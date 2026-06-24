@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>JSTQB FL 総合模擬テスト 第2回</title>
+<style>
+  :root{
+    --ink:#1a1d24;--paper:#f7f4ec;--card:#ffffff;--line:#e3ddd0;
+    --accent:#c0392b;--good:#2a7d4f;--good-bg:#e7f3ec;--bad:#b23b3b;--bad-bg:#fae9e7;
+    --muted:#6f6a60;--pick:#3a4250;--pick-bg:#eef1f5;--seal:#1a1d24;--amber:#b8860b;
+    --shadow:0 1px 2px rgba(26,29,36,.06),0 8px 24px rgba(26,29,36,.06);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{background:var(--paper);color:var(--ink);
+    font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Yu Gothic",Meiryo,system-ui,sans-serif;
+    line-height:1.75;font-size:16px;-webkit-text-size-adjust:100%;padding-bottom:env(safe-area-inset-bottom);}
+  .wrap{max-width:680px;margin:0 auto;padding:0 16px;}
+  header{position:sticky;top:0;z-index:30;background:rgba(247,244,236,.9);
+    backdrop-filter:saturate(1.2) blur(10px);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top);}
+  .hbar{display:flex;align-items:center;gap:12px;padding:12px 16px;max-width:680px;margin:0 auto;}
+  .seal{flex:0 0 auto;width:42px;height:42px;border-radius:50%;background:var(--seal);color:#f7f4ec;
+    display:grid;place-items:center;font-weight:800;font-size:11px;letter-spacing:.04em;line-height:1.05;text-align:center;
+    box-shadow:inset 0 0 0 2px rgba(247,244,236,.15);}
+  .htext{flex:1 1 auto;min-width:0;}
+  .htext h1{margin:0;font-size:15px;font-weight:800;letter-spacing:.02em;}
+  .htext .sub{margin:0;font-size:11px;color:var(--muted);letter-spacing:.06em;}
+  .counter{flex:0 0 auto;font-size:12px;font-weight:800;color:var(--accent);background:#fff;border:1px solid var(--line);border-radius:99px;padding:4px 10px;}
+  .progress{height:4px;background:var(--line);border-radius:99px;overflow:hidden;margin:0 16px 10px;max-width:680px;}
+  @media(min-width:712px){.progress{margin-left:auto;margin-right:auto;}}
+  .progress > i{display:block;height:100%;width:0;background:var(--accent);transition:width .35s ease;}
+  .intro{margin:22px 0;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px 20px;box-shadow:var(--shadow);}
+  .intro .eyebrow{font-size:11px;letter-spacing:.22em;color:var(--accent);font-weight:800;text-transform:uppercase;margin-bottom:10px;}
+  .intro h2{margin:0 0 8px;font-size:22px;letter-spacing:.01em;}
+  .intro p{margin:6px 0;color:var(--muted);font-size:14px;}
+  .intro .note{background:#fbf9f3;border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:10px 12px;font-size:13px;color:#46423a;margin-top:12px;}
+  .stats{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;}
+  .stat{flex:1 1 0;min-width:88px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:#fbf9f3;}
+  .stat b{display:block;font-size:20px;}
+  .stat span{font-size:11px;color:var(--muted);letter-spacing:.04em;}
+  .q{margin:16px 0;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;}
+  .qhead{display:flex;align-items:baseline;gap:10px;padding:16px 18px 6px;}
+  .qno{flex:0 0 auto;background:var(--seal);color:#f7f4ec;border-radius:8px;font-size:12px;font-weight:800;padding:3px 8px;letter-spacing:.02em;}
+  .qtag{font-size:10px;letter-spacing:.12em;color:var(--muted);font-weight:700;text-transform:uppercase;}
+  .qstem{padding:4px 18px 14px;font-size:15.5px;font-weight:600;white-space:pre-line;}
+  .qstem .neg{color:inherit;font-weight:inherit;border-bottom:none;}
+  .blankbadge{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.08em;color:#fff;background:var(--amber);border-radius:6px;padding:2px 8px;margin-right:8px;vertical-align:middle;}
+  .qfig{margin:0 18px 14px;padding:12px 14px;background:#fbf9f3;border:1px solid var(--line);border-radius:10px;font-size:13.5px;color:#46423a;white-space:pre-line;}
+  .qfig table{border-collapse:collapse;width:100%;margin-top:6px;font-size:13px;}
+  .qfig th,.qfig td{border:1px solid var(--line);padding:4px 8px;text-align:left;}
+  .qfig th{background:#efe9dc;}
+  .qfigsvg{overflow-x:auto;white-space:normal;}
+  .qfigsvg svg{display:block;margin:0 auto;max-width:100%;height:auto;}
+  .qfigsvg text{font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans",Meiryo,sans-serif;}
+  .qfig .figcap{font-size:11px;color:var(--muted);letter-spacing:.06em;text-align:center;margin-top:6px;font-weight:700;}
+  .opts{list-style:none;margin:0;padding:0 14px 14px;}
+  .opt{display:flex;gap:11px;align-items:flex-start;border:1.5px solid var(--line);border-radius:12px;
+    padding:12px 13px;margin:8px 0;cursor:pointer;background:#fff;transition:border-color .15s,background .15s,transform .05s;font-size:14.5px;}
+  .opt:active{transform:scale(.995);}
+  .opt .key{flex:0 0 auto;width:26px;height:26px;border-radius:50%;border:1.5px solid var(--line);
+    display:grid;place-items:center;font-weight:800;font-size:13px;color:var(--pick);background:#fff;transition:all .15s;}
+  .opt .body{flex:1 1 auto;padding-top:1px;}
+  .opt.pick{border-color:var(--pick);background:var(--pick-bg);}
+  .opt.pick .key{background:var(--pick);color:#fff;border-color:var(--pick);}
+  /* graded states (only after submit) */
+  .graded .opt{cursor:default;}
+  .graded .opt.correct{border-color:var(--good);background:var(--good-bg);}
+  .graded .opt.correct .key{background:var(--good);color:#fff;border-color:var(--good);}
+  .graded .opt.wrong{border-color:var(--bad);background:var(--bad-bg);}
+  .graded .opt.wrong .key{background:var(--bad);color:#fff;border-color:var(--bad);}
+  .graded .opt .mark{margin-left:auto;font-weight:800;font-size:15px;align-self:center;}
+  .graded .opt.correct .mark::after{content:"\2713";color:var(--good);}
+  .graded .opt.wrong .mark::after{content:"\2715";color:var(--bad);}
+  .exp{max-height:0;overflow:hidden;transition:max-height .45s ease;}
+  .graded .exp{max-height:4000px;}
+  .expinner{margin:0 14px 16px;border-top:1px dashed var(--line);padding-top:14px;}
+  .expchap{font-size:10px;letter-spacing:.12em;color:var(--muted);font-weight:800;text-transform:uppercase;margin-bottom:10px;}
+  .verdict{font-size:13px;font-weight:800;letter-spacing:.02em;margin-bottom:10px;}
+  .verdict.ok{color:var(--good);}.verdict.ng{color:var(--bad);}.verdict.skip{color:var(--amber);}
+  .why{margin:0 0 10px;font-size:14px;background:#fbf9f3;border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:10px 12px;}
+  .why b{color:var(--accent);}
+  .breakdown{margin:0;padding:0;list-style:none;font-size:13.5px;}
+  .breakdown li{display:flex;gap:9px;padding:6px 0;border-bottom:1px solid #f0ece1;align-items:flex-start;}
+  .breakdown li:last-child{border-bottom:none;}
+  .bk{flex:0 0 auto;width:22px;height:22px;border-radius:6px;display:grid;place-items:center;font-weight:800;font-size:12px;}
+  .bk.o{background:var(--good-bg);color:var(--good);}
+  .bk.x{background:var(--bad-bg);color:var(--bad);}
+  .bktext{flex:1;}
+  .bktext .lab{font-weight:700;}
+
+  .submitbar{position:sticky;bottom:0;z-index:20;background:rgba(247,244,236,.92);backdrop-filter:blur(8px);
+    border-top:1px solid var(--line);padding:12px 16px calc(12px + env(safe-area-inset-bottom));margin-top:8px;}
+  .submitbar .inner{max-width:680px;margin:0 auto;display:flex;gap:12px;align-items:center;}
+  .submitbar .left{flex:1;font-size:12px;color:var(--muted);}
+  .submitbar .left b{color:var(--ink);font-size:14px;}
+  #submitBtn{background:var(--accent);color:#fff;border:none;border-radius:99px;padding:12px 24px;font-size:14px;font-weight:800;letter-spacing:.03em;cursor:pointer;transition:opacity .2s;}
+  #submitBtn:disabled{opacity:.45;cursor:not-allowed;}
+
+  #result{margin:22px 0 16px;background:var(--seal);color:#f4f1ea;border-radius:18px;padding:26px 22px;text-align:center;display:none;box-shadow:var(--shadow);scroll-margin-top:90px;}
+  #result.show{display:block;}
+  #result .score{font-size:46px;font-weight:800;letter-spacing:-.02em;}
+  #result .score small{font-size:18px;color:#b9b3a6;font-weight:600;}
+  #result .pct{font-size:13px;letter-spacing:.18em;color:#c7b6a8;text-transform:uppercase;margin-top:2px;}
+  #result .pass{display:inline-block;margin-top:12px;font-size:13px;font-weight:800;letter-spacing:.08em;padding:5px 16px;border-radius:99px;}
+  #result .pass.ok{background:var(--good);color:#fff;}
+  #result .pass.ng{background:var(--bad);color:#fff;}
+  #result .msg{font-size:14px;color:#ddd6c8;margin-top:12px;}
+  #result .bychap{margin-top:18px;text-align:left;background:rgba(255,255,255,.06);border-radius:12px;padding:12px 14px;}
+  #result .bychap h4{margin:0 0 8px;font-size:12px;letter-spacing:.1em;color:#c7b6a8;text-transform:uppercase;font-weight:800;}
+  #result .crow{display:flex;align-items:center;gap:10px;font-size:13px;padding:3px 0;}
+  #result .crow .cl{flex:1;color:#ddd6c8;}
+  #result .crow .cv{font-weight:800;}
+  #result .barwrap{flex:0 0 90px;height:6px;background:rgba(255,255,255,.12);border-radius:99px;overflow:hidden;}
+  #result .barwrap > i{display:block;height:100%;background:#7fb89a;}
+  #result button{margin-top:18px;background:var(--accent);color:#fff;border:none;border-radius:99px;padding:12px 26px;font-size:14px;font-weight:800;letter-spacing:.04em;cursor:pointer;}
+  footer{text-align:center;color:var(--muted);font-size:11px;letter-spacing:.05em;padding:8px 0 36px;}
+  .live{position:fixed;left:-9999px;}
+</style>
+</head>
+<body>
+<header>
+  <div class="hbar">
+    <div class="seal">JSTQB<br>FL</div>
+    <div class="htext">
+      <h1>総合模擬テスト 第2回</h1>
+      <p class="sub">SYLLABUS 4.0 ・ 全章横断 40問</p>
+    </div>
+    <div class="counter"><span id="cnt">0</span>/40</div>
+  </div>
+  <div class="progress"><i id="bar"></i></div>
+</header>
+
+<main class="wrap">
+  <section class="intro">
+    <div class="eyebrow">Mock Exam</div>
+    <h2>本番想定 総合模擬テスト 第2回</h2>
+    <p>第1〜6章を横断する40問。本番の出題比重に近づけて配分しています（基礎・テスト技法を厚めに）。</p>
+    <div class="note">本番同様、<b>全40問に解答してから「採点する」</b>を押してください。採点するまで正誤や解説は表示されません（前問の答えで次を類推しないため）。合格ラインは<b>65%（40問中26問）</b>を目安にしています。</div>
+    <div class="stats">
+      <div class="stat"><b id="answered">0</b><span>解答済み</span></div>
+      <div class="stat"><b>40</b><span>総問題数</span></div>
+      <div class="stat"><b>65%</b><span>合格目安</span></div>
+    </div>
+  </section>
+
+  <div id="quiz"></div>
+
+  <section id="result">
+    <div class="pct">YOUR SCORE</div>
+    <div class="score"><span id="sc">0</span><small>/40</small></div>
+    <div class="pct" id="scpct">0%</div>
+    <div><span class="pass" id="passbadge"></span></div>
+    <div class="msg" id="scmsg"></div>
+    <div class="bychap">
+      <h4>章別の正答率</h4>
+      <div id="chapRows"></div>
+    </div>
+    <button id="restart">もう一度挑戦する</button>
+  </section>
+
+  <footer>JSTQB Foundation Level シラバス4.0 準拠 ・ 学習用模擬テスト</footer>
+</main>
+
+<div class="submitbar">
+  <div class="inner">
+    <div class="left">未解答 <b id="remain">40</b> 問</div>
+    <button id="submitBtn" disabled>採点する</button>
+  </div>
+</div>
+
+<div class="live" aria-live="polite" id="live"></div>
+
+<script>
+const QUESTIONS = [
+{
+ ch:"第1章", tag:"1.1 テストの目的",
+ stem:"あなたは在庫管理システムのテスト担当者で、スプリントレビューでテストの狙いを問われた。テストの目的の説明として、適切でないものはどれか。",
+ opts:[
+  {t:"要件定義書のレビューに参加し、仕様の曖昧さや矛盾を早期に指摘して欠陥の作り込みを防ぐ。",e:"適切。静的テストによる欠陥の作り込み防止はテストの目的。"},
+  {t:"在庫の引当ロジックが業務ルールどおり動作するか、妥当性を確認する。",e:"適切。妥当性確認はテストの目的。"},
+  {t:"発見した欠陥の原因をコードから特定し、その場で修正してコミットする。",e:"これが正解（不適切）。原因特定と修正はデバッグであり、開発担当の作業。テストの目的ではない。"},
+  {t:"在庫数が不正になるリスクの大きさを評価し、ステークホルダーに情報を提供する。",e:"適切。品質に関する情報提供とリスク評価はテストの目的。"}
+ ],
+ correct:2,
+ why:"テストは欠陥の作り込み防止・妥当性確認・欠陥検出・リスク評価などを目的とする。<b>欠陥の原因特定と修正（デバッグ）はテストの目的ではなく開発担当の作業</b>。"
+},
+{
+ ch:"第1章", tag:"1.2 誤り・欠陥・故障",
+ stem:"次の文の空欄に入る語の組み合わせとして、最も適切なものはどれか。「テストで、欠陥でないものを欠陥として報告してしまうことを（①）という。逆に、存在する欠陥を検出できずに見逃すことを（②）という。」",
+ opts:[
+  {t:"①偽陽性　②偽陰性",e:"正しい。誤検出＝偽陽性、見逃し＝偽陰性。"},
+  {t:"①偽陰性　②偽陽性",e:"誤り。①②が逆。"},
+  {t:"①エラー　②欠陥",e:"誤り。偽陽性/偽陰性の話であり、エラー/欠陥ではない。"},
+  {t:"①故障　②欠陥",e:"誤り。偽陽性/偽陰性を問う設問。"}
+ ],
+ correct:0,
+ why:"<b>偽陽性＝誤検出</b>（欠陥でないものを欠陥と報告）、<b>偽陰性＝検出漏れ</b>（本物を見逃す）。"
+},
+{
+ ch:"第1章", tag:"1.2 QA/QC",
+ stem:"品質保証と品質コントロールの説明として、最も適切なものはどれか。",
+ opts:[
+  {t:"QAはプロセス指向、QCはプロダクト指向である。",e:"正しい。QA=プロセス指向、QC=プロダクト指向。"},
+  {t:"QAはプロダクト指向、QCはプロセス指向である。",e:"誤り。逆。"},
+  {t:"QAもQCも品質マネジメントの上位概念である。",e:"誤り。QA・QCは品質マネジメントに含まれる。"},
+  {t:"QCはテストを含まない活動である。",e:"誤り。QCはテストを含む。"}
+ ],
+ correct:0,
+ why:"<b>QA＝プロセス指向</b>（適切なプロセスへの信頼）、<b>QC＝プロダクト指向</b>（テストを含み品質に到達）。両者を包含するのが品質マネジメント。"
+},
+{
+ ch:"第1章", tag:"1.3 7原則",
+ stem:"テストの7原則に関する次の文の空欄に入る語の組み合わせとして、最も適切なものはどれか。「テストは（①）。また、同じテストを繰り返すだけでは新しい欠陥を見つけられなくなる。これは（②）と呼ばれる。」",
+ opts:[
+  {t:"①コンテキストに依存する　②テストの弱化",e:"正しい。原則6（コンテキスト次第）と原則5（テストの弱化）。同じテストの繰り返しでは新しい欠陥が見つからなくなる。"},
+  {t:"①欠陥の数で決まる　②欠陥ゼロ",e:"誤り。状況依存とテストの弱化を問う設問。"},
+  {t:"①テスト工数で決まる　②全数テスト",e:"誤り。①②とも該当しない。"},
+  {t:"①開発モデルで決まる　②テストの弱化",e:"誤り。①はコンテキスト。"}
+ ],
+ correct:0,
+ why:"原則6＝テストは<b>コンテキスト次第</b>。原則5＝<b>テストの弱化</b>（同じテストの繰り返しでは新しい欠陥が見つからない。殺虫剤を繰り返すと効きが落ちるのと同様の比喩で説明される）。"
+},
+{
+ ch:"第1章", tag:"1.3 7原則（適用）",
+ stem:"あるテスト担当者が立てたテスト方針のうち、テストの7原則に反しているものはどれか。",
+ opts:[
+  {t:"過去に欠陥が多く見つかったモジュールを重点的にテストする。",e:"適切。原則4（欠陥の偏在）の活用。"},
+  {t:"繰り返すことで精度が上がるため、同じテストケースを固定し続ける。",e:"これが正解（反している）。原則5（テストの弱化）に反する。テストケースは定期的に見直し・追加すべき。"},
+  {t:"全数テストは不可能なので、リスクと優先度に基づいてテストを集中する。",e:"適切。原則2への正しい対応。"},
+  {t:"開発の早い段階からレビューや静的テストを行う。",e:"適切。原則3（早期テスト）の実践。"}
+ ],
+ correct:1,
+ why:"同じテストケースの固定は<b>テストの弱化（原則5）に反する</b>。テストケースは見直し・追加が必要。"
+},
+{
+ ch:"第1章", tag:"1.4 テスト活動",
+ stem:"テストプロセスの活動のうち、テスト分析について説明しているものはどれか。",
+ opts:[
+  {t:"テストベースを分析してテスト可能なフィーチャーを識別し、テスト条件を決める。",e:"正しい。テスト分析は『何を』テストするかを決める。"},
+  {t:"テスト条件をテストケースに落とし込み、どうテストするかを決める。",e:"誤り。これはテスト設計の説明。"},
+  {t:"テスト実行に必要なテストウェアを作成・完成させる。",e:"誤り。これはテスト実装の説明。"},
+  {t:"制約内で目的を達成するためのアプローチを定義する。",e:"誤り。これはテスト計画の説明。"}
+ ],
+ correct:0,
+ why:"テスト分析は<b>何をテストするか</b>（テスト条件）を決める。設計（どう）の前段。"
+},
+{
+ ch:"第1章", tag:"1.5 独立性",
+ stem:"独立したテストの利点として、適切でないものはどれか。",
+ opts:[
+  {t:"開発担当者とは異なる視点・バイアスをもつため、異なる種類の故障を検出しやすい。",e:"適切。独立性の代表的な利点。"},
+  {t:"テスト担当者がステークホルダーの仮定を検証・反証できる。",e:"適切。独立した検証は利点。"},
+  {t:"開発者が作ったものを開発者自身がテストするため、欠陥に最も気づきやすい。",e:"これが正解（不適切）。自分の作ったものは思い込みで欠陥に気づきにくい。これは独立性の利点とは逆。"},
+  {t:"契約上の圧力に左右されず、客観的に報告できる。",e:"適切。圧力からの独立は利点。"}
+ ],
+ correct:2,
+ why:"自分の成果物は<b>思い込みで欠陥に気づきにくい</b>。独立したテストの利点は『異なる視点による検出』であり、自己テストの優位ではない。"
+},
+{
+ ch:"第1章", tag:"1.2 根本原因（事例）",  
+ stem:"「ある病院の予約システムで、同じ時間帯に定員を超える予約が受け付けられ、当日に患者が長時間待たされた。調査の結果、設計時に同時予約数の上限チェックの仕様が定義されておらず、コードに上限を超えた予約を弾く処理が実装されていなかった」。根本原因・欠陥・故障・影響の関係で最も当てはまるものはどれか。",  
+ opts:[
+  {t:"上限チェック仕様の未定義が根本原因、上限超過を弾く処理の未実装が欠陥、定員超過の予約受付が故障、患者が長時間待たされたことが影響。",e:"正しい。根本原因→欠陥→故障→影響の連鎖が正しく対応している。"},
+  {t:"上限超過を弾く処理の未実装が根本原因、定員超過の予約受付が欠陥、患者が長時間待たされたことが故障、上限チェック仕様の未定義が影響。",e:"誤り。未実装は欠陥、定員超過の予約受付は故障、患者の待ち時間は影響、仕様未定義は根本原因。"},
+  {t:"定員超過の予約受付が根本原因、上限チェック仕様の未定義が欠陥、上限超過を弾く処理の未実装が故障、患者が長時間待たされたことが影響。",e:"誤り。定員超過の予約受付は実行時に現れた故障であり、根本原因ではない。仕様未定義は根本原因、未実装は欠陥。"},
+  {t:"患者が長時間待たされたことが根本原因、定員超過の予約受付が欠陥、上限チェック仕様の未定義が故障、上限超過を弾く処理の未実装が影響。",e:"誤り。患者が長時間待たされたことは影響であり、根本原因ではない。定員超過の予約受付は故障、仕様未定義は根本原因、未実装は欠陥。"}
+ ],
+ correct:0,
+ why:"連鎖は<b>根本原因（上限チェック仕様の未定義）→欠陥（上限超過を弾く処理の未実装）→故障（定員超過の予約受付）→影響（患者が長時間待たされる）</b>。すべての選択肢で根本原因・欠陥・故障・影響の候補を示しているため、選択肢の要素数ではなく用語の対応関係で判断する。"
+},
+{
+ ch:"第2章", tag:"2.1 SDLCモデル",
+ stem:"シーケンシャル開発モデルについて説明しているものはどれか。",
+ opts:[
+  {t:"開発工程を順番に完了し、他の開発活動が終わった後にテストする。",e:"正しい。シーケンシャルの説明。"},
+  {t:"フィーチャー群を固定期間のサイクルで仕様化〜テストし、毎回動くソフトを提供する。",e:"誤り。これはイテレーティブの説明。"},
+  {t:"開発プロセスにテストプロセスを対応づけ、早期テストを実装する。",e:"誤り。これはV字モデルの説明。"},
+  {t:"小さく分割して積み上げ、段階的に完成させる。",e:"誤り。これはインクリメンタルの説明。"}
+ ],
+ correct:0,
+ why:"シーケンシャルは<b>活動を逐次完了</b>し、テストは開発完了後。V字＝対応づけ、イテレーティブ＝反復、インクリメンタル＝積み上げ。"
+},
+{
+ ch:"第2章", tag:"2.1 シフトレフト",
+ stem:"シフトレフトを導入する際の留意点として、最も適切なものはどれか。",
+ opts:[
+  {t:"早期にテストを行うと、追加コストは一切かからない。",e:"誤り。シフトレフトは小さな先行投資（早期レビュー等）を伴う。コストゼロではなく、後工程の手戻り削減で全体最適になる。"},
+  {t:"早期テストを行うには、先行投資が必要になる。",e:"正しい。シフトレフトは先行投資を伴うが、後工程の高コストな手戻りを減らす。"},
+  {t:"シフトレフトを採用したら動的テストは一切不要になる。",e:"誤り。静的テストを早期に足すのであって、動的テストを置き換えるものではない。"},
+  {t:"シフトレフトはウォーターフォールでは原理的に適用できない。",e:"誤り。要件・設計レビューなどはどの開発モデルでも早期に行える。"}
+ ],
+ correct:1,
+ why:"シフトレフトは<b>早期の先行投資</b>を伴うが、上流で欠陥を防ぐことで後工程の手戻りコストを下げ全体最適になる。動的テストの置き換えではない。"
+},
+{
+ ch:"第2章", tag:"2.3 タイプ×レベル",
+ fig:"【テストタイプ】\n1. 機能テスト\n2. 性能テスト\n3. ホワイトボックステスト\n4. 変更関連テスト\n\n【観点】\nA. コードの構造（分岐・命令）をどれだけ実行できたか\nB. システムが「何を」すべきか、外部から見た振る舞いが仕様どおりか\nC. 欠陥修正後、その欠陥が直り、かつ他に悪影響が出ていないか\nD. 負荷をかけたときの応答時間やスループットなど、品質特性が要件を満たすか",
+ stem:"次のテストタイプ（1〜4）と、その主な観点（A〜D）を対応させたとき、最も適切な組み合わせはどれか。",
+ opts:[
+  {t:"1-B、2-D、3-A、4-C",e:"正しい。機能テスト＝外部振る舞い(B)、性能テスト＝品質特性(D)、ホワイトボックス＝コード構造(A)、変更関連テスト＝修正後の確認/リグレッション(C)。"},
+  {t:"1-A、2-D、3-B、4-C",e:"誤り。Aの「コード構造」はホワイトボックス、Bの「外部振る舞い」は機能テストで、1と3が逆。"},
+  {t:"1-B、2-A、3-D、4-C",e:"誤り。Aの「コード構造」とDの「品質特性」が入れ替わっており、2と3が誤り。"},
+  {t:"1-B、2-D、3-C、4-A",e:"誤り。Cの「修正後の確認」は変更関連テスト、Aの「コード構造」はホワイトボックスで、3と4が逆。"}
+ ],
+ correct:0,
+ why:"<b>機能テスト</b>＝外部から見た振る舞い(B)、<b>性能テスト</b>＝品質特性(D)、<b>ホワイトボックス</b>＝コード構造のカバレッジ(A)、<b>変更関連テスト</b>＝修正後の確認・リグレッション(C)。"
+},
+{
+ ch:"第2章", tag:"2.4 確認/リグレッション",
+ stem:"確認テストとリグレッションテストの説明として、最も適切なものはどれか。",
+ opts:[
+  {t:"確認は修正確認、リグレッションは副作用確認である。",e:"正しい。確認＝修正の確認、リグレッション＝副作用の確認。"},
+  {t:"確認テストは副作用の確認、リグレッションテストは修正の確認である。",e:"誤り。逆になっている。"},
+  {t:"確認テストの方がリグレッションテストより自動化に向いている。",e:"誤り。反復実行されるリグレッションの方が自動化に向く。"},
+  {t:"両者は同じテストを指す。",e:"誤り。目的が異なり区別される。"}
+ ],
+ correct:0,
+ why:"<b>確認テスト＝修正が効いたか</b>、<b>リグレッションテスト＝変更の副作用がないか</b>（自動化向き）。"
+},
+{
+ ch:"第2章", tag:"2.2 テストレベルの目的",
+ stem:"受け入れテストの目的について説明しているものはどれか。",
+ opts:[
+  {t:"本番想定の利用方法や運用条件に合っているかを確認する。",e:"正しい。受け入れテストは、本番想定の利用方法や運用条件に合うかを確認し、受け入れ可否の判断に役立てる。"},
+  {t:"コンポーネントに焦点を当て、内部の欠陥を検出する。",e:"誤り。これはコンポーネントテストの目的。"},
+  {t:"コンポーネント間のインターフェースに焦点を当てる。",e:"誤り。これはコンポーネント統合テストの目的。"},
+  {t:"システム全体の機能的/非機能的振る舞いが設計・仕様どおりかを検証する。",e:"誤り。これはシステムテストの目的。"}
+ ],
+ correct:0,
+ why:"受け入れテストは<b>本番想定の使用方法との合致・妥当性確認・リリース可否</b>に焦点を当てる。"
+},
+{
+ ch:"第3章", tag:"3.1 静的テストの利点",
+ stem:"静的テストの利点として、適切でないものはどれか。",
+ opts:[
+  {t:"動的テストを行う前に、要件や設計の欠陥を早期かつ安価に検出・修正できる。",e:"適切。早期・安価な欠陥検出は静的テストの利点。"},
+  {t:"動的テストでは見つけにくい欠陥（要件の曖昧さ・到達不能コード等）を識別できる。",e:"適切。実行では見つけにくい欠陥の識別は利点。"},
+  {t:"実際にソフトウェアを実行して、性能上のボトルネックを測定できる。",e:"これが正解（不適切）。性能の測定は実行を伴う動的テストの領域。静的テストは実行しない。"},
+  {t:"作業成果物の整合性や内部品質（保守性等）を向上できる。",e:"適切。整合性・内部品質の向上は利点。"}
+ ],
+ correct:2,
+ why:"性能ボトルネックの測定は<b>動的テスト</b>の領域。静的テストは実行しないため不可。"
+},
+{
+ ch:"第3章", tag:"3.2 ステークホルダー",
+ stem:"レビューにおけるステークホルダーの位置づけとして、最も適切なものはどれか。",
+ opts:[
+  {t:"顧客やビジネス側の代表として、ニーズや期待への適合の観点を提供する。",e:"正しい。ステークホルダーはビジネス側代表でニーズ適合の観点を提供。"},
+  {t:"レビューを運営するモデレーターを必ず務める。",e:"誤り。モデレーターは通常プロジェクトチーム側。"},
+  {t:"コードの内部構造を解析する技術専門家でなければならない。",e:"誤り。ステークホルダーは技術専門家とは限らない。"},
+  {t:"レビューには関与してはならない。",e:"誤り。早期・頻繁な関与が推奨される。"}
+ ],
+ correct:0,
+ why:"ステークホルダー＝<b>顧客・ビジネス側の代表</b>。ニーズ適合の観点を提供。モデレーターや技術専門家とは限らない。"
+},
+{
+ ch:"第3章", tag:"3.2 レビュープロセス",
+ stem:"レビュープロセスの活動のうち、計画プロセスについて説明しているものはどれか。",
+ opts:[
+  {t:"レビューの目的・対象・範囲、参加者と役割を定める。",e:"正しい。計画プロセスでは、レビューの目的・対象・範囲を定め、参加者を選び役割を割り当てる。"},
+  {t:"成果物を参加者に共有し、範囲・目的・役割を説明する。",e:"誤り。これは開始（立ち上げ）プロセス。"},
+  {t:"識別した不正を分析し、オーナーとステータスを割り当てる。",e:"誤り。これは共有と分析プロセス。"},
+  {t:"欠陥レポートを作成し作成者に修正してもらう。",e:"誤り。これは修正と報告プロセス。"}
+ ],
+ correct:0,
+ why:"計画は<b>目的・対象・範囲（工数/時間枠）・参加者と役割</b>を定める。他は開始・共有と分析・修正と報告の作業。"
+},
+{
+ ch:"第3章", tag:"3.2 レビュー種別",
+ stem:"インスペクションについて説明しているものはどれか。",
+ opts:[
+  {t:"最も形式的で、役割・ルール・記録を伴うレビュー。",e:"正しい。インスペクションは最も形式的なレビュー。"},
+  {t:"役割を定めず同僚同士が気軽に行う簡易なレビュー。",e:"誤り。これは非形式的レビュー。"},
+  {t:"作成者が主導してシナリオに沿って説明していくレビュー。",e:"誤り。これはウォークスルー。"},
+  {t:"主に技術面に焦点を当て、専門家が行うレビュー。",e:"誤り。これはテクニカルレビュー。"}
+ ],
+ correct:0,
+ why:"インスペクションは<b>最も形式的</b>で、役割定義・ルール・メトリクス収集・書記を伴う。"
+},
+{
+ ch:"第3章", tag:"3.2 成功要因",
+ stem:"レビューを成功させる要因として、適切でないものはどれか。",
+ opts:[
+  {t:"レビュー対象を小さく分割し、レビューアが集中力を保てるようにする。",e:"適切。小さく分割は成功要因。"},
+  {t:"欠陥の指摘を作成者個人への非難として扱い、責任を明確にする。",e:"これが正解（不適切）。個人攻撃は防御反応を招きレビューの効果を損なう。人ではなく成果物に焦点を当てるべき。"},
+  {t:"測定可能な終了基準を計画時に定義する。",e:"適切。明確な終了基準は成功要因。"},
+  {t:"組織にレビュー文化を定着させ、参加者にトレーニングを行う。",e:"適切。文化定着・トレーニングは成功要因。"}
+ ],
+ correct:1,
+ why:"レビューは<b>人ではなく成果物に焦点</b>を当て中立的に扱う。個人への非難は逆効果で不適切。"
+},
+{
+ ch:"第4章", tag:"4.1 技法の分類",
+ stem:"ブラックボックステスト技法を説明しているものはどれか。",
+ opts:[
+  {t:"テスト対象の入力と出力に着目し、内部構造を参照せずにテストする。",e:"正しい。ブラックボックスは入出力ベース（仕様ベース）。"},
+  {t:"アーキテクチャや内部構造・コードの分析に基づいてテストする。",e:"誤り。これはホワイトボックス。"},
+  {t:"テスト担当者の経験や直感を活用してテストする。",e:"誤り。これは経験ベース。"},
+  {t:"コードの命令や分岐を網羅するようテストする。",e:"誤り。これはホワイトボックス（構造ベース）。"}
+ ],
+ correct:0,
+ why:"ブラックボックスは<b>入出力（仕様）に着目</b>し内部構造を参照しない。機能・非機能の両方に適用可。"
+},
+{
+ ch:"第4章", tag:"4.2 同値分割（計算）",
+ stem:"自動販売機が、投入金額により「釣り銭なし（ちょうど）」「釣り銭あり」「金額不足（商品出さず返金）」を処理する。投入金額が0円以下、または現実にありえない上限を超える場合はエラーとする。同値分割法で振り分けたとき、有効同値と無効同値の数の組み合わせとして正しいものはどれか。",
+ opts:[
+  {t:"有効同値が3、無効同値が2",e:"正しい。有効は『不足/ちょうど/釣り銭あり』の3つ、無効は『0円以下』『上限超過』の2つ。"},
+  {t:"有効同値が3、無効同値が0",e:"誤り。0円以下と上限超過の無効2つを見落としている。"},
+  {t:"有効同値が2、無効同値が1",e:"誤り。有効は3つ、無効は2つ。"},
+  {t:"有効同値が5、無効同値が2",e:"誤り。有効は3つ。"}
+ ],
+ correct:0,
+ why:"有効同値は<b>3つ</b>（不足/ちょうど/釣り銭あり）、無効同値は<b>2つ</b>（0円以下/上限超過）。下側と上側の無効を見落とさない。"
+},
+{
+ ch:"第4章", tag:"4.2 境界値（カバレッジ計算）",
+ fig:"会員ランクを年間購入額で判定：\n・5万円未満 → レギュラー\n・5万円以上20万円未満 → シルバー\n・20万円以上 → ゴールド",
+ stem:"上記のランク判定を2値境界値分析でテストする。各区切りについて「区切り値」と「その直前の値」を境界値とする（範囲端は考慮しない）。あるテストセットが、境界値として 49999, 50000, 200000 の3つをカバーしていた。このテストセットが達成している2値境界値カバレッジは何%か。",
+ opts:[
+  {t:"75%",e:"正しい。2値BVAの境界値は各区切りで2つ＝2区切り×2＝計4個（49999,50000／199999,200000）。カバー済みは49999,50000,200000の3個で、199999が抜けている。3/4＝75%。"},
+  {t:"100%",e:"誤り。区切り「20万」の直前の値199999がカバーされていないため100%ではない。"},
+  {t:"50%",e:"誤り。4個中2個(50%)ではない。カバー済みは3個。"},
+  {t:"約67%",e:"誤り。全境界値は4個。3個カバーで75%。"}
+ ],
+ correct:0,
+ why:"2値BVAの境界値は各区切りで「区切り値・その直前」の2個。2区切りで計4個（49999,50000／199999,200000）。テストセットは199999を欠くため3/4＝<b>75%</b>。"
+},
+{
+ ch:"第4章", tag:"4.2 デシジョンテーブル（計算）",
+ fig:"映画館チケット料金：\n・一般は会員/非会員で料金が異なり、通常上映/レイトショーでも料金が変わる\n・学生は会員/非会員で料金が異なるが、レイトショー料金は適用しない\n・幼児は会員区分・時間帯に関係なく無料\n・招待券利用者は会員区分・時間帯に関係なく無料",
+ stem:"上記の料金をデシジョンテーブルテストで行う場合、条件の組み合わせはいくつあるか。",
+ opts:[
+  {t:"8個",e:"正しい。一般は会員区分2×時間帯2で4通り、学生は会員区分2で2通り、幼児1通り、招待券1通り。合計8通り。"},
+  {t:"6個",e:"誤り。一般の時間帯差分4通りに加え、学生・幼児・招待券も数える必要がある。"},
+  {t:"9個",e:"誤り。幼児と招待券はそれぞれ会員区分・時間帯で料金が変わらないため、各1通りに縮約される。"},
+  {t:"12個",e:"誤り。すべてを単純に掛け合わせると過剰。条件によって無関係な項目は縮約する。"},
+ ],
+ correct:0,
+ why:"一般4通り＋学生2通り＋幼児1通り＋招待券1通りで<b>8通り</b>。すべてを単純に掛けるのではなく、料金に影響しない条件は縮約する。"
+},
+{
+ ch:"第4章", tag:"4.2 状態遷移（有効遷移の数え上げ）",
+ figsvg:`<svg viewBox="0 0 680 250" width="680" height="250" role="img" aria-label="ログイン認証の状態遷移図">
+   <defs><marker id="mkar" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#c0392b"/></marker></defs>
+   <g font-size="12" font-weight="800" text-anchor="middle">
+     <rect x="20" y="105" width="110" height="40" rx="9" fill="#fff" stroke="#1a1d24" stroke-width="1.8"/><text x="75" y="130">ログアウト</text>
+     <rect x="270" y="105" width="110" height="40" rx="9" fill="#fff" stroke="#1a1d24" stroke-width="1.8"/><text x="325" y="130">入力中</text>
+     <rect x="520" y="30" width="130" height="40" rx="9" fill="#fff" stroke="#1a1d24" stroke-width="1.8"/><text x="585" y="55">ログイン中</text>
+     <rect x="520" y="180" width="130" height="40" rx="9" fill="#fff" stroke="#1a1d24" stroke-width="1.8"/><text x="585" y="205">ロック</text>
+     <rect x="240" y="195" width="170" height="40" rx="9" fill="#fff" stroke="#1a1d24" stroke-width="1.8"/><text x="325" y="220">パスワード再設定</text>
+   </g>
+   <g font-size="10.5" fill="#6f6a60" text-anchor="middle">
+     <!-- ① ログアウト→入力中 -->
+     <path d="M130,125 L266,125" fill="none" stroke="#c0392b" stroke-width="2" marker-end="url(#mkar)"/><text x="198" y="115">ID入力開始</text>
+     <!-- ② 入力中→ログイン中 -->
+     <path d="M370,104 Q460,70 516,58" fill="none" stroke="#c0392b" stroke-width="2" marker-end="url(#mkar)"/><text x="395" y="78">認証成功</text>
+     <!-- ③ 入力中→ロック -->
+     <path d="M364,145 Q450,180 516,192" fill="none" stroke="#c0392b" stroke-width="2" marker-end="url(#mkar)"/><text x="445" y="195">3回失敗</text>
+     <!-- ④ ログアウト→パスワード再設定 -->
+     <path d="M80,145 Q90,205 236,213" fill="none" stroke="#c0392b" stroke-width="2" marker-end="url(#mkar)"/><text x="60" y="190">再設定要求</text>
+     <!-- ⑤ パスワード再設定→入力中 -->
+     <path d="M340,195 Q360,170 340,148" fill="none" stroke="#c0392b" stroke-width="2" marker-end="url(#mkar)"/><text x="310" y="178">再設定完了</text>
+   </g>
+ </svg>`,
+ figcap:"ログイン認証の状態遷移図（矢印＝有効遷移）",
+ stem:"下図のように状態遷移するログイン認証機能をテストする。開始状態「ログアウト」から終了状態（「ログイン中」または「ロック」）までを、有効遷移100%カバレッジを保証するために必要な最小テストケース（経路）はいくつか。",
+ opts:[
+  {t:"2",e:"正しい。例：TC1「ログアウト→パスワード再設定→入力中→ログイン中」、TC2「ログアウト→入力中→ロック」の2本で全5遷移を網羅できる。"},
+  {t:"5",e:"誤り。これは有効遷移（矢印）の本数。1本の経路で複数の遷移を通れるため、必要ケース数はより少ない。"},
+  {t:"3",e:"誤り。終端が2つ（ログイン中・ロック）あるが、3本は不要。経路を工夫すれば2本で足りる。"},
+  {t:"1",e:"誤り。終端「ログイン中」へ至る経路と「ロック」へ至る経路は1本にまとめられず、最低2本必要。"}
+ ],
+ correct:0,
+ why:"開始→終了の経路を数える。終端が2つあるため最低2本必要で、<b>2本</b>の経路で全5遷移を網羅できる。"
+},
+{
+ ch:"第4章", tag:"4.2 状態遷移カバレッジ",
+ stem:"状態遷移テストのカバレッジに関する説明として、適切でないものはどれか。",
+ opts:[
+  {t:"有効遷移カバレッジ100%は全状態カバレッジ100%を保証する。",e:"適切。有効遷移100%なら全状態100%が保証される。"},
+  {t:"全状態カバレッジ100%は有効遷移カバレッジ100%を保証する。",e:"これが正解（不適切）。逆は成り立たない。全状態を通っても、すべての有効遷移を通ったとは限らない。"},
+  {t:"全遷移カバレッジは有効遷移と無効遷移の両方を対象とする。",e:"適切。全遷移は有効・無効の両方を対象。"},
+  {t:"無効遷移は、テスト実行を試みられるものだけを対象にすればよい。",e:"適切。無効遷移は実行可能なものに限る。"}
+ ],
+ correct:1,
+ why:"<b>有効遷移100%→全状態100%は保証</b>するが、<b>全状態100%→有効遷移100%は保証しない</b>。Bが逆で不適切。"
+},
+{
+ ch:"第4章", tag:"4.3 命令網羅/分岐網羅",
+ stem:"ホワイトボックステストに関する次の文の空欄に入る語の組み合わせとして、最も適切なものはどれか。「100%の（①）カバレッジは、すべての実行可能な文を1回以上実行したことを保証する。100%の（②）カバレッジは、すべての判定の真と偽の両方の結果を1回以上実行したことを保証し、（①）カバレッジ100%も達成される。」",
+ opts:[
+  {t:"①ステートメント　②ブランチ",e:"正しい。命令網羅は文の実行を保証、分岐網羅は真偽両方を保証し命令網羅を内包する。"},
+  {t:"①ブランチ　②ステートメント",e:"誤り。①②が逆。分岐網羅の方が強い。"},
+  {t:"①ステートメント　②コンディション",e:"誤り。②は分岐（ブランチ）。真偽両方を通すのは分岐網羅。"},
+  {t:"①パス　②ブランチ",e:"誤り。①は文の実行を保証するステートメント網羅。"}
+ ],
+ correct:0,
+ why:"<b>命令（ステートメント）網羅＝文の実行を保証</b>、<b>分岐（ブランチ）網羅＝真偽両方を保証し命令網羅を内包</b>。分岐網羅100%なら命令網羅100%も達成。"
+},
+{
+ ch:"第4章", tag:"4.4 経験ベース（チェックリスト）",
+ stem:"チェックリストベースドテストと他技法の関係について、最も適切なものはどれか。",
+ opts:[
+  {t:"チェックリストの各項目は、一意なテストケースに機械的に1対1で対応する。",e:"誤り。項目はハイレベルなため解釈に幅があり、1対1で機械的に決まらない。"},
+  {t:"過去の欠陥傾向やリスクから作った観点リストを使いテストする。",e:"正しい。経験・リスクに基づく観点リストでカバレッジを担保する経験ベース技法。"},
+  {t:"チェックリストは一度作ったら更新してはならない。",e:"誤り。テストの弱化（原則5）を避けるため定期的に見直す。"},
+  {t:"チェックリストベースドテストはホワイトボックス技法に分類される。",e:"誤り。経験ベース技法であり、内部構造には基づかない。"}
+ ],
+ correct:1,
+ why:"チェックリストベースドは<b>経験・リスクに基づく観点リスト</b>で項目をカバーする経験ベース技法。項目は解釈に幅があり、リストは適宜見直す。"
+},
+{
+ ch:"第4章", tag:"4.5 コラボレーション（3つのC）",
+ stem:"ユーザーストーリーに関する次の文の空欄に入る語の組み合わせとして、最も適切なものはどれか。「ユーザーストーリーの3つのCは、（①）、（②）、（③）である。」",
+ opts:[
+  {t:"①Card　②Conversation　③Confirmation",e:"正しい。3つのC＝Card・Conversation・Confirmation。"},
+  {t:"①Card　②Contract　③Confirmation",e:"誤り。Contractは3つのCに含まれない。"},
+  {t:"①Customer　②Conversation　③Confirmation",e:"誤り。Customerは3つのCに含まれない。"},
+  {t:"①Card　②Conversation　③Coverage",e:"誤り。Coverageは3つのCに含まれない。"},
+ ],
+ correct:0,
+ why:"3つのCは<b>Card・Conversation・Confirmation</b>。選択肢は一部だけ正しい語を含むため、語の出現回数ではなく組み合わせで判断する。"
+},
+{
+ ch:"第4章", tag:"4.4 経験ベース（エラー推測）",
+ stem:"エラー推測の説明として、最も適切なものはどれか。",
+ opts:[
+  {t:"経験から欠陥を予測し、テストを設計する。",e:"正しい。エラー推測は経験から欠陥を予測する技法。フォールト攻撃として体系化される。"},
+  {t:"テスト実行時に動的に設計しながら進める技法である。",e:"誤り。これは探索的テストの説明。"},
+  {t:"入力範囲を分割して代表値をテストする技法である。",e:"誤り。これは同値分割法の説明。"},
+  {t:"条件の組み合わせを表に整理して網羅する技法である。",e:"誤り。これはデシジョンテーブルテストの説明。"}
+ ],
+ correct:0,
+ why:"エラー推測は<b>経験から欠陥を予測</b>し、それを突くテストを設計する。フォールト攻撃として系統化できる。"
+},
+{
+ ch:"第4章", tag:"4.5 コラボレーション",
+ stem:"次の文の空欄に入る語として、最も適切なものはどれか。「良いユーザーストーリーが満たすべき特性は（　）である。」",
+ opts:[
+  {t:"INVEST",e:"正しい。良いユーザーストーリーの特性INVESTの説明。"},
+  {t:"SMART",e:"誤り。SMARTは目標設定のフレームワークで、ユーザーストーリーの特性ではない。"},
+  {t:"3つのC",e:"誤り。3つのCは構成要素で、特性ではない。"},
+  {t:"MoSCoW",e:"誤り。MoSCoWは優先順位付けの手法。"}
+ ],
+ correct:0,
+ why:"良いユーザーストーリーの特性は<b>INVEST</b>。"
+},
+{
+ ch:"第5章", tag:"5.1 開始/終了基準",
+ stem:"テストの開始基準を説明しているものはどれか。",
+ opts:[
+  {t:"テスト環境やデータが準備済みである。",e:"正しい。開始基準は着手の前提（環境・データ・テスト可能な要件等が整っているか）。"},
+  {t:"未解決の欠陥の件数が合意された制限内に収まっている。",e:"誤り。これは終了基準。"},
+  {t:"計画したテストケースの実行が完了している。",e:"誤り。これは終了基準寄り。"},
+  {t:"テストの残存リスクが許容範囲に収まっている。",e:"誤り。これは終了基準寄り。"}
+ ],
+ correct:0,
+ why:"開始基準は<b>着手の前提（環境・データ・テスト可能な要件が整っているか）</b>。未解決欠陥や残存リスクは終了基準。"
+},
+{
+ ch:"第5章", tag:"5.1 見積り（外挿）",
+ stem:"テスト工数の見積り技法のうち、外挿を説明しているものはどれか。",
+ opts:[
+  {t:"序盤の実績データから、残りのテスト工数を見積る。",e:"正しい。外挿は、プロジェクト序盤で得た実績データをもとに、残りのテスト工数を推定するメトリクスベースの見積り技法。"},
+  {t:"複数の専門家が個別に見積もり、議論して合意するまで繰り返す。",e:"誤り。これはワイドバンドデルファイ。"},
+  {t:"楽観・最頻・悲観の3値を加重平均する。",e:"誤り。これは三点見積り。"},
+  {t:"過去の類似プロジェクトの実績に比率を掛けて見積る。",e:"誤り。これは比率に基づく見積り。"}
+ ],
+ correct:0,
+ why:"外挿は<b>実績工数を計測し数学モデルで残りを見積る</b>メトリクスベースの技法。"
+},
+{
+ ch:"第5章", tag:"5.2 リスクの種類",
+ stem:"プロジェクトリスクに該当するものはどれか。",
+ opts:[
+  {t:"テスト要員のスキル不足や離脱により、テストの進捗が遅れる。",e:"正しい。要員・進捗に関わるのはプロジェクトリスク。"},
+  {t:"ソフトウェアの機能が仕様どおりに動作しない。",e:"誤り。成果物の品質に関わるのでプロダクトリスク。"},
+  {t:"ユーザーエクスペリエンスが期待を満たさない。",e:"誤り。成果物の品質に関わるのでプロダクトリスク。"},
+  {t:"性能効率性が要件を下回る。",e:"誤り。成果物の品質に関わるのでプロダクトリスク。"}
+ ],
+ correct:0,
+ why:"<b>プロジェクトリスク＝管理・遂行</b>（要員・進捗・納期）。機能不全・UX・性能は成果物の品質＝プロダクトリスク。"
+},
+{
+ ch:"第5章", tag:"5.3 モニタリング/コントロール",
+ stem:"テストのコントロールの活動として、最も適切なものはどれか。",
+ opts:[
+  {t:"計画との差異に是正アクションを取る。",e:"正しい。コントロールは計画を補正する是正アクション。"},
+  {t:"収集した欠陥を開発者に代わって修正して取り除く。",e:"誤り。欠陥修正はデバッグであり、コントロールではない。"},
+  {t:"メトリクスを収集して進捗を把握すること自体を指す。",e:"誤り。それはモニタリングの活動。"},
+  {t:"テストベースとテストケースの対応づけを維持すること。",e:"誤り。それはトレーサビリティ。"}
+ ],
+ correct:0,
+ why:"コントロールは<b>モニタリング結果に基づく是正アクション（計画の補正）</b>。欠陥修正（デバッグ）ではない。"
+},
+{
+ ch:"第5章", tag:"5.4 構成管理",
+ stem:"構成管理のベースラインの説明として、最も適切なものはどれか。",
+ opts:[
+  {t:"承認済みの構成アイテムの状態である。",e:"正しい。ベースラインは承認時点の構成アイテムの状態。"},
+  {t:"テスト工数の実績値を集計した指標である。",e:"誤り。それはメトリクス。"},
+  {t:"リスクレベルを算出する計算式である。",e:"誤り。リスクレベルとは無関係。"},
+  {t:"プロジェクトのスケジュールそのものを指す。",e:"誤り。スケジュールそのものではない。"}
+ ],
+ correct:0,
+ why:"ベースラインは<b>承認された時点の構成アイテムの状態</b>。履歴管理・復元の基準になる。"
+},
+{
+ ch:"第5章", tag:"5.5 欠陥マネジメント",
+ stem:"欠陥レポートの「優先度」と「重大度」の違いとして、最も適切なものはどれか。",
+ opts:[
+  {t:"重大度は修正に着手する順序、優先度は故障が与える影響の大きさを表す。",e:"誤り。説明が逆。重大度=影響の大きさ、優先度=対応の順序。"},
+  {t:"重大度は故障が与える影響の大きさ、優先度は修正に対応する順序を表す。",e:"正しい。重大度は技術的影響、優先度はビジネス上の対応順序を示す。"},
+  {t:"優先度と重大度は常に一致し、区別する意味はない。",e:"誤り。影響は大きいが対応順序は低い等、両者は一致しないことがある。"},
+  {t:"どちらも開発者の人事評価に用いる指標である。",e:"誤り。人事評価には用いない。欠陥の管理属性である。"}
+ ],
+ correct:1,
+ why:"<b>重大度＝故障の影響の大きさ</b>、<b>優先度＝修正に対応する順序</b>。両者は独立で一致しないこともある。"
+},
+{
+ ch:"第5章", tag:"5.1 終了基準",
+ stem:"終了基準を満たさないままテストレベルを終了する場合の対応として、最も適切なものはどれか。",
+ opts:[
+  {t:"終了基準は目安なので、満たさなくても次へ進めてよい。",e:"誤り。終了基準の無視は品質リスクの隠蔽になる。"},
+  {t:"未達であることと残存リスクをステークホルダーに報告し、合意のうえで判断する。",e:"正しい。未達・残存リスクを可視化し、合意に基づき終了可否を決める。"},
+  {t:"終了基準を事後的に緩めれば、必ず達成済みとして扱える。",e:"誤り。基準の恣意的な改ざんは品質判断を歪める。"},
+  {t:"終了基準はテスト担当者だけで判断し、他者に共有しない。",e:"誤り。終了可否はステークホルダーと合意して判断する。"}
+ ],
+ correct:1,
+ why:"終了基準が未達なら、<b>未達の事実と残存リスクを報告</b>し、ステークホルダーの合意のうえで終了可否を判断する。基準の改ざんや無視は不可。"
+},
+{
+ ch:"第5章", tag:"5.1 見積り（三点見積り）",
+ stem:"テスト工数の見積り技法のうち、三点見積りを説明しているものはどれか。",
+ opts:[
+  {t:"楽観値、最頻値、悲観値を加重平均する。",e:"正しい。三点見積りの説明。"},
+  {t:"実績工数を計測し数学モデルで残りを見積る。",e:"誤り。これは外挿。"},
+  {t:"複数の専門家が議論して合意するまで繰り返す。",e:"誤り。これはワイドバンドデルファイ。"},
+  {t:"過去の類似プロジェクトの実績に比率を掛ける。",e:"誤り。これは比率に基づく見積り。"}
+ ],
+ correct:0,
+ why:"三点見積りは<b>楽観(a)・最頻(m)・悲観(b)の加重平均</b>（(a+4m+b)/6など）。エキスパートベースの技法。"
+},
+{
+ ch:"第5章", tag:"5.3 メトリクス",
+ stem:"テストのモニタリングで用いるメトリクスについて、最も適切なものはどれか。",
+ opts:[
+  {t:"準備・実行状況や欠陥情報の計画値と実績値である。",e:"正しい。準備/実行状況・欠陥情報の計画と実績は代表的なメトリクス。"},
+  {t:"メトリクスはテストベースとテストケースの対応づけそのものを指す。",e:"誤り。それはトレーサビリティ。"},
+  {t:"メトリクスはテスト完了時にのみ収集する。",e:"誤り。活動期間中も収集し、必要に応じてコントロールする。"},
+  {t:"メトリクスは欠陥を修正する活動である。",e:"誤り。それはデバッグ。"}
+ ],
+ correct:0,
+ why:"メトリクスは活動を定量化した指標で、<b>テストケース準備/実行状況・欠陥情報の計画と実績</b>が代表例。期間中も収集する。"
+},
+{
+ ch:"第6章", tag:"6.1 ツールの分類",
+ stem:"テストツールの分類の説明として、最も適切なものはどれか。",
+ opts:[
+  {t:"テストデータ準備ツールやテストケース作成支援ツールは、テスト設計・実装を支援するツールに分類される。",e:"正しい。設計・実装を支援するツール。"},
+  {t:"ロードテストやストレステストを支援する性能テストツールは、静的テスト支援ツールに分類される。",e:"誤り。性能テストツールは非機能テストツール。実行を伴う。"},
+  {t:"レビューや静的解析を支援するツールは、テスト実行ツールに分類される。",e:"誤り。それらは静的テスト（静的解析）支援ツール。"},
+  {t:"テスト実行ツールやカバレッジツールは、テストウェアのマネジメント支援ツールに分類される。",e:"誤り。それらはテスト実行を支援するツール。"}
+ ],
+ correct:0,
+ why:"テストデータ準備・テストケース作成支援は<b>テスト設計・実装の支援ツール</b>。性能＝非機能、レビュー/静的解析＝静的テスト支援、実行/カバレッジ＝テスト実行ツール。"
+},
+{
+ ch:"第6章", tag:"6.2 自動化の利点/リスク",
+ stem:"テスト自動化の利点とリスクの説明として、適切でないものはどれか。",
+ opts:[
+  {t:"反復的な手動作業を削減し、一貫性や再実行性を高められる。",e:"適切。反復削減・一貫性向上は利点。"},
+  {t:"静的解析やカバレッジツールは結果が数値で表されるため、評価の客観性を高められる。",e:"適切。数値結果による客観性向上は利点。"},
+  {t:"ツールの導入や保守に要する時間・コスト・工数を過小評価しやすい。",e:"適切。導入/保守コストの過小評価はリスク。"},
+  {t:"ツールを導入すれば、テスト設計やテスト戦略の検討は不要になる。",e:"これが正解（不適切）。ツールは作業を支援するだけで、設計や戦略の検討を不要にはしない。人の判断は引き続き重要。"}
+ ],
+ correct:3,
+ why:"自動化は反復削減・客観性向上などの利点をもつが、<b>テスト設計や戦略の検討まで不要にはしない</b>。ツールは支援であって思考の代替ではない。"
+}
+];
+
+const KEYS=['A','B','C','D'];
+const quiz=document.getElementById('quiz');
+const bar=document.getElementById('bar');
+const cntEl=document.getElementById('cnt');
+const answeredEl=document.getElementById('answered');
+const remainEl=document.getElementById('remain');
+const submitBtn=document.getElementById('submitBtn');
+const live=document.getElementById('live');
+
+// 出題順をシャッフル（読み込みごとに順不同）。章は採点後の解説でのみ表示する。
+for(let i=QUESTIONS.length-1;i>0;i--){
+  const j=Math.floor(Math.random()*(i+1));
+  [QUESTIONS[i],QUESTIONS[j]]=[QUESTIONS[j],QUESTIONS[i]];
+}
+
+// 各問題の選択肢順もシャッフル（配置で覚えないように）。正解の位置は追従させる。
+QUESTIONS.forEach(q=>{
+  const correctOpt = q.opts[q.correct];
+  for(let i=q.opts.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [q.opts[i],q.opts[j]]=[q.opts[j],q.opts[i]];
+  }
+  q.correct = q.opts.indexOf(correctOpt);
+});
+
+const TOTAL=QUESTIONS.length;
+const answers=new Array(TOTAL).fill(null);
+let graded=false;
+
+QUESTIONS.forEach((q,qi)=>{
+  const card=document.createElement('section');
+  card.className='q';card.dataset.qi=qi;
+  card.id='q'+qi;
+
+  const head=document.createElement('div');
+  head.className='qhead';
+  head.innerHTML=`<span class="qno">Q${qi+1}</span>`;
+  card.appendChild(head);
+
+  const stem=document.createElement('div');
+  stem.className='qstem';
+  const blankBadge = q.blank ? '<span class="blankbadge">穴埋め</span>' : '';
+  stem.innerHTML=blankBadge+q.stem;
+  card.appendChild(stem);
+
+  if(q.figsvg){
+    const f=document.createElement('div');
+    f.className='qfig qfigsvg';
+    f.innerHTML=q.figsvg + (q.figcap ? `<div class="figcap">${q.figcap}</div>` : '');
+    card.appendChild(f);
+  } else if(q.fig){
+    const f=document.createElement('div');
+    f.className='qfig';f.textContent=q.fig;card.appendChild(f);
+  }
+
+  const ul=document.createElement('ul');
+  ul.className='opts';
+  q.opts.forEach((o,oi)=>{
+    const li=document.createElement('li');
+    li.className='opt';li.dataset.oi=oi;
+    li.innerHTML=`<span class="key">${KEYS[oi]}</span><span class="body">${o.t}</span><span class="mark"></span>`;
+    li.addEventListener('click',()=>pick(card,qi,oi));
+    ul.appendChild(li);
+  });
+  card.appendChild(ul);
+
+  const exp=document.createElement('div');
+  exp.className='exp';
+  const inner=document.createElement('div');
+  inner.className='expinner';
+  inner.innerHTML=`
+    <div class="expchap">${q.ch} ・ ${q.tag}</div>
+    <div class="verdict" data-role="verdict"></div>
+    <p class="why"><b>正解 ${KEYS[q.correct]}：</b>${q.why}</p>
+    <ul class="breakdown">
+      ${q.opts.map((o,oi)=>`
+        <li>
+          <span class="bk ${oi===q.correct?'o':'x'}">${KEYS[oi]}</span>
+          <span class="bktext"><span class="lab">${oi===q.correct?'正解':'誤り'}：</span>${o.e}</span>
+        </li>`).join('')}
+    </ul>`;
+  exp.appendChild(inner);
+  card.appendChild(exp);
+
+  quiz.appendChild(card);
+});
+
+function pick(card,qi,oi){
+  if(graded) return;
+  answers[qi]=oi;
+  card.querySelectorAll('.opt').forEach((el,i)=>{
+    el.classList.toggle('pick', i===oi);
+  });
+  const done=answers.filter(a=>a!==null).length;
+  cntEl.textContent=done;
+  answeredEl.textContent=done;
+  remainEl.textContent=TOTAL-done;
+  bar.style.width=(done/TOTAL*100)+'%';
+  submitBtn.disabled = (done!==TOTAL);
+  live.textContent=`${done}問解答済み`;
+}
+
+submitBtn.addEventListener('click',()=>{
+  if(graded) return;
+  if(answers.filter(a=>a!==null).length!==TOTAL) return;
+  graded=true;
+  submitBtn.disabled=true;
+
+  let correct=0;
+  // chapter tally
+  const chap={};
+  QUESTIONS.forEach((q,qi)=>{
+    if(!chap[q.ch]) chap[q.ch]={ok:0,total:0};
+    chap[q.ch].total++;
+    const card=document.getElementById('q'+qi);
+    card.classList.add('graded');
+    const chosen=answers[qi];
+    const isOk=(chosen===q.correct);
+    if(isOk){correct++;chap[q.ch].ok++;}
+    card.querySelectorAll('.opt').forEach((el,i)=>{
+      el.classList.remove('pick');
+      if(i===q.correct) el.classList.add('correct');
+      if(i===chosen && !isOk) el.classList.add('wrong');
+    });
+    const v=card.querySelector('[data-role="verdict"]');
+    v.textContent = isOk ? '◎ 正解' : '✕ 不正解';
+    v.classList.add(isOk?'ok':'ng');
+  });
+
+  // result panel
+  const r=document.getElementById('result');
+  document.getElementById('sc').textContent=correct;
+  const pct=Math.round(correct/TOTAL*100);
+  document.getElementById('scpct').textContent=pct+'%';
+  const pass=pct>=65;
+  const badge=document.getElementById('passbadge');
+  badge.textContent = pass ? 'PASS（合格目安）' : 'もう一歩';
+  badge.className='pass '+(pass?'ok':'ng');
+  let m;
+  if(pct>=90) m='非常に高い完成度です。本番でも安定して合格できるでしょう。';
+  else if(pct>=75) m='合格圏内です。間違えた問題の解説で弱点を補強しましょう。';
+  else if(pct>=65) m='合格ラインぎりぎりです。章別の弱点を重点的に復習を。';
+  else m='合格ラインまであと少し。章別正答率の低い分野を中心に復習しましょう。';
+  document.getElementById('scmsg').textContent=m;
+
+  // chapter breakdown
+  const order=['第1章','第2章','第3章','第4章','第5章','第6章'];
+  const rows=document.getElementById('chapRows');
+  rows.innerHTML='';
+  order.forEach(c=>{
+    if(!chap[c]) return;
+    const o=chap[c];
+    const p=Math.round(o.ok/o.total*100);
+    const div=document.createElement('div');
+    div.className='crow';
+    div.innerHTML=`<span class="cl">${c}</span><span class="barwrap"><i style="width:${p}%"></i></span><span class="cv">${o.ok}/${o.total}</span>`;
+    rows.appendChild(div);
+  });
+
+  r.classList.add('show');
+  r.scrollIntoView({behavior:'smooth',block:'center'});
+  live.textContent=`採点完了。${TOTAL}問中${correct}問正解、${pct}%`;
+});
+
+document.getElementById('restart').addEventListener('click',()=>{
+  graded=false;
+  for(let i=0;i<TOTAL;i++) answers[i]=null;
+  cntEl.textContent=0;answeredEl.textContent=0;remainEl.textContent=TOTAL;
+  bar.style.width='0%';
+  submitBtn.disabled=true;
+  document.getElementById('result').classList.remove('show');
+  document.querySelectorAll('.q').forEach(card=>{
+    card.classList.remove('graded');
+    card.querySelectorAll('.opt').forEach(el=>el.classList.remove('correct','wrong','pick'));
+    const v=card.querySelector('[data-role="verdict"]');
+    v.textContent='';v.classList.remove('ok','ng','skip');
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+</script>
+</body>
+</html>

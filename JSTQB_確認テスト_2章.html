@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>JSTQB FL 第2章 演習問題</title>
+<style>
+  :root{
+    --ink:#1a1d24;
+    --paper:#f7f4ec;
+    --card:#ffffff;
+    --line:#e3ddd0;
+    --accent:#c0392b;
+    --good:#2a7d4f;
+    --good-bg:#e7f3ec;
+    --bad:#b23b3b;
+    --bad-bg:#fae9e7;
+    --muted:#6f6a60;
+    --pick:#3a4250;
+    --pick-bg:#eef1f5;
+    --seal:#1a1d24;
+    --shadow:0 1px 2px rgba(26,29,36,.06),0 8px 24px rgba(26,29,36,.06);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Yu Gothic",Meiryo,system-ui,sans-serif;
+    line-height:1.75;
+    font-size:16px;
+    -webkit-text-size-adjust:100%;
+    padding-bottom:env(safe-area-inset-bottom);
+  }
+  .wrap{max-width:680px;margin:0 auto;padding:0 16px;}
+  header{
+    position:sticky;top:0;z-index:30;
+    background:rgba(247,244,236,.86);
+    backdrop-filter:saturate(1.2) blur(10px);
+    border-bottom:1px solid var(--line);
+    padding-top:env(safe-area-inset-top);
+  }
+  .hbar{display:flex;align-items:center;gap:12px;padding:12px 16px;max-width:680px;margin:0 auto;}
+  .seal{
+    flex:0 0 auto;width:42px;height:42px;border-radius:50%;
+    background:var(--seal);color:#f7f4ec;
+    display:grid;place-items:center;
+    font-weight:800;font-size:11px;letter-spacing:.04em;line-height:1.05;text-align:center;
+    box-shadow:inset 0 0 0 2px rgba(247,244,236,.15);
+  }
+  .htext{flex:1 1 auto;min-width:0;}
+  .htext h1{margin:0;font-size:15px;font-weight:800;letter-spacing:.02em;}
+  .htext .sub{margin:0;font-size:11px;color:var(--muted);letter-spacing:.06em;}
+  .progress{height:4px;background:var(--line);border-radius:99px;overflow:hidden;margin:0 16px 10px;max-width:680px;}
+  @media(min-width:712px){.progress{margin-left:auto;margin-right:auto;}}
+  .progress > i{display:block;height:100%;width:0;background:var(--accent);transition:width .35s ease;}
+  .intro{margin:22px 0;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px 20px;box-shadow:var(--shadow);}
+  .intro .eyebrow{font-size:11px;letter-spacing:.22em;color:var(--accent);font-weight:800;text-transform:uppercase;margin-bottom:10px;}
+  .intro h2{margin:0 0 8px;font-size:22px;letter-spacing:.01em;}
+  .intro p{margin:6px 0;color:var(--muted);font-size:14px;}
+  .stats{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;}
+  .stat{flex:1 1 0;min-width:96px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:#fbf9f3;}
+  .stat b{display:block;font-size:20px;}
+  .stat span{font-size:11px;color:var(--muted);letter-spacing:.04em;}
+  .topics{margin:6px 0 0;padding:0;list-style:none;font-size:13px;color:var(--muted);}
+  .topics li{padding:4px 0 4px 18px;position:relative;}
+  .topics li::before{content:"";position:absolute;left:0;top:11px;width:7px;height:7px;border-radius:2px;background:var(--accent);}
+  .q{margin:16px 0;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;}
+  .qhead{display:flex;align-items:baseline;gap:10px;padding:16px 18px 6px;}
+  .qno{flex:0 0 auto;background:var(--seal);color:#f7f4ec;border-radius:8px;font-size:12px;font-weight:800;padding:3px 8px;letter-spacing:.02em;}
+  .qtag{font-size:10px;letter-spacing:.14em;color:var(--muted);font-weight:700;text-transform:uppercase;}
+  .qstem{padding:4px 18px 14px;font-size:15.5px;font-weight:600;}
+  .qstem .neg{color:var(--accent);font-weight:800;border-bottom:2px solid rgba(192,57,43,.3);}
+  .opts{list-style:none;margin:0;padding:0 14px 8px;}
+  .opt{
+    display:flex;gap:11px;align-items:flex-start;
+    border:1.5px solid var(--line);border-radius:12px;
+    padding:12px 13px;margin:8px 0;cursor:pointer;
+    background:#fff;transition:border-color .15s,background .15s,transform .05s;
+    font-size:14.5px;
+  }
+  .opt:active{transform:scale(.995);}
+  .opt .key{
+    flex:0 0 auto;width:26px;height:26px;border-radius:50%;
+    border:1.5px solid var(--line);display:grid;place-items:center;
+    font-weight:800;font-size:13px;color:var(--pick);background:#fff;transition:all .15s;
+  }
+  .opt .body{flex:1 1 auto;padding-top:1px;}
+  .opt.pick{border-color:var(--pick);background:var(--pick-bg);}
+  .opt.pick .key{background:var(--pick);color:#fff;border-color:var(--pick);}
+  .q.done .opt{cursor:default;}
+  .opt.correct{border-color:var(--good);background:var(--good-bg);}
+  .opt.correct .key{background:var(--good);color:#fff;border-color:var(--good);}
+  .opt.wrong{border-color:var(--bad);background:var(--bad-bg);}
+  .opt.wrong .key{background:var(--bad);color:#fff;border-color:var(--bad);}
+  .opt .mark{margin-left:auto;font-weight:800;font-size:15px;align-self:center;}
+  .opt.correct .mark::after{content:"\2713";color:var(--good);}
+  .opt.wrong .mark::after{content:"\2715";color:var(--bad);}
+  .exp{max-height:0;overflow:hidden;transition:max-height .4s ease;}
+  .q.done .exp{max-height:3000px;}
+  .expinner{margin:4px 14px 16px;border-top:1px dashed var(--line);padding-top:14px;}
+  .verdict{font-size:13px;font-weight:800;letter-spacing:.02em;margin-bottom:10px;}
+  .verdict.ok{color:var(--good);}
+  .verdict.ng{color:var(--bad);}
+  .why{margin:0 0 10px;font-size:14px;background:#fbf9f3;border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:10px 12px;}
+  .why b{color:var(--accent);}
+  .breakdown{margin:0;padding:0;list-style:none;font-size:13.5px;}
+  .breakdown li{display:flex;gap:9px;padding:6px 0;border-bottom:1px solid #f0ece1;align-items:flex-start;}
+  .breakdown li:last-child{border-bottom:none;}
+  .bk{flex:0 0 auto;width:22px;height:22px;border-radius:6px;display:grid;place-items:center;font-weight:800;font-size:12px;}
+  .bk.o{background:var(--good-bg);color:var(--good);}
+  .bk.x{background:var(--bad-bg);color:var(--bad);}
+  .bktext{flex:1;}
+  .bktext .lab{font-weight:700;}
+  #result{margin:26px 0 16px;background:var(--seal);color:#f4f1ea;border-radius:18px;padding:26px 22px;text-align:center;display:none;box-shadow:var(--shadow);}
+  #result.show{display:block;}
+  #result .score{font-size:46px;font-weight:800;letter-spacing:-.02em;}
+  #result .score small{font-size:18px;color:#b9b3a6;font-weight:600;}
+  #result .pct{font-size:13px;letter-spacing:.18em;color:#c7b6a8;text-transform:uppercase;margin-top:2px;}
+  #result .msg{font-size:14px;color:#ddd6c8;margin-top:10px;}
+  #result button{margin-top:18px;background:var(--accent);color:#fff;border:none;border-radius:99px;padding:12px 26px;font-size:14px;font-weight:800;letter-spacing:.04em;cursor:pointer;}
+  footer{text-align:center;color:var(--muted);font-size:11px;letter-spacing:.05em;padding:8px 0 36px;}
+  .live{position:fixed;left:-9999px;}
+</style>
+</head>
+<body>
+<header>
+  <div class="hbar">
+    <div class="seal">JSTQB<br>FL</div>
+    <div class="htext">
+      <h1>第2章 SDLC全体を通してのテスト</h1>
+      <p class="sub">SYLLABUS 4.0 ・ CHAPTER 2</p>
+    </div>
+  </div>
+  <div class="progress"><i id="bar"></i></div>
+</header>
+
+<main class="wrap">
+  <section class="intro">
+    <div class="eyebrow">Chapter 2 Drill</div>
+    <h2>ソフトウェア開発ライフサイクル全体を通してのテスト</h2>
+    <p>シラバス4.0 第2章の細かい理解を問う26問演習。各設問は「なぜその選択肢が正解か」だけでなく、誤りの選択肢が<b>どこをどう取り違えているか</b>まで解説します。</p>
+    <div class="stats">
+      <div class="stat"><b id="answered">0</b><span>解答済み</span></div>
+      <div class="stat"><b id="correct">0</b><span>正解</span></div>
+      <div class="stat"><b id="total">0</b><span>総問題数</span></div>
+    </div>
+    <ul class="topics">
+      <li>2.1 SDLCモデル（シーケンシャル/イテレーティブ/インクリメンタル・選択と調整）</li>
+      <li>2.1 テスト駆動開発（TDD/ATDD/BDD）・DevOps・シフトレフト・ふりかえり</li>
+      <li>2.2 テストレベル（コンポーネント〜受け入れ）</li>
+      <li>2.2.2 テストタイプ（機能/非機能/ホワイト/ブラック）</li>
+      <li>2.3 メンテナンステスト・影響度分析</li>
+    </ul>
+  </section>
+
+  <div id="quiz"></div>
+
+  <section id="result">
+    <div class="pct">YOUR SCORE</div>
+    <div class="score"><span id="sc">0</span><small id="scden">/0</small></div>
+    <div class="pct" id="scpct">0%</div>
+    <div class="msg" id="scmsg"></div>
+    <button id="restart">もう一度挑戦する</button>
+  </section>
+
+  <footer>JSTQB Foundation Level シラバス4.0 準拠 ・ 学習用演習</footer>
+</main>
+
+<div class="live" aria-live="polite" id="live"></div>
+
+<script>
+const QUESTIONS = [
+  {
+    "tag": "2.1 SDLCモデル",
+    "stem": "ソフトウェア開発ライフサイクル（SDLC）モデルの説明のうち、適切でないものはどれか。",
+    "opts": [
+      {
+        "t": "シーケンシャル開発モデルの代表例にウォーターフォールモデルがあり、あるフェーズが完了してから次のフェーズが始まる。",
+        "e": "適切。ウォーターフォールは順次（シーケンシャル）にフェーズを進める代表的モデル。"
+      },
+      {
+        "t": "インクリメンタル開発モデルは、システムを機能のグループ（インクリメント）に分割し、機能を積み上げていく方式である。",
+        "e": "適切。インクリメンタルは機能を少しずつ積み上げる（増加させる）方式。"
+      },
+      {
+        "t": "イテレーティブ開発モデルは、フィーチャー群を一連のサイクルの中で仕様化・設計・構築・テストし、サイクルごとに動作するソフトウェアを提供する。",
+        "e": "適切。イテレーティブは反復サイクルごとに動くソフトウェアを提供する方式。"
+      },
+      {
+        "t": "V字モデルは、短期間のウォーターフォールを繰り返しながら機能を段階的に高め、最終的にリリースするモデルである。",
+        "e": "これが正解（不適切）。これはインクリメンタル／イテレーティブの説明。V字モデルはシーケンシャルの一種で、開発プロセスとテストプロセスをV字に対応づけ、早期テストの原則を実装したモデル。"
+      }
+    ],
+    "correct": 3,
+    "why": "V字モデルは<b>シーケンシャル開発の一種</b>で、開発工程とテスト工程をV字に対応づけ早期テストを実装する。Dの説明は反復型モデルのもの。"
+  },
+  {
+    "tag": "2.1 アジャイル",
+    "stem": "アジャイル開発におけるテストの特徴として、最も適切でないものはどれか。",
+    "opts": [
+      {
+        "t": "テストは反復（イテレーション）の中で継続的に行われ、頻繁にフィードバックする。",
+        "e": "適切。短い反復ごとにテストとフィードバックを繰り返すのがアジャイルの特徴。"
+      },
+      {
+        "t": "テスト担当者はチームに組み込まれ、開発と密に協働することが多い。",
+        "e": "適切。チーム全体アプローチに近く、テスト担当者は開発と協働する。"
+      },
+      {
+        "t": "自動化（リグレッションテスト等）が重視される。",
+        "e": "適切。頻繁な変更に追従するため自動リグレッションが重視される。"
+      },
+      {
+        "t": "テストはすべての開発が完了した後にまとめて1度だけ実施する。",
+        "e": "これが正解（不適切）。これはシーケンシャル（後付けテスト）の発想で、反復ごとにテストするアジャイルとは相容れない。"
+      }
+    ],
+    "correct": 3,
+    "why": "アジャイルは<b>反復ごとに継続的にテスト</b>する。最後にまとめて1度だけ行うのはシーケンシャル的で不適切。"
+  },
+  {
+    "tag": "2.1 テストファースト",
+    "stem": "テストファースト系の開発手法（TDD・ATDD・BDD）に関する説明として、適切でないものはどれか。",
+    "opts": [
+      {
+        "t": "テスト駆動開発（TDD）は、コードを書く前にテストを書き、それに合格するコードを書く方法である。",
+        "e": "適切。TDDはテストを先に書き、実装→リファクタリングのサイクルを回す（主にコンポーネントレベル）。"
+      },
+      {
+        "t": "テストファースト系の手法は、テストを実装の後に書くことで、まず動くコードを優先する考え方である。",
+        "e": "これが正解（不適切）。テストファーストはその名のとおり、実装の「前」にテストを書く考え方。後に書くという説明は矛盾している。"
+      },
+      {
+        "t": "受け入れテスト駆動開発（ATDD）は、受け入れ基準をもとにテストケースを先に作成し、それを満たすように開発する方法である。",
+        "e": "適切。ATDDは受け入れ基準（テスト）を先に定義する、テストファーストのアプローチ。"
+      },
+      {
+        "t": "振る舞い駆動開発（BDD）は、期待される振る舞いを先に定義し、その振る舞いになるように開発する方法である。",
+        "e": "適切。BDDは期待される振る舞いを先に記述する、テストファーストのアプローチ。"
+      }
+    ],
+    "correct": 1,
+    "why": "<b>テストファースト</b>は実装の「前」にテストを書く考え方。TDD・ATDD・BDDはいずれもこの系統で、テストを後に書くという記述は矛盾している。"
+  },
+  {
+    "tag": "2.1 DevOps",
+    "stem": "DevOpsについての説明のうち、適切でないものはどれか。",
+    "opts": [
+      {
+        "t": "DevOpsは開発とテストが共通のゴールを達成するために協力し、相乗効果を生み出す組織的アプローチである。",
+        "e": "これが正解（不適切）。DevOpsは「開発(Development)」と「運用(Operations)」の協力であり、開発とテストの協力ではない。"
+      },
+      {
+        "t": "DevOpsを実現するために、継続的インテグレーション（CI）と継続的デリバリー（CD）の技術的実践が促進される。",
+        "e": "適切。CI/CDはDevOpsを支える代表的な技術的実践。"
+      },
+      {
+        "t": "DevOpsを実現するには、CI/CDのためのツール導入や仕組みづくりの作業コストがかかる。",
+        "e": "適切。DevOps実現には初期の導入コスト・整備コストが伴う。"
+      },
+      {
+        "t": "DevOpsが実現すると、デリバリーパイプラインを通じてコードをより早くビルド・テスト・リリースできる。",
+        "e": "適切。パイプラインによりビルド〜リリースの高速化が得られる。"
+      }
+    ],
+    "correct": 0,
+    "why": "DevOps=<b>開発(Development)＋運用(Operations)</b>の協力。「開発とテスト」とするAが取り違え。"
+  },
+  {
+    "tag": "2.1 シフトレフト",
+    "stem": "シフトレフトアプローチを説明した文章のうち、適切なものはどれか。",
+    "opts": [
+      {
+        "t": "イテレーション終了時にふりかえりを行い、プロセスを改善するアプローチである。",
+        "e": "誤り。これはふりかえり（retrospective）の説明。"
+      },
+      {
+        "t": "SDLCの早い段階でテスト活動を行い、その結果で後期の時間やコストを削減する方法である。",
+        "e": "正しい。シフトレフトは早期テスト（7原則の3番目）の考え方で、上流でテストして後工程のコストを下げる。"
+      },
+      {
+        "t": "プロジェクトの成功に向けてチーム全体が一体となって協力し、責任を共有するアプローチである。",
+        "e": "誤り。これはチーム全体アプローチの説明。"
+      },
+      {
+        "t": "テストベースとテストウェアの間のトレーサビリティを確立し、テストの進捗を判断するカバレッジ評価を行うアプローチである。",
+        "e": "誤り。これはトレーサビリティを使ったカバレッジ評価の説明。"
+      }
+    ],
+    "correct": 1,
+    "why": "シフトレフト＝<b>早期テスト</b>（7原則3番目）。上流でテストを前倒しし、後工程の時間とコストを削減する。"
+  },
+  {
+    "tag": "2.1 ふりかえり",
+    "stem": "ふりかえり（retrospective）の説明として、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "イテレーションやマイルストーンの終了時に、うまくいったことや改善点を話し合い、プロセスを改善する活動。",
+        "e": "正しい。ふりかえりは振り返りによる継続的なプロセス改善の活動。"
+      },
+      {
+        "t": "SDLCの早い段階でテストを前倒しする活動。",
+        "e": "誤り。これはシフトレフトの説明。"
+      },
+      {
+        "t": "テストベースとテストウェアの対応づけを行う活動。",
+        "e": "誤り。これはトレーサビリティの説明。"
+      },
+      {
+        "t": "開発と運用が協力する組織的アプローチ。",
+        "e": "誤り。これはDevOpsの説明。"
+      }
+    ],
+    "correct": 0,
+    "why": "ふりかえりは反復の節目に<b>良かった点・改善点を議論しプロセスを改善</b>する活動。"
+  },
+  {
+    "tag": "2.1 CI/CD",
+    "stem": "継続的インテグレーション（CI）と継続的デリバリー（CD）について、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "CIはコード変更を頻繁に統合してビルド・自動テストを走らせる実践で、CDはリリース可能な状態を継続的に維持・提供する実践である。",
+        "e": "正しい。CIは統合とビルド・自動テスト、CDはリリース可能状態の継続提供を指す。"
+      },
+      {
+        "t": "CIはテストを行わずビルドのみを行う実践である。",
+        "e": "誤り。CIは自動テストの実行を含むのが一般的。"
+      },
+      {
+        "t": "CDはコードを一切テストせず本番へ直接反映する実践である。",
+        "e": "誤り。CDはパイプライン上のテストを経てリリース可能状態を保つ。テストなしの直接反映ではない。"
+      },
+      {
+        "t": "CIとCDはウォーターフォール特有の実践であり、アジャイルやDevOpsとは無関係である。",
+        "e": "誤り。CI/CDはむしろアジャイル／DevOpsで重視される実践。"
+      }
+    ],
+    "correct": 0,
+    "why": "CI=<b>頻繁な統合＋自動ビルド・テスト</b>、CD=<b>リリース可能状態の継続的提供</b>。DevOpsを支える技術的実践。"
+  },
+  {
+    "tag": "2.2 コンポーネントテスト",
+    "stem": "コンポーネントテストを説明する文章として、適切でないものはどれか。",
+    "opts": [
+      {
+        "t": "コンポーネントテストは、ユニットテストやモジュールテストとも呼ばれ、コンポーネントに焦点を当てたテストである。",
+        "e": "適切。コンポーネントテスト＝ユニット／モジュールテスト。"
+      },
+      {
+        "t": "コンポーネントテストのテストベースには、詳細設計書・コード・データモデル・コンポーネント仕様書などがある。",
+        "e": "適切。これらはコンポーネントテストのテストベースとして妥当。"
+      },
+      {
+        "t": "コンポーネントテストの目的は、コンポーネントの振る舞いが仕様どおりであることを検証し、欠陥を検出し、品質への信頼を積み上げることである。",
+        "e": "適切。コンポーネントテストの目的の説明として正しい。"
+      },
+      {
+        "t": "コンポーネントテストの対象は、コンポーネント間のインターフェースであり、テストベースとしてインターフェース仕様やシーケンス図が用いられる。",
+        "e": "これが正解（不適切）。これはコンポーネント統合テストの説明。コンポーネントテストの対象はコンポーネント単体（コードとデータ構造）であり、コンポーネント間のインターフェースは対象にならない。"
+      }
+    ],
+    "correct": 3,
+    "why": "コンポーネントテストの対象は<b>単体（コードとデータ構造）</b>。コンポーネント間インターフェースは統合テストの対象であり、これと取り違える誤答に注意。"
+  },
+  {
+    "tag": "2.2 コンポーネント統合テスト",
+    "stem": "コンポーネント統合テストを説明する文章として、適切でないものはどれか。",
+    "opts": [
+      {
+        "t": "目的は、コンポーネント間のインターフェースの振る舞いが仕様どおりかを検証し、欠陥を検出し、インターフェースの品質への信頼を積み上げ、リスクを低減することである。",
+        "e": "適切。コンポーネント統合テストの目的の説明として正しい。"
+      },
+      {
+        "t": "インターフェースに焦点を当てたテストにはコンポーネント統合テストとシステム統合テストがあり、前者の典型的故障はコンポーネント間通信、後者はシステム間通信の故障である。",
+        "e": "適切。統合テストには2レベルあり、それぞれ典型的な故障が異なる、という記述は正しい。"
+      },
+      {
+        "t": "コンポーネント統合テストのアプローチとしては、システム全体の機能と非機能の両方に焦点を当て、ユーザーストーリーやビジネス要件と合っているかを検証するのが望ましい。",
+        "e": "これが正解（不適切）。これはシステムテストのアプローチの説明。統合テストはコンポーネントやシステムの統合部分だけに集中すべきである。"
+      },
+      {
+        "t": "コンポーネント統合テストは、コンポーネント間の相互処理に焦点を当てたテストである。",
+        "e": "適切。統合テストはコンポーネント間の連携（相互処理）に焦点を当てる。"
+      }
+    ],
+    "correct": 2,
+    "why": "統合テストのアプローチは<b>統合部分（インターフェース）だけに集中</b>すべき。システム全体の機能・非機能を見るのはシステムテスト。"
+  },
+  {
+    "tag": "2.2 システムテスト",
+    "stem": "システムテストを説明する文章として、適切でないものはどれか。",
+    "opts": [
+      {
+        "t": "アプローチとして、テスト担当者がユーザーストーリーのレビューなどに早期から関与することが望ましく、偽陽性による時間の浪費や偽陰性による検出率低下を防げる。",
+        "e": "適切。早期関与により期待される振る舞いを正しく理解でき、無駄や見逃しを防げる。"
+      },
+      {
+        "t": "目的は、システムの振る舞いが仕様どおりかを検証し、欠陥を検出し、システム全体の品質への信頼を積み上げ、リスクを低減することである。",
+        "e": "適切。システムテストの目的の説明として正しい。"
+      },
+      {
+        "t": "システムテストは、通常、運用環境においてユーザーや運用担当者の責任で行われ、ユーザーの受け入れ準備や運用・メンテナンスプロセスもテスト対象となる。",
+        "e": "これが正解（不適切）。これは受け入れテストの説明。システムテストはテスト担当者によって行われ、システム全体の機能・非機能をエンドツーエンドで検証する。"
+      },
+      {
+        "t": "典型的な欠陥・故障には、マニュアルに記載されたとおりにシステムが動作しないというものがある。",
+        "e": "適切。仕様・マニュアル不一致はシステムテストで見つかる典型的な欠陥。"
+      }
+    ],
+    "correct": 2,
+    "why": "システムテストは<b>テスト担当者が実施</b>し、機能・非機能をエンドツーエンドで検証する。運用環境でユーザー/運用担当が行うのは受け入れテスト。"
+  },
+  {
+    "tag": "2.2 受け入れテスト",
+    "stem": "受け入れテストを説明する文章として、適切でないものはどれか。",
+    "opts": [
+      {
+        "t": "受け入れテストは本番運用前の最後の品質ゲートであり、運用後に故障が発生しないようシステム内の欠陥を見つけることが一番の目的である。",
+        "e": "これが正解（不適切）。欠陥が見つかることはあるが、それが主目的ではない。受け入れテストのメインの目的は、システムへの信頼の積み上げや妥当性確認（ユーザーニーズ・要件・ビジネスプロセスへの適合）にある。"
+      },
+      {
+        "t": "受け入れテスト的なアプローチとして、アルファテストやベータテストがあり、市販ソフトウェア（COTS）を正式リリース前に潜在的ユーザーに使ってもらいフィードバックを得る。",
+        "e": "適切。アルファ／ベータテストは受け入れテスト的アプローチの例。"
+      },
+      {
+        "t": "ユーザー受け入れテストは、ユーザーがシステムがニーズに合致し要件を満たしビジネスプロセスを実行できることを確認するものである。",
+        "e": "適切。UAT（ユーザー受け入れテスト）の説明として正しい。"
+      },
+      {
+        "t": "運用受け入れテストは、本番環境において運用面で問題がないかという妥当性を確認するものである。",
+        "e": "適切。OAT（運用受け入れテスト）の説明として正しい。"
+      }
+    ],
+    "correct": 0,
+    "why": "受け入れテストの主目的は<b>信頼の積み上げ・妥当性確認</b>。欠陥検出が一番の目的ではない（それはむしろ下位レベルのテストの主眼）。"
+  },
+  {
+    "tag": "2.2 受け入れテストの種類",
+    "stem": "受け入れテストの種類とその説明の対応として、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "契約による受け入れテストは、契約上の受け入れ基準を満たすかを確認するものである。",
+        "e": "正しい。契約・規制による受け入れテストは、契約基準や規制要件への適合を確認する。"
+      },
+      {
+        "t": "アルファテストは、開発組織の外（利用者の現場）で利用者自身が行うテストである。",
+        "e": "誤り。アルファテストは開発組織側（社内）で行う。利用者の現場で行うのはベータテスト。"
+      },
+      {
+        "t": "運用受け入れテストは、ユーザーの業務要件への合致のみを確認するものである。",
+        "e": "誤り。それはユーザー受け入れテスト寄り。OATはバックアップ・復旧・セキュリティなど運用面を確認する。"
+      },
+      {
+        "t": "ベータテストは、開発組織の社内のみで実施するテストである。",
+        "e": "誤り。ベータテストは実際の利用者環境で行う。社内のみはアルファテスト寄り。"
+      }
+    ],
+    "correct": 0,
+    "why": "契約／規制による受け入れテスト＝<b>契約基準・規制への適合確認</b>。アルファ＝社内、ベータ＝利用者環境という区別も重要。"
+  },
+  {
+    "tag": "2.2 テストレベル全般",
+    "stem": "テストレベルの順序・対象に関する説明として、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "一般にコンポーネント→コンポーネント統合→システム→システム統合→受け入れの順で、扱う対象の粒度が大きくなっていく。",
+        "e": "正しい。下位から上位へ、単体→統合→システム→受け入れと対象の粒度が大きくなる。"
+      },
+      {
+        "t": "受け入れテストが最も下位のレベルで、最初に実施される。",
+        "e": "誤り。受け入れテストは最上位レベルで、通常は最後に近い段階。"
+      },
+      {
+        "t": "テストレベルは1つだけ選んで実施すればよく、複数を組み合わせることはない。",
+        "e": "誤り。実際には複数のテストレベルを組み合わせて実施する。"
+      },
+      {
+        "t": "システムテストはコンポーネントテストより低いレベルである。",
+        "e": "誤り。システムテストはコンポーネントテストより上位のレベル。"
+      }
+    ],
+    "correct": 0,
+    "why": "テストレベルは<b>単体→統合→システム→受け入れ</b>と粒度が大きくなる階層構造。複数を組み合わせて使う。"
+  },
+  {
+    "tag": "2.2.2 機能テスト",
+    "stem": "機能テストを説明する文章として、適切でないものはどれか。",
+    "opts": [
+      {
+        "t": "機能要件とテストのトレーサビリティを作成することで、機能要件のうちテストで何割カバーしたかを表す機能カバレッジを計測できる。",
+        "e": "適切。機能要件との対応づけで機能カバレッジを計測できる。"
+      },
+      {
+        "t": "機能テストはすべてのテストレベルで行うべきだが、レベルによってどの振る舞いに焦点を当てるかは異なる。",
+        "e": "適切。機能テストは全レベルで行え、焦点はレベルにより変わる。"
+      },
+      {
+        "t": "通常、機能要件はビジネス要件仕様・エピック・ユーザーストーリー・ユースケース・機能仕様などに記述されるが、まったく文書化していない場合もある。",
+        "e": "適切。機能要件は様々な作業成果物に記述され、未文書化のこともある。"
+      },
+      {
+        "t": "機能テストは、システムが「正しく振る舞うか」をテストするのではなく、「どのようにうまく振る舞うか」をテストするものである。",
+        "e": "これが正解（不適切）。これは非機能テストの説明。機能テストは「何を（正しく）するか（仕様どおりに振る舞うか）」を検証する。"
+      }
+    ],
+    "correct": 3,
+    "why": "機能テスト＝<b>何を（正しく）するか</b>（仕様適合）。「どのようにうまく振る舞うか（how well）」を見るのは非機能テストで、これと取り違える誤答に注意。"
+  },
+  {
+    "tag": "2.2.2 非機能テスト",
+    "stem": "非機能テストを説明する文章として、適切でないものはどれか。",
+    "opts": [
+      {
+        "t": "非機能テストは、テストの性質上、コンポーネントテストやシステムテストではなく、本番環境が用意された後の受け入れテストで行う必要がある。",
+        "e": "これが正解（不適切）。非機能テストはすべてのテストレベルで行うことができ、可能な限り早期に行うべき。受け入れテストに限定されない。"
+      },
+      {
+        "t": "非機能テストは、使用性・性能効率性・セキュリティといった品質特性を評価するテストである。",
+        "e": "適切。非機能テストは品質特性（how well）を評価する。"
+      },
+      {
+        "t": "非機能テストでもカバレッジを計測できる。非機能カバレッジは、テストと非機能要件のトレーサビリティを作成し、何割カバーしたかで計測する。",
+        "e": "適切。非機能カバレッジも要件との対応づけで計測できる。"
+      },
+      {
+        "t": "非機能要件は機能以外の要件すべてで対象範囲が広いため、設計や実行に特別なスキルや知識が必要な場合がある。",
+        "e": "適切。性能やセキュリティ等は専門的スキル・ツールを要することがある。"
+      }
+    ],
+    "correct": 0,
+    "why": "非機能テストは<b>全テストレベルで実施可能</b>で、早期に行うのが望ましい。受け入れテストに限定するAが不適切（検出遅れは大きなリスク）。"
+  },
+  {
+    "tag": "2.2.2 ホワイトボックステスト",
+    "stem": "ホワイトボックステストを説明する文章として、適切でないものはどれか。",
+    "opts": [
+      {
+        "t": "構造カバレッジは、最初に構造要素を洗い出し、テストによってその何割をカバーしたかで計測される。",
+        "e": "適切。構造カバレッジは構造要素の網羅率で計測する。"
+      },
+      {
+        "t": "コードカバレッジは、コンポーネント内のカバレッジアイテム（命令や分岐など）のうち、テストで何割カバーしたかで計測される。",
+        "e": "適切。命令網羅・分岐網羅などコードカバレッジの説明として正しい。"
+      },
+      {
+        "t": "ホワイトボックステストには、ソフトウェアを実行させずに直接欠陥を見つけることができる利点がある。",
+        "e": "これが正解（不適切）。これは静的テストの説明。ホワイトボックステストは内部構造に着目した動的テストで、外部からのブラックボックスでは見落とす欠陥を見つけられるのが利点。"
+      },
+      {
+        "t": "テスト対象はコードだけではなく、アーキテクチャ・ワークフロー・データフローなどの内部構造も対象になる。",
+        "e": "適切。ホワイトボックスの対象はコードに限らず内部構造全般。"
+      }
+    ],
+    "correct": 2,
+    "why": "ホワイトボックスは<b>内部構造に着目した動的テスト</b>。利点はブラックボックスで見落とす欠陥の検出。実行しないで見つけるのは静的テスト。"
+  },
+  {
+    "tag": "2.2.2 テストタイプ全般",
+    "stem": "「すべてのテストタイプはすべてのテストレベルで実行できる」という考え方について、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "原理的にはどのレベルでも各タイプを実施でき、レベルごとに焦点や手法が変わる。",
+        "e": "正しい。機能・非機能・ホワイト・ブラックいずれも各レベルで実施可能で、焦点や粒度が変わる。"
+      },
+      {
+        "t": "非機能テストはシステムテスト以降でしか実施できない。",
+        "e": "誤り。非機能テストもコンポーネントレベルなど早期から実施できる。"
+      },
+      {
+        "t": "ホワイトボックステストは受け入れテストでのみ実施する。",
+        "e": "誤り。ホワイトボックスはむしろ下位レベル（コンポーネント）で多用する。"
+      },
+      {
+        "t": "機能テストはコンポーネントテストでは実施できない。",
+        "e": "誤り。機能テストはコンポーネントレベルでも実施できる。"
+      }
+    ],
+    "correct": 0,
+    "why": "各テストタイプは<b>どのレベルでも実施可能</b>で、レベルごとに焦点が変わる。"
+  },
+  {
+    "tag": "2.3 メンテナンス",
+    "stem": "メンテナンス（運用中のシステムへの変更・移行・廃棄など）の説明として、適切でないものはどれか。",
+    "opts": [
+      {
+        "t": "運用で見つかった欠陥の修正など緊急変更はメンテナンスだが、計画的なシステム拡張やOSアップグレードなど計画的に実施する作業はメンテナンスとはいわない。",
+        "e": "これが正解（不適切）。運用中のシステムに手を加えるのはすべてメンテナンスであり、計画的か緊急対応かは問わない。"
+      },
+      {
+        "t": "自社データセンターで稼働中のシステムをクラウドへ移行する作業はメンテナンスだが、運用チームのメンバーを入れ替えるのはメンテナンスとはいわない。",
+        "e": "適切。環境移行はメンテナンスに含まれ、人員交代はシステムへの変更ではない。"
+      },
+      {
+        "t": "システムの利用を停止するためにデータを取り出して保管するのはメンテナンスだが、代替となるシステムを開発するのはメンテナンスとはいわない。",
+        "e": "適切。廃棄（データ退避）はメンテナンス、新規システム開発は別物。"
+      },
+      {
+        "t": "IoTシステムでハードウェアを最新タイプに入れ替える作業はメンテナンスだが、そのハードウェアを別のIoTシステムにも適用するのはメンテナンスとはいわない。",
+        "e": "適切。対象システムへの変更はメンテナンス、別システムへの新規適用は別の作業。"
+      }
+    ],
+    "correct": 0,
+    "why": "運用中システムへの変更は<b>計画的か緊急かを問わずすべてメンテナンス</b>。計画的作業を除外するAが不適切。"
+  },
+  {
+    "tag": "2.3 メンテナンスの契機",
+    "stem": "メンテナンス（保守）が必要となる契機の分類として、最も適切でないものはどれか。",
+    "opts": [
+      {
+        "t": "是正（修正）：運用中に発見された欠陥を直すための変更。",
+        "e": "適切。是正保守は欠陥修正のための変更。"
+      },
+      {
+        "t": "適応：環境変化（OS・ハードウェア・法規制など）に合わせるための変更。",
+        "e": "適切。適応保守は環境適応のための変更。"
+      },
+      {
+        "t": "改善（完全化）：性能や保守性の向上など、機能改善のための変更。",
+        "e": "適切。完全化保守は改善のための変更。"
+      },
+      {
+        "t": "廃止：システムを使い続けるために新機能を継続追加し続けること。",
+        "e": "これが正解（不適切）。廃止（リタイア）はシステムの利用停止・退役に伴う作業であり、新機能を追加し続けることではない。"
+      }
+    ],
+    "correct": 3,
+    "why": "保守の契機は是正・適応・完全化（改善）、そして廃止（退役）。廃止を「新機能追加の継続」とするDが取り違え。"
+  },
+  {
+    "tag": "2.3 影響度分析",
+    "stem": "メンテナンスの影響度分析（impact analysis）の説明として、適切でないものはどれか。",
+    "opts": [
+      {
+        "t": "変更により意図した結果が何で、予想される副作用は何か、変更が影響する領域はどこかを識別する。",
+        "e": "適切。影響度分析は意図した結果・副作用・影響領域を識別する。"
+      },
+      {
+        "t": "修正箇所内の影響だけでなく、修正箇所ではないが影響を受けそうな領域に対しても行う必要がある。",
+        "e": "適切。波及範囲（既存への影響）も含めて分析する。"
+      },
+      {
+        "t": "影響度分析は変更作業後に行ってはならない。変更すべきかどうかを判断するため、必ず変更を行う前に実施する。",
+        "e": "これが正解（不適切）。影響度分析は変更前に行うこともあるが、実際に変更してリリースする前に行うことも多い。実際に変更しないと影響を正確に割り出せないことがあるため。「変更前のみ・変更後は禁止」は誤り。"
+      },
+      {
+        "t": "仕様が最新版でない、テストケースが文書化されていない、システムに精通した運用担当者がいない、といった状況だと影響度分析が難しくなる。",
+        "e": "適切。これらの状況は影響度分析を困難にする要因。"
+      }
+    ],
+    "correct": 2,
+    "why": "影響度分析は<b>変更前にも変更後（リリース前）にも行いうる</b>。実際に変更しないと影響を正確に割り出せないことがあるため、Cの「変更後は禁止」は誤り。"
+  },
+  {
+    "tag": "2.3 リグレッション",
+    "stem": "メンテナンスにおけるリグレッションテストの位置づけとして、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "変更により既存の機能に意図しない悪影響（リグレッション）が出ていないかを確認するため、メンテナンスでも重要である。",
+        "e": "正しい。変更の副作用を検出するリグレッションテストはメンテナンスで特に重要。"
+      },
+      {
+        "t": "メンテナンスでは新機能のみをテストすればよく、既存機能の確認は不要である。",
+        "e": "誤り。変更の副作用が既存機能に及ぶため、既存機能のリグレッション確認が必要。"
+      },
+      {
+        "t": "リグレッションテストは運用フェーズでのみ考慮すればよい。",
+        "e": "誤り。リグレッションテストはすべてのテストレベル・段階で考慮すべき。"
+      },
+      {
+        "t": "リグレッションテストは欠陥の修正そのものを指す。",
+        "e": "誤り。それはデバッグ。リグレッションテストは副作用の確認。"
+      }
+    ],
+    "correct": 0,
+    "why": "メンテナンスは既存システムへの変更なので、<b>リグレッション（副作用）の確認</b>が特に重要になる。"
+  },
+  {
+    "tag": "2.2.3 確認/リグレッション",
+    "stem": "システムを変更したときに必要となる確認テストとリグレッションテストの説明として、適切でないものはどれか。",
+    "opts": [
+      {
+        "t": "リグレッションテストは、開発プロセスの最後にまとめてテストするのではなく、一定期間ごとにどのフィーチャーを開発するかを決め、開発・テストを繰り返すテスト方法である。",
+        "e": "これが正解（不適切）。これはイテレーティブ／インクリメンタル開発の説明であり、リグレッションテストの説明ではない。"
+      },
+      {
+        "t": "確認テストは、欠陥を修正した際に、欠陥が確実に修正されたことを確認するテストである。",
+        "e": "適切。確認テスト（confirmation testing）の説明として正しい。"
+      },
+      {
+        "t": "リグレッションテストは、運用フェーズだけでなく、すべてのテストレベルで考慮すべきである。",
+        "e": "適切。リグレッションテストは全レベルで考慮する。"
+      },
+      {
+        "t": "リグレッションテストは、欠陥を修正した際に既存部分に意図しない影響が及んでいないかを確認するテストである。",
+        "e": "適切。リグレッションテストの説明として正しい。"
+      }
+    ],
+    "correct": 0,
+    "why": "リグレッションテスト＝<b>変更による既存への副作用の確認</b>。開発モデル（反復型）の説明と取り違える誤答に注意。"
+  },
+  {
+    "tag": "2.1 SDLCとテスト",
+    "stem": "SDLCモデルがテスト活動に与える影響について、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "採用するSDLCモデルによって、テストの計画・範囲・タイミング・自動化の度合いなどが変わる。",
+        "e": "正しい。モデルにより、いつ・どの程度テストするか、自動化の重みなどが変わる。"
+      },
+      {
+        "t": "SDLCモデルが変わってもテストの進め方は一切変わらない。",
+        "e": "誤り。モデルはテストプロセスに影響する（第1章の論点とも整合）。"
+      },
+      {
+        "t": "アジャイルではテスト計画は不要である。",
+        "e": "誤り。アジャイルでもテスト計画は行う（より軽量・反復的になる）。"
+      },
+      {
+        "t": "シーケンシャルモデルでは早期テストの考え方は適用できない。",
+        "e": "誤り。V字モデルのように、シーケンシャルでも早期テスト（テスト設計の前倒し）は適用できる。"
+      }
+    ],
+    "correct": 0,
+    "why": "SDLCモデルは<b>テストの計画・範囲・タイミング・自動化</b>に影響する。モデルに応じてテストの進め方を調整する。"
+  },
+  {
+    "tag": "2.1 早期テスト",
+    "stem": "SDLC全体を通したテストで「早期に関与する」ことの利点として、最も適切でないものはどれか。",
+    "opts": [
+      {
+        "t": "要件やユーザーストーリーの曖昧さ・矛盾を上流で発見できる。",
+        "e": "適切。上流関与で上流の欠陥を早期に発見できる。"
+      },
+      {
+        "t": "後工程での手戻りや修正コストを削減できる。",
+        "e": "適切。早期発見は後工程のコストを下げる。"
+      },
+      {
+        "t": "期待される振る舞いを正しく理解でき、偽陽性・偽陰性を減らせる。",
+        "e": "適切。早期理解により誤検出・見逃しを減らせる。"
+      },
+      {
+        "t": "早期に関与すれば全数テストが可能になり、欠陥ゼロを保証できる。",
+        "e": "これが正解（不適切）。早期関与しても全数テストは不可能であり、欠陥ゼロも保証できない（第1章の原則と矛盾）。"
+      }
+    ],
+    "correct": 3,
+    "why": "早期関与の利点は<b>上流欠陥の発見・手戻り削減・正確な理解</b>。全数テストや欠陥ゼロ保証は原則に反する。"
+  },
+  {
+    "tag": "2.2 コンポーネント統合",
+    "stem": "コンポーネント統合テストとシステム統合テストの違いとして、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "コンポーネント統合テストはコンポーネント間の連携を、システム統合テストはシステムや外部サービス間の連携を対象とする。",
+        "e": "正しい。前者はコンポーネント間、後者はシステム間（外部システム・サービス含む）の連携を対象とする。"
+      },
+      {
+        "t": "両者は対象が同じで、名前だけが異なる。",
+        "e": "誤り。対象とする統合の粒度（コンポーネント間／システム間）が異なる。"
+      },
+      {
+        "t": "システム統合テストはコンポーネント間の通信のみを対象とする。",
+        "e": "誤り。システム統合はシステム間・外部サービスとの通信を対象とする。"
+      },
+      {
+        "t": "コンポーネント統合テストはユーザー受け入れと同義である。",
+        "e": "誤り。受け入れテストとは目的もレベルも異なる。"
+      }
+    ],
+    "correct": 0,
+    "why": "コンポーネント統合＝<b>コンポーネント間</b>、システム統合＝<b>システム間・外部サービス間</b>の連携を対象とする。"
+  },
+  {
+    "tag": "2.2.2 テストタイプ定義",
+    "stem": "「テストタイプ」と「テストレベル」の違いとして、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "テストレベルは「いつ・どの統合段階で」テストするか、テストタイプは「何に着目して」テストするかを表す。",
+        "e": "正しい。レベル＝段階（コンポーネント〜受け入れ）、タイプ＝着目点（機能/非機能/構造ベース等）。"
+      },
+      {
+        "t": "テストレベルとテストタイプは同じ意味である。",
+        "e": "誤り。段階と着目点という異なる軸。"
+      },
+      {
+        "t": "テストタイプは段階を、テストレベルは着目点を表す。",
+        "e": "誤り。説明が逆。"
+      },
+      {
+        "t": "いずれもデバッグの分類である。",
+        "e": "誤り。テスト活動の分類軸であり、デバッグの分類ではない。"
+      }
+    ],
+    "correct": 0,
+    "why": "テストレベル＝<b>段階（いつ・どの統合段階）</b>、テストタイプ＝<b>着目点（何を見るか）</b>。両者は直交する軸。"
+  }
+];
+
+const KEYS=['A','B','C','D'];
+const quiz=document.getElementById('quiz');
+const bar=document.getElementById('bar');
+const answeredEl=document.getElementById('answered');
+const correctEl=document.getElementById('correct');
+const totalEl=document.getElementById('total');
+const live=document.getElementById('live');
+let answered=0, correct=0;
+totalEl.textContent=QUESTIONS.length;
+document.getElementById('scden').textContent='/'+QUESTIONS.length;
+
+/* ===== 選択肢のシャッフル =====
+   ページを開くたびに各設問の選択肢順をランダム化。元データの correct は保持し、表示用に正解位置を再計算する。 */
+function withShuffledOptions(q){
+  const opts = q.opts.map((o, originalIndex) => ({...o, originalIndex}));
+  for(let i = opts.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [opts[i], opts[j]] = [opts[j], opts[i]];
+  }
+  return { ...q, opts, correct: opts.findIndex(o => o.originalIndex === q.correct) };
+}
+
+QUESTIONS.forEach((q,qi)=>{
+  const viewQ = withShuffledOptions(q);
+  const card=document.createElement('section');
+  card.className='q';
+  card.dataset.qi=qi;
+
+  const head=document.createElement('div');
+  head.className='qhead';
+  head.innerHTML=`<span class="qno">Q${qi+1}</span><span class="qtag">${viewQ.tag}</span>`;
+  card.appendChild(head);
+
+  const stem=document.createElement('div');
+  stem.className='qstem';
+  stem.innerHTML=viewQ.stem
+    .replace(/(適切でないもの|該当しないもの|含まれないもの|誤っているもの)/g,'<span class="neg">$1</span>');
+  card.appendChild(stem);
+
+  const ul=document.createElement('ul');
+  ul.className='opts';
+  viewQ.opts.forEach((o,oi)=>{
+    const li=document.createElement('li');
+    li.className='opt';
+    li.dataset.oi=oi;
+    li.innerHTML=`<span class="key">${KEYS[oi]}</span><span class="body">${o.t}</span><span class="mark"></span>`;
+    li.addEventListener('click',()=>choose(card,viewQ,qi,oi));
+    ul.appendChild(li);
+  });
+  card.appendChild(ul);
+
+  const exp=document.createElement('div');
+  exp.className='exp';
+  const inner=document.createElement('div');
+  inner.className='expinner';
+  inner.innerHTML=`
+    <div class="verdict" data-role="verdict"></div>
+    <p class="why"><b>正解 ${KEYS[viewQ.correct]}：</b>${q.why}</p>
+    <ul class="breakdown">
+      ${viewQ.opts.map((o,oi)=>`
+        <li>
+          <span class="bk ${oi===viewQ.correct?'o':'x'}">${KEYS[oi]}</span>
+          <span class="bktext"><span class="lab">${oi===viewQ.correct?'正解':'誤り'}：</span>${o.e}</span>
+        </li>`).join('')}
+    </ul>`;
+  exp.appendChild(inner);
+  card.appendChild(exp);
+
+  quiz.appendChild(card);
+});
+
+function choose(card,q,qi,oi){
+  if(card.classList.contains('done')) return;
+  card.classList.add('done');
+  const opts=card.querySelectorAll('.opt');
+  opts.forEach((el,i)=>{
+    el.classList.remove('pick');
+    if(i===q.correct) el.classList.add('correct');
+    if(i===oi && oi!==q.correct) el.classList.add('wrong');
+  });
+  const ok=(oi===q.correct);
+  const v=card.querySelector('[data-role="verdict"]');
+  v.textContent= ok ? '◎ 正解' : '✕ 不正解';
+  v.classList.add(ok?'ok':'ng');
+
+  answered++; if(ok) correct++;
+  answeredEl.textContent=answered;
+  correctEl.textContent=correct;
+  bar.style.width=(answered/QUESTIONS.length*100)+'%';
+  live.textContent = ok ? `第${qi+1}問 正解` : `第${qi+1}問 不正解、正解は${KEYS[q.correct]}`;
+
+  if(answered===QUESTIONS.length) showResult();
+}
+
+function showResult(){
+  const r=document.getElementById('result');
+  document.getElementById('sc').textContent=correct;
+  const pct=Math.round(correct/QUESTIONS.length*100);
+  document.getElementById('scpct').textContent=pct+'%';
+  let m;
+  if(pct>=90) m='素晴らしい完成度。本番でも安定して得点できるレベルです。';
+  else if(pct>=75) m='合格圏内。誤った問題の解説を読み直して取りこぼしを潰しましょう。';
+  else if(pct>=60) m='あと一歩。誤り選択肢の「どこを取り違えているか」を重点的に復習を。';
+  else m='基礎の定着が必要。テストレベル・テストタイプ・SDLCモデルの定義から整理しましょう。';
+  document.getElementById('scmsg').textContent=m;
+  r.classList.add('show');
+  r.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+document.getElementById('restart').addEventListener('click',()=>{
+  answered=0;correct=0;
+  answeredEl.textContent=0;correctEl.textContent=0;
+  bar.style.width='0%';
+  document.getElementById('result').classList.remove('show');
+  document.querySelectorAll('.q').forEach(card=>{
+    card.classList.remove('done');
+    card.querySelectorAll('.opt').forEach(el=>el.classList.remove('correct','wrong','pick'));
+    const v=card.querySelector('[data-role="verdict"]');
+    v.textContent='';v.classList.remove('ok','ng');
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+</script>
+</body>
+</html>

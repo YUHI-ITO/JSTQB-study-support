@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>JSTQB FL 第6章 演習問題</title>
+<style>
+  :root{
+    --ink:#1a1d24;--paper:#f7f4ec;--card:#ffffff;--line:#e3ddd0;
+    --accent:#c0392b;--good:#2a7d4f;--good-bg:#e7f3ec;--bad:#b23b3b;--bad-bg:#fae9e7;
+    --muted:#6f6a60;--pick:#3a4250;--pick-bg:#eef1f5;--seal:#1a1d24;
+    --shadow:0 1px 2px rgba(26,29,36,.06),0 8px 24px rgba(26,29,36,.06);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{background:var(--paper);color:var(--ink);
+    font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Yu Gothic",Meiryo,system-ui,sans-serif;
+    line-height:1.75;font-size:16px;-webkit-text-size-adjust:100%;padding-bottom:env(safe-area-inset-bottom);}
+  .wrap{max-width:680px;margin:0 auto;padding:0 16px;}
+  header{position:sticky;top:0;z-index:30;background:rgba(247,244,236,.86);
+    backdrop-filter:saturate(1.2) blur(10px);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top);}
+  .hbar{display:flex;align-items:center;gap:12px;padding:12px 16px;max-width:680px;margin:0 auto;}
+  .seal{flex:0 0 auto;width:42px;height:42px;border-radius:50%;background:var(--seal);color:#f7f4ec;
+    display:grid;place-items:center;font-weight:800;font-size:11px;letter-spacing:.04em;line-height:1.05;text-align:center;
+    box-shadow:inset 0 0 0 2px rgba(247,244,236,.15);}
+  .htext{flex:1 1 auto;min-width:0;}
+  .htext h1{margin:0;font-size:15px;font-weight:800;letter-spacing:.02em;}
+  .htext .sub{margin:0;font-size:11px;color:var(--muted);letter-spacing:.06em;}
+  .progress{height:4px;background:var(--line);border-radius:99px;overflow:hidden;margin:0 16px 10px;max-width:680px;}
+  @media(min-width:712px){.progress{margin-left:auto;margin-right:auto;}}
+  .progress > i{display:block;height:100%;width:0;background:var(--accent);transition:width .35s ease;}
+  .intro{margin:22px 0;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px 20px;box-shadow:var(--shadow);}
+  .intro .eyebrow{font-size:11px;letter-spacing:.22em;color:var(--accent);font-weight:800;text-transform:uppercase;margin-bottom:10px;}
+  .intro h2{margin:0 0 8px;font-size:22px;letter-spacing:.01em;}
+  .intro p{margin:6px 0;color:var(--muted);font-size:14px;}
+  .stats{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;}
+  .stat{flex:1 1 0;min-width:96px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:#fbf9f3;}
+  .stat b{display:block;font-size:20px;}
+  .stat span{font-size:11px;color:var(--muted);letter-spacing:.04em;}
+  .topics{margin:6px 0 0;padding:0;list-style:none;font-size:13px;color:var(--muted);}
+  .topics li{padding:4px 0 4px 18px;position:relative;}
+  .topics li::before{content:"";position:absolute;left:0;top:11px;width:7px;height:7px;border-radius:2px;background:var(--accent);}
+  .q{margin:16px 0;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;}
+  .qhead{display:flex;align-items:baseline;gap:10px;padding:16px 18px 6px;}
+  .qno{flex:0 0 auto;background:var(--seal);color:#f7f4ec;border-radius:8px;font-size:12px;font-weight:800;padding:3px 8px;letter-spacing:.02em;}
+  .qtag{font-size:10px;letter-spacing:.14em;color:var(--muted);font-weight:700;text-transform:uppercase;}
+  .qstem{padding:4px 18px 14px;font-size:15.5px;font-weight:600;}
+  .qstem .neg{color:var(--accent);font-weight:800;border-bottom:2px solid rgba(192,57,43,.3);}
+  .opts{list-style:none;margin:0;padding:0 14px 8px;}
+  .opt{display:flex;gap:11px;align-items:flex-start;border:1.5px solid var(--line);border-radius:12px;
+    padding:12px 13px;margin:8px 0;cursor:pointer;background:#fff;transition:border-color .15s,background .15s,transform .05s;font-size:14.5px;}
+  .opt:active{transform:scale(.995);}
+  .opt .key{flex:0 0 auto;width:26px;height:26px;border-radius:50%;border:1.5px solid var(--line);
+    display:grid;place-items:center;font-weight:800;font-size:13px;color:var(--pick);background:#fff;transition:all .15s;}
+  .opt .body{flex:1 1 auto;padding-top:1px;}
+  .opt.pick{border-color:var(--pick);background:var(--pick-bg);}
+  .opt.pick .key{background:var(--pick);color:#fff;border-color:var(--pick);}
+  .q.done .opt{cursor:default;}
+  .opt.correct{border-color:var(--good);background:var(--good-bg);}
+  .opt.correct .key{background:var(--good);color:#fff;border-color:var(--good);}
+  .opt.wrong{border-color:var(--bad);background:var(--bad-bg);}
+  .opt.wrong .key{background:var(--bad);color:#fff;border-color:var(--bad);}
+  .opt .mark{margin-left:auto;font-weight:800;font-size:15px;align-self:center;}
+  .opt.correct .mark::after{content:"\2713";color:var(--good);}
+  .opt.wrong .mark::after{content:"\2715";color:var(--bad);}
+  .exp{max-height:0;overflow:hidden;transition:max-height .45s ease;}
+  .q.done .exp{max-height:4000px;}
+  .expinner{margin:4px 14px 16px;border-top:1px dashed var(--line);padding-top:14px;}
+  .verdict{font-size:13px;font-weight:800;letter-spacing:.02em;margin-bottom:10px;}
+  .verdict.ok{color:var(--good);}.verdict.ng{color:var(--bad);}
+  .why{margin:0 0 10px;font-size:14px;background:#fbf9f3;border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:10px 12px;}
+  .why b{color:var(--accent);}
+  .breakdown{margin:0;padding:0;list-style:none;font-size:13.5px;}
+  .breakdown li{display:flex;gap:9px;padding:6px 0;border-bottom:1px solid #f0ece1;align-items:flex-start;}
+  .breakdown li:last-child{border-bottom:none;}
+  .bk{flex:0 0 auto;width:22px;height:22px;border-radius:6px;display:grid;place-items:center;font-weight:800;font-size:12px;}
+  .bk.o{background:var(--good-bg);color:var(--good);}
+  .bk.x{background:var(--bad-bg);color:var(--bad);}
+  .bktext{flex:1;}
+  .bktext .lab{font-weight:700;}
+  #result{margin:26px 0 16px;background:var(--seal);color:#f4f1ea;border-radius:18px;padding:26px 22px;text-align:center;display:none;box-shadow:var(--shadow);}
+  #result.show{display:block;}
+  #result .score{font-size:46px;font-weight:800;letter-spacing:-.02em;}
+  #result .score small{font-size:18px;color:#b9b3a6;font-weight:600;}
+  #result .pct{font-size:13px;letter-spacing:.18em;color:#c7b6a8;text-transform:uppercase;margin-top:2px;}
+  #result .msg{font-size:14px;color:#ddd6c8;margin-top:10px;}
+  #result button{margin-top:18px;background:var(--accent);color:#fff;border:none;border-radius:99px;padding:12px 26px;font-size:14px;font-weight:800;letter-spacing:.04em;cursor:pointer;}
+  footer{text-align:center;color:var(--muted);font-size:11px;letter-spacing:.05em;padding:8px 0 36px;}
+  .live{position:fixed;left:-9999px;}
+</style>
+</head>
+<body>
+<header>
+  <div class="hbar">
+    <div class="seal">JSTQB<br>FL</div>
+    <div class="htext">
+      <h1>第6章 テストツール</h1>
+      <p class="sub">SYLLABUS 4.0 ・ CHAPTER 6</p>
+    </div>
+  </div>
+  <div class="progress"><i id="bar"></i></div>
+</header>
+
+<main class="wrap">
+  <section class="intro">
+    <div class="eyebrow">Chapter 6 Drill</div>
+    <h2>テストツール</h2>
+    <p>シラバス4.0 第6章の細かい理解を問う9問演習。各設問は「なぜその選択肢が正解か」だけでなく、誤りの選択肢が<b>どこをどう取り違えているか</b>まで解説します。第6章は範囲が狭いため少なめの構成です。</p>
+    <div class="stats">
+      <div class="stat"><b id="answered">0</b><span>解答済み</span></div>
+      <div class="stat"><b id="correct">0</b><span>正解</span></div>
+      <div class="stat"><b id="total">0</b><span>総問題数</span></div>
+    </div>
+    <ul class="topics">
+      <li>6.1 テストツールの分類・支援対象</li>
+      <li>6.1 テスト活動別のツール（静的テスト/設計/実装/実行/管理）</li>
+      <li>6.2 テスト自動化の利点</li>
+      <li>6.2 テスト自動化のリスク・潜在的問題</li>
+    </ul>
+  </section>
+
+  <div id="quiz"></div>
+
+  <section id="result">
+    <div class="pct">YOUR SCORE</div>
+    <div class="score"><span id="sc">0</span><small id="scden">/0</small></div>
+    <div class="pct" id="scpct">0%</div>
+    <div class="msg" id="scmsg"></div>
+    <button id="restart">もう一度挑戦する</button>
+  </section>
+
+  <footer>JSTQB Foundation Level シラバス4.0 準拠 ・ 学習用演習</footer>
+</main>
+
+<div class="live" aria-live="polite" id="live"></div>
+
+<script>
+const QUESTIONS = [
+  {
+    "tag": "6.1 ツールの分類",
+    "stem": "テスト活動を支援するテストツールには様々な種類がある。テストツールの分類の説明として、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "レビューや静的解析を支援するツールは、DevOpsツールに分類される。",
+        "e": "誤り。レビューや静的解析を支援するツールは静的解析（静的テスト）ツールに分類される。DevOpsツールではない。"
+      },
+      {
+        "t": "リグレッションテストで使うテスト実行ツールやコードカバレッジツールなどは、代表的な静的テストの支援ツールである。",
+        "e": "誤り。テスト実行ツールやカバレッジツールはテスト実行（動的テスト）を支援するツール。静的テストの支援ツールには静的解析ツールなどがある。"
+      },
+      {
+        "t": "ロードテストやストレステストなど、手動では効果的に実行できないテストを支援する性能テストツールは、テストウェアのマネジメント支援ツールに分類される。",
+        "e": "誤り。ロード/ストレステストを支援する性能テストツールは非機能テストツールに分類される。テストウェアのマネジメント支援ツールではない。"
+      },
+      {
+        "t": "テストケース作成支援ツールやテストデータ準備ツールなどは、テスト実装の支援ツールに分類される。",
+        "e": "正しい。テストケース作成支援・テストデータ準備ツールはテスト実装の支援ツールに分類される。"
+      }
+    ],
+    "correct": 3,
+    "why": "テストケース作成支援・テストデータ準備ツールは<b>テスト実装の支援ツール</b>。他の選択肢は静的解析ツール・テスト実行ツール・非機能テストツールへの分類を取り違えている。"
+  },
+  {
+    "tag": "6.2 自動化の利点/リスク",
+    "stem": "テスト自動化ツールには利点もあるがリスクもある。テスト自動化ツールの利点とリスクの説明として、適切でないものはどれか。",
+    "opts": [
+      {
+        "t": "テスト自動化ツールには、反復する手動作業を削減して、時間の節約ができる利点がある。",
+        "e": "適切。反復作業の削減・時間節約は自動化の代表的な利点。"
+      },
+      {
+        "t": "静的解析やカバレッジなどのテスト自動化ツールの潜在的リスクとしては、テスト結果の評価の客観性が損なわれることが挙げられる。",
+        "e": "これが正解（不適切）。これらのツールの結果は数値で表されるため、むしろ評価の客観性が向上する利点がある。客観性が損なわれるというのは誤り。"
+      },
+      {
+        "t": "テスト自動化ツールの潜在的リスクとしては、導入に要する時間やコスト、工数を過小評価することが挙げられる。",
+        "e": "適切。導入コストや工数の過小評価は自動化の潜在的リスク。"
+      },
+      {
+        "t": "テスト自動化ツールの潜在的リスクとしては、テストツールの効果を過大に期待したり、ツールに過剰な依存をしたりすることが挙げられる。",
+        "e": "適切。効果の過大評価・過度の依存は自動化の潜在的リスク。"
+      }
+    ],
+    "correct": 1,
+    "why": "静的解析やカバレッジツールの結果は<b>数値で表されるため客観性が向上</b>する利点がある。客観性が損なわれるとする記述は誤り（利点とリスクが逆）。"
+  },
+  {
+    "tag": "6.1 活動別ツール",
+    "stem": "テスト活動とそれを支援するツールの対応として、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "静的テストはレビュー支援ツールや静的解析ツール、テスト実装はテストデータ準備ツール、テスト実行はテスト実行ツールが支援する。",
+        "e": "正しい。各活動に対応する支援ツールの対応として正しい。"
+      },
+      {
+        "t": "静的テストはテスト実行ツール、テスト実行は静的解析ツールが支援する。",
+        "e": "誤り。対応が逆。静的テスト＝静的解析ツール、テスト実行＝テスト実行ツール。"
+      },
+      {
+        "t": "すべてのテスト活動は1種類のツールだけで支援される。",
+        "e": "誤り。活動ごとに異なる種類のツールが対応する。"
+      },
+      {
+        "t": "テスト実装はDevOpsツールのみで支援される。",
+        "e": "誤り。テスト実装はテストケース作成支援・テストデータ準備ツール等が支援する。DevOpsツールのみではない。"
+      }
+    ],
+    "correct": 0,
+    "why": "<b>静的テスト＝レビュー/静的解析ツール</b>、<b>テスト実装＝テストデータ準備等</b>、<b>テスト実行＝テスト実行ツール</b>と活動別に対応する。"
+  },
+  {
+    "tag": "6.1 静的解析ツール",
+    "stem": "静的解析ツールが支援する内容として、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "コードやモデルなどを実行せずに解析し、規約違反・到達不能コード・複雑度などを検出する。",
+        "e": "正しい。静的解析ツールは実行せずにコード等を解析し、規約違反等を検出する。"
+      },
+      {
+        "t": "ソフトウェアを実際に動かして応答時間を測定する。",
+        "e": "誤り。それは性能テストツール（動的テスト）の支援。"
+      },
+      {
+        "t": "テストケースをスケジュールに従って実行する。",
+        "e": "誤り。それはテスト実行ツール（動的テスト）の支援。"
+      },
+      {
+        "t": "欠陥のチケットを管理する。",
+        "e": "誤り。それは欠陥マネジメントツールの支援。"
+      }
+    ],
+    "correct": 0,
+    "why": "静的解析ツールは<b>実行せずにコード/モデルを解析</b>し、規約違反・到達不能コード・複雑度などを検出する。"
+  },
+  {
+    "tag": "6.1 性能テストツール",
+    "stem": "ロードテストやストレステストを支援するツールの分類として、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "性能（非機能）テストツールに分類される。",
+        "e": "正しい。ロード/ストレステストを支援するのは性能（非機能）テストツール。"
+      },
+      {
+        "t": "静的テストの支援ツールに分類される。",
+        "e": "誤り。ロード/ストレスは実行を伴う動的テストで、静的テスト支援ではない。"
+      },
+      {
+        "t": "テストウェアのマネジメント支援ツールに分類される。",
+        "e": "誤り。マネジメント支援ツールは成果物管理用。性能テストの実行支援ではない。"
+      },
+      {
+        "t": "レビュー支援ツールに分類される。",
+        "e": "誤り。レビュー支援は静的テスト用で、性能テストの支援ではない。"
+      }
+    ],
+    "correct": 0,
+    "why": "ロード/ストレステストを支援するのは<b>性能（非機能）テストツール</b>。手動では効果的に実行しにくいため自動化が有効。"
+  },
+  {
+    "tag": "6.2 自動化の利点",
+    "stem": "テスト自動化の利点として、最も適切でないものはどれか。",
+    "opts": [
+      {
+        "t": "反復的な手動作業（リグレッションテスト等）を削減し、時間とコストを節約できる。",
+        "e": "適切。反復作業の削減は代表的な利点。"
+      },
+      {
+        "t": "数値で表される結果（カバレッジ・性能値等）により、評価の客観性・一貫性が向上する。",
+        "e": "適切。数値結果による客観性・一貫性の向上は利点。"
+      },
+      {
+        "t": "人手では実行が難しい大規模・高頻度のテスト（負荷テスト等）を実行できる。",
+        "e": "適切。人手では困難な大規模・高頻度テストの実行は利点。"
+      },
+      {
+        "t": "ツールを導入すれば、テスト設計やテスト戦略の検討は不要になる。",
+        "e": "これが正解（不適切＝利点ではない）。ツールは作業を支援するだけで、テスト設計や戦略の検討が不要になるわけではない。むしろ人の判断は依然として重要。"
+      }
+    ],
+    "correct": 3,
+    "why": "自動化は<b>反復削減・客観性向上・大規模実行</b>などの利点をもつが、テスト設計や戦略の検討まで不要にはしない。ツールは支援であって思考の代替ではない。"
+  },
+  {
+    "tag": "6.2 ツール導入",
+    "stem": "組織へのテストツール導入を成功させるための考え方として、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "パイロット（試行導入）で評価し、段階的に展開しながら、トレーニングやサポート体制を整える。",
+        "e": "正しい。パイロット評価・段階展開・トレーニング/サポートは導入成功の要点。"
+      },
+      {
+        "t": "評価や試行をせず、一度に全社へ強制展開する。",
+        "e": "誤り。一度に全社強制展開はリスクが高く、段階的導入が望ましい。"
+      },
+      {
+        "t": "トレーニングやサポートは不要で、ツールを配れば自然に定着する。",
+        "e": "誤り。トレーニング・サポートは定着に不可欠。"
+      },
+      {
+        "t": "ツールを入れれば人による判断や設計は完全に不要になる。",
+        "e": "誤り。ツールは支援であり、人の判断・設計を完全に置き換えるものではない。"
+      }
+    ],
+    "correct": 0,
+    "why": "ツール導入は<b>パイロット評価→段階展開→トレーニング/サポート整備</b>が成功の要点。一気に強制展開せず、人の判断も引き続き重要。"
+  },
+  {
+    "tag": "6.1 マネジメント支援ツール",
+    "stem": "テストウェアのマネジメント支援ツール／管理系ツールが支援する内容として、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "テストケース・要件・欠陥などの管理やトレーサビリティの維持を支援する。",
+        "e": "正しい。管理系ツールはテストケース・要件・欠陥の管理やトレーサビリティ維持を支援する。"
+      },
+      {
+        "t": "ソフトウェアを動かして負荷をかける。",
+        "e": "誤り。それは性能テストツールの支援。"
+      },
+      {
+        "t": "コードを実行せずに規約違反を検出する。",
+        "e": "誤り。それは静的解析ツールの支援。"
+      },
+      {
+        "t": "テストスクリプトを実行して結果を比較する。",
+        "e": "誤り。それはテスト実行ツールの支援。"
+      }
+    ],
+    "correct": 0,
+    "why": "マネジメント支援ツールは<b>テストケース・要件・欠陥の管理やトレーサビリティ維持</b>を支援する。"
+  },
+  {
+    "tag": "6.1 テスト実行ツール",
+    "stem": "テスト実行ツール（リグレッションテストの自動化等）の特徴として、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "テストスクリプトに従ってテストを自動実行し、結果を期待結果と比較する。反復実行に強い。",
+        "e": "正しい。テスト実行ツールはスクリプトで自動実行・結果比較を行い、反復実行に強い。"
+      },
+      {
+        "t": "コードを実行せずに静的に解析する。",
+        "e": "誤り。それは静的解析ツール。テスト実行ツールは実行する。"
+      },
+      {
+        "t": "レビューミーティングの運営を支援する。",
+        "e": "誤り。それはレビュー支援ツール（静的テスト）。"
+      },
+      {
+        "t": "テスト工数の見積りだけを行う。",
+        "e": "誤り。テスト実行ツールは実行支援であり、見積り専用ではない。"
+      }
+    ],
+    "correct": 0,
+    "why": "テスト実行ツールは<b>スクリプトで自動実行し結果を比較</b>する。リグレッションテストなど反復実行に強い動的テストの支援ツール。"
+  }
+];
+
+const KEYS=['A','B','C','D'];
+const quiz=document.getElementById('quiz');
+const bar=document.getElementById('bar');
+const answeredEl=document.getElementById('answered');
+const correctEl=document.getElementById('correct');
+const totalEl=document.getElementById('total');
+const live=document.getElementById('live');
+let answered=0, correct=0;
+totalEl.textContent=QUESTIONS.length;
+document.getElementById('scden').textContent='/'+QUESTIONS.length;
+
+/* ===== 選択肢のシャッフル =====
+   ページを開くたびに各設問の選択肢順をランダム化。元データの correct は保持し、表示用に正解位置を再計算する。 */
+function withShuffledOptions(q){
+  const opts = q.opts.map((o, originalIndex) => ({...o, originalIndex}));
+  for(let i = opts.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [opts[i], opts[j]] = [opts[j], opts[i]];
+  }
+  return { ...q, opts, correct: opts.findIndex(o => o.originalIndex === q.correct) };
+}
+
+QUESTIONS.forEach((q,qi)=>{
+  const viewQ = withShuffledOptions(q);
+  const card=document.createElement('section');
+  card.className='q';card.dataset.qi=qi;
+  const head=document.createElement('div');
+  head.className='qhead';
+  head.innerHTML=`<span class="qno">Q${qi+1}</span><span class="qtag">${viewQ.tag}</span>`;
+  card.appendChild(head);
+  const stem=document.createElement('div');
+  stem.className='qstem';
+  stem.innerHTML=viewQ.stem.replace(/(適切でないもの|該当しないもの|含まれないもの|誤っているもの)/g,'<span class="neg">$1</span>');
+  card.appendChild(stem);
+  const ul=document.createElement('ul');
+  ul.className='opts';
+  viewQ.opts.forEach((o,oi)=>{
+    const li=document.createElement('li');
+    li.className='opt';li.dataset.oi=oi;
+    li.innerHTML=`<span class="key">${KEYS[oi]}</span><span class="body">${o.t}</span><span class="mark"></span>`;
+    li.addEventListener('click',()=>choose(card,viewQ,qi,oi));
+    ul.appendChild(li);
+  });
+  card.appendChild(ul);
+  const exp=document.createElement('div');
+  exp.className='exp';
+  const inner=document.createElement('div');
+  inner.className='expinner';
+  inner.innerHTML=`
+    <div class="verdict" data-role="verdict"></div>
+    <p class="why"><b>正解 ${KEYS[viewQ.correct]}：</b>${q.why}</p>
+    <ul class="breakdown">
+      ${viewQ.opts.map((o,oi)=>`
+        <li>
+          <span class="bk ${oi===viewQ.correct?'o':'x'}">${KEYS[oi]}</span>
+          <span class="bktext"><span class="lab">${oi===viewQ.correct?'正解':'誤り'}：</span>${o.e}</span>
+        </li>`).join('')}
+    </ul>`;
+  exp.appendChild(inner);
+  card.appendChild(exp);
+  quiz.appendChild(card);
+});
+
+function choose(card,q,qi,oi){
+  if(card.classList.contains('done')) return;
+  card.classList.add('done');
+  const opts=card.querySelectorAll('.opt');
+  opts.forEach((el,i)=>{
+    el.classList.remove('pick');
+    if(i===q.correct) el.classList.add('correct');
+    if(i===oi && oi!==q.correct) el.classList.add('wrong');
+  });
+  const ok=(oi===q.correct);
+  const v=card.querySelector('[data-role="verdict"]');
+  v.textContent= ok ? '◎ 正解' : '✕ 不正解';
+  v.classList.add(ok?'ok':'ng');
+  answered++; if(ok) correct++;
+  answeredEl.textContent=answered;correctEl.textContent=correct;
+  bar.style.width=(answered/QUESTIONS.length*100)+'%';
+  live.textContent = ok ? `第${qi+1}問 正解` : `第${qi+1}問 不正解、正解は${KEYS[q.correct]}`;
+  if(answered===QUESTIONS.length) showResult();
+}
+
+function showResult(){
+  const r=document.getElementById('result');
+  document.getElementById('sc').textContent=correct;
+  const pct=Math.round(correct/QUESTIONS.length*100);
+  document.getElementById('scpct').textContent=pct+'%';
+  let m;
+  if(pct>=90) m='素晴らしい完成度。本番でも安定して得点できるレベルです。';
+  else if(pct>=75) m='合格圏内。誤った問題の解説を読み直して取りこぼしを潰しましょう。';
+  else if(pct>=60) m='あと一歩。ツールの分類と自動化の利点/リスクの区別を重点的に復習を。';
+  else m='基礎の定着が必要。テストツールの分類と自動化の利点/リスクの定義から整理しましょう。';
+  document.getElementById('scmsg').textContent=m;
+  r.classList.add('show');
+  r.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+document.getElementById('restart').addEventListener('click',()=>{
+  answered=0;correct=0;
+  answeredEl.textContent=0;correctEl.textContent=0;
+  bar.style.width='0%';
+  document.getElementById('result').classList.remove('show');
+  document.querySelectorAll('.q').forEach(card=>{
+    card.classList.remove('done');
+    card.querySelectorAll('.opt').forEach(el=>el.classList.remove('correct','wrong','pick'));
+    const v=card.querySelector('[data-role="verdict"]');
+    v.textContent='';v.classList.remove('ok','ng');
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+</script>
+</body>
+</html>

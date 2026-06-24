@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>JSTQB FL 第5章 演習問題</title>
+<style>
+  :root{
+    --ink:#1a1d24;--paper:#f7f4ec;--card:#ffffff;--line:#e3ddd0;
+    --accent:#c0392b;--good:#2a7d4f;--good-bg:#e7f3ec;--bad:#b23b3b;--bad-bg:#fae9e7;
+    --muted:#6f6a60;--pick:#3a4250;--pick-bg:#eef1f5;--seal:#1a1d24;
+    --shadow:0 1px 2px rgba(26,29,36,.06),0 8px 24px rgba(26,29,36,.06);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{background:var(--paper);color:var(--ink);
+    font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Yu Gothic",Meiryo,system-ui,sans-serif;
+    line-height:1.75;font-size:16px;-webkit-text-size-adjust:100%;padding-bottom:env(safe-area-inset-bottom);}
+  .wrap{max-width:680px;margin:0 auto;padding:0 16px;}
+  header{position:sticky;top:0;z-index:30;background:rgba(247,244,236,.86);
+    backdrop-filter:saturate(1.2) blur(10px);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top);}
+  .hbar{display:flex;align-items:center;gap:12px;padding:12px 16px;max-width:680px;margin:0 auto;}
+  .seal{flex:0 0 auto;width:42px;height:42px;border-radius:50%;background:var(--seal);color:#f7f4ec;
+    display:grid;place-items:center;font-weight:800;font-size:11px;letter-spacing:.04em;line-height:1.05;text-align:center;
+    box-shadow:inset 0 0 0 2px rgba(247,244,236,.15);}
+  .htext{flex:1 1 auto;min-width:0;}
+  .htext h1{margin:0;font-size:15px;font-weight:800;letter-spacing:.02em;}
+  .htext .sub{margin:0;font-size:11px;color:var(--muted);letter-spacing:.06em;}
+  .progress{height:4px;background:var(--line);border-radius:99px;overflow:hidden;margin:0 16px 10px;max-width:680px;}
+  @media(min-width:712px){.progress{margin-left:auto;margin-right:auto;}}
+  .progress > i{display:block;height:100%;width:0;background:var(--accent);transition:width .35s ease;}
+  .intro{margin:22px 0;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px 20px;box-shadow:var(--shadow);}
+  .intro .eyebrow{font-size:11px;letter-spacing:.22em;color:var(--accent);font-weight:800;text-transform:uppercase;margin-bottom:10px;}
+  .intro h2{margin:0 0 8px;font-size:22px;letter-spacing:.01em;}
+  .intro p{margin:6px 0;color:var(--muted);font-size:14px;}
+  .stats{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;}
+  .stat{flex:1 1 0;min-width:96px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:#fbf9f3;}
+  .stat b{display:block;font-size:20px;}
+  .stat span{font-size:11px;color:var(--muted);letter-spacing:.04em;}
+  .topics{margin:6px 0 0;padding:0;list-style:none;font-size:13px;color:var(--muted);}
+  .topics li{padding:4px 0 4px 18px;position:relative;}
+  .topics li::before{content:"";position:absolute;left:0;top:11px;width:7px;height:7px;border-radius:2px;background:var(--accent);}
+  .q{margin:16px 0;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;}
+  .qhead{display:flex;align-items:baseline;gap:10px;padding:16px 18px 6px;}
+  .qno{flex:0 0 auto;background:var(--seal);color:#f7f4ec;border-radius:8px;font-size:12px;font-weight:800;padding:3px 8px;letter-spacing:.02em;}
+  .qtag{font-size:10px;letter-spacing:.14em;color:var(--muted);font-weight:700;text-transform:uppercase;}
+  .qstem{padding:4px 18px 14px;font-size:15.5px;font-weight:600;}
+  .qstem .neg{color:var(--accent);font-weight:800;border-bottom:2px solid rgba(192,57,43,.3);}
+  .opts{list-style:none;margin:0;padding:0 14px 8px;}
+  .opt{display:flex;gap:11px;align-items:flex-start;border:1.5px solid var(--line);border-radius:12px;
+    padding:12px 13px;margin:8px 0;cursor:pointer;background:#fff;transition:border-color .15s,background .15s,transform .05s;font-size:14.5px;}
+  .opt:active{transform:scale(.995);}
+  .opt .key{flex:0 0 auto;width:26px;height:26px;border-radius:50%;border:1.5px solid var(--line);
+    display:grid;place-items:center;font-weight:800;font-size:13px;color:var(--pick);background:#fff;transition:all .15s;}
+  .opt .body{flex:1 1 auto;padding-top:1px;}
+  .opt.pick{border-color:var(--pick);background:var(--pick-bg);}
+  .opt.pick .key{background:var(--pick);color:#fff;border-color:var(--pick);}
+  .q.done .opt{cursor:default;}
+  .opt.correct{border-color:var(--good);background:var(--good-bg);}
+  .opt.correct .key{background:var(--good);color:#fff;border-color:var(--good);}
+  .opt.wrong{border-color:var(--bad);background:var(--bad-bg);}
+  .opt.wrong .key{background:var(--bad);color:#fff;border-color:var(--bad);}
+  .opt .mark{margin-left:auto;font-weight:800;font-size:15px;align-self:center;}
+  .opt.correct .mark::after{content:"\2713";color:var(--good);}
+  .opt.wrong .mark::after{content:"\2715";color:var(--bad);}
+  .exp{max-height:0;overflow:hidden;transition:max-height .45s ease;}
+  .q.done .exp{max-height:4000px;}
+  .expinner{margin:4px 14px 16px;border-top:1px dashed var(--line);padding-top:14px;}
+  .verdict{font-size:13px;font-weight:800;letter-spacing:.02em;margin-bottom:10px;}
+  .verdict.ok{color:var(--good);}.verdict.ng{color:var(--bad);}
+  .why{margin:0 0 10px;font-size:14px;background:#fbf9f3;border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:10px 12px;}
+  .why b{color:var(--accent);}
+  .breakdown{margin:0;padding:0;list-style:none;font-size:13.5px;}
+  .breakdown li{display:flex;gap:9px;padding:6px 0;border-bottom:1px solid #f0ece1;align-items:flex-start;}
+  .breakdown li:last-child{border-bottom:none;}
+  .bk{flex:0 0 auto;width:22px;height:22px;border-radius:6px;display:grid;place-items:center;font-weight:800;font-size:12px;}
+  .bk.o{background:var(--good-bg);color:var(--good);}
+  .bk.x{background:var(--bad-bg);color:var(--bad);}
+  .bktext{flex:1;}
+  .bktext .lab{font-weight:700;}
+  #result{margin:26px 0 16px;background:var(--seal);color:#f4f1ea;border-radius:18px;padding:26px 22px;text-align:center;display:none;box-shadow:var(--shadow);}
+  #result.show{display:block;}
+  #result .score{font-size:46px;font-weight:800;letter-spacing:-.02em;}
+  #result .score small{font-size:18px;color:#b9b3a6;font-weight:600;}
+  #result .pct{font-size:13px;letter-spacing:.18em;color:#c7b6a8;text-transform:uppercase;margin-top:2px;}
+  #result .msg{font-size:14px;color:#ddd6c8;margin-top:10px;}
+  #result button{margin-top:18px;background:var(--accent);color:#fff;border:none;border-radius:99px;padding:12px 26px;font-size:14px;font-weight:800;letter-spacing:.04em;cursor:pointer;}
+  footer{text-align:center;color:var(--muted);font-size:11px;letter-spacing:.05em;padding:8px 0 36px;}
+  .live{position:fixed;left:-9999px;}
+</style>
+</head>
+<body>
+<header>
+  <div class="hbar">
+    <div class="seal">JSTQB<br>FL</div>
+    <div class="htext">
+      <h1>第5章 テスト活動のマネジメント</h1>
+      <p class="sub">SYLLABUS 4.0 ・ CHAPTER 5</p>
+    </div>
+  </div>
+  <div class="progress"><i id="bar"></i></div>
+</header>
+
+<main class="wrap">
+  <section class="intro">
+    <div class="eyebrow">Chapter 5 Drill</div>
+    <h2>テスト活動のマネジメント</h2>
+    <p>シラバス4.0 第5章の細かい理解を問う21問演習。各設問は「なぜその選択肢が正解か」だけでなく、誤りの選択肢が<b>どこをどう取り違えているか</b>まで解説します。</p>
+    <div class="stats">
+      <div class="stat"><b id="answered">0</b><span>解答済み</span></div>
+      <div class="stat"><b id="correct">0</b><span>正解</span></div>
+      <div class="stat"><b id="total">0</b><span>総問題数</span></div>
+    </div>
+    <ul class="topics">
+      <li>5.1 テスト計画（計画書・開始/終了基準・見積り）</li>
+      <li>5.1 テストピラミッド・テストの四象限</li>
+      <li>5.2 リスクマネジメント（プロダクト/プロジェクトリスク・リスクベース）</li>
+      <li>5.3 テストのモニタリング・コントロール・テストレポート</li>
+      <li>5.4 構成管理（CM）　5.5 欠陥マネジメント</li>
+    </ul>
+  </section>
+
+  <div id="quiz"></div>
+
+  <section id="result">
+    <div class="pct">YOUR SCORE</div>
+    <div class="score"><span id="sc">0</span><small id="scden">/0</small></div>
+    <div class="pct" id="scpct">0%</div>
+    <div class="msg" id="scmsg"></div>
+    <button id="restart">もう一度挑戦する</button>
+  </section>
+
+  <footer>JSTQB Foundation Level シラバス4.0 準拠 ・ 学習用演習</footer>
+</main>
+
+<div class="live" aria-live="polite" id="live"></div>
+
+<script>
+const QUESTIONS = [
+  {
+    "tag": "5.1 計画プロセス",
+    "stem": "イテレーティブ開発モデルにおける計画プロセスを説明する文章の中で、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "リリース計画では、1回のイテレーションの終わりを見据えて、イテレーションのバックログを考慮した計画を立てる。",
+        "e": "誤り。これはイテレーション計画の説明。リリース計画はリリース全体を見据えた、より長期の計画。"
+      },
+      {
+        "t": "イテレーション計画は、プロダクトバックログの定義やユーザーストーリーの作成、受け入れ基準の作成を行うものである。",
+        "e": "誤り。プロダクトバックログの定義やユーザーストーリー・受け入れ基準の作成はリリース計画（より上位）に近い内容。イテレーション計画は当該イテレーションで実装する項目を選び詳細化する。"
+      },
+      {
+        "t": "リリース計画は、イテレーション計画に基づいてイテレーティブな開発が行われ、最後にリリースするタイミングで作成する。",
+        "e": "誤り。順序が逆。最初にリリース計画を立て、その内容をベースにイテレーション計画が立てられる。最後に作るのではない。"
+      },
+      {
+        "t": "リリース計画に関わるテスト担当者は、プロジェクトと品質のリスク分析やユーザーストーリーに関連するテスト工数の見積り、テストアプローチの決定などを行う。",
+        "e": "正しい。リリース計画ではテスト担当者がリスク分析・工数見積り・テストアプローチの決定などに関与する。"
+      }
+    ],
+    "correct": 3,
+    "why": "リリース計画ではテスト担当者が<b>リスク分析・テスト工数見積り・テストアプローチ決定</b>に関与する。リリース計画→イテレーション計画の順であり、順序を逆にした記述は誤り。"
+  },
+  {
+    "tag": "5.1 テスト工数見積り",
+    "stem": "テスト工数の見積り技法を説明する文章の中で、外挿（extrapolation）を説明しているものはどれか。",
+    "opts": [
+      {
+        "t": "現在のプロジェクトの早い時期に見積りが行われるもので、これまでにかかったテスト工数を観測し、それをもとに数学モデルを適用してこれからの工数を見積る方法である。",
+        "e": "正しい。外挿は実績データ（過去の工数）を観測し、数学モデルで今後を見積るメトリクスベースの技法。"
+      },
+      {
+        "t": "複数の専門家が経験に基づいて工数を推測し、その結果を議論して合意したものを見積りとする方法である。",
+        "e": "誤り。これはワイドバンドデルファイ（エキスパートベース）の説明。"
+      },
+      {
+        "t": "最も楽観的な推定値(a)、最も可能性の高い推定値(m)、最も悲観的な推定値(b)を専門家が作成し、一定の加重算術平均式で見積りを得る方法である。",
+        "e": "誤り。これは三点見積りの説明。"
+      },
+      {
+        "t": "組織内の過去の類似プロジェクトで収集されたテスト工数を基準にして、規模などに応じた比率をかけて見積る方法である。",
+        "e": "誤り。これは比率に基づく見積り（ratio-based）の説明。"
+      }
+    ],
+    "correct": 0,
+    "why": "外挿は<b>過去の実績工数を観測し数学モデルで今後を見積る</b>メトリクスベース技法。他の選択肢はワイドバンドデルファイ・三点見積り・比率に基づく見積りの説明である。"
+  },
+  {
+    "tag": "5.1 見積り技法の分類",
+    "stem": "テスト工数の見積り技法の分類として、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "外挿や比率に基づく見積りはメトリクスベース、ワイドバンドデルファイや三点見積りはエキスパートベースの技法である。",
+        "e": "正しい。実績データを使う外挿・比率はメトリクスベース、専門家の判断を使うワイドバンドデルファイ・三点見積りはエキスパートベース。"
+      },
+      {
+        "t": "外挿はエキスパートベース、ワイドバンドデルファイはメトリクスベースの技法である。",
+        "e": "誤り。分類が逆。外挿はメトリクスベース、ワイドバンドデルファイはエキスパートベース。"
+      },
+      {
+        "t": "すべての見積り技法はエキスパートベースに分類される。",
+        "e": "誤り。外挿・比率に基づく見積りはメトリクスベース。"
+      },
+      {
+        "t": "見積り技法に分類はなく、どれも同じ手法である。",
+        "e": "誤り。メトリクスベースとエキスパートベースという分類がある。"
+      }
+    ],
+    "correct": 0,
+    "why": "<b>メトリクスベース＝外挿・比率</b>（実績データ）、<b>エキスパートベース＝ワイドバンドデルファイ・三点見積り</b>（専門家の判断）。"
+  },
+  {
+    "tag": "5.1 テスト計画書",
+    "stem": "テスト計画書はテスト活動を概説するものである。テスト計画書に記載すべき内容として適切なものはどれか。",
+    "opts": [
+      {
+        "t": "テスト計画書には、テスト条件を落とし込んだものとしてテストケースやテストデータ、テスト環境、トレーサビリティなどの具体的内容を記載する。",
+        "e": "誤り。これはテスト設計／テスト実装の作業成果物の内容。テスト計画書は概説（範囲・目的・アプローチ等）を記載するもので、個々のテストケースの詳細ではない。"
+      },
+      {
+        "t": "テスト計画書には、テストを行うのに必要なテストウェアとして、テストプロシジャーやテストスイートなどを記載する。",
+        "e": "誤り。テストプロシジャーやテストスイートはテスト実装の成果物。テスト計画書に詳細を記載するものではない。"
+      },
+      {
+        "t": "テスト計画書には、テストの範囲や目的、リスクを決定したり、テストに対する包括的なアプローチを定義したりする内容が含まれる。",
+        "e": "正しい。テスト計画書は範囲・目的・リスク・包括的アプローチなどを概説する文書。"
+      },
+      {
+        "t": "プロダクトのテスト計画は、プロダクトのライフサイクル全体を通して行う活動だが、メンテナンスフェーズまでは延長されない。",
+        "e": "誤り。プロダクトのライフサイクルはプロジェクトの範囲を越えてメンテナンスフェーズまで延長される（『ソフトウェア開発ライフサイクル』という文言ではない点に注意）。"
+      }
+    ],
+    "correct": 2,
+    "why": "テスト計画書は<b>範囲・目的・リスク・包括的アプローチ</b>を概説する文書。設計／実装の成果物の説明や、プロダクトのライフサイクルがメンテナンスまで延長される点を誤る記述に注意。"
+  },
+  {
+    "tag": "5.1 開始/終了基準",
+    "stem": "テストの開始基準と終了基準を説明する文章の中で、適切でないものはどれか。",
+    "opts": [
+      {
+        "t": "開始基準が満たされていないままにテスト活動を開始すると、難易度が上がり、時間やコストが増え、リスクが高まる。",
+        "e": "適切。準備不足のまま開始するとコスト・リスクが増える。"
+      },
+      {
+        "t": "終了基準が満たされていないままにテスト活動を終了すると、未解決・潜在的な欠陥が多く残り、リリース後に故障を起こすリスクが高まる。",
+        "e": "適切。終了基準未達のまま終わると残存欠陥のリスクが高まる。"
+      },
+      {
+        "t": "テスト終了基準では、テスト活動を終了するための達成条件を定義する。達成条件には、運用環境が準備できている、メンテナンスチームがアサインできている、ユーザー教育が終了しているなどがある。",
+        "e": "これが正解（不適切）。テスト終了基準は、テスト対象のテストレベルで達成すべき条件からなる。運用環境の準備・メンテナンスチームのアサイン・ユーザー教育の完了などは次のレベルや運用の準備であって、テスト終了基準とは直接関係ない。"
+      },
+      {
+        "t": "テスト終了基準を満たしていない場合でも、ビジネスニーズによりステークホルダーがリリースするリスクを見直して受け入れた場合は、テスト活動を切り上げる場合もある。",
+        "e": "適切。ビジネス判断でリスクを受容しテストを切り上げることはある。"
+      }
+    ],
+    "correct": 2,
+    "why": "テスト終了基準は<b>当該テストレベルで達成すべき条件</b>。運用環境準備・チームアサイン・ユーザー教育完了などは次レベル/運用の準備で、テスト終了基準とは直接関係ない。"
+  },
+  {
+    "tag": "5.1 工数の影響要因",
+    "stem": "テスト工数を見積る上で適切でないものはどれか。",
+    "opts": [
+      {
+        "t": "テスト工数に影響する要因には、プロダクトの特性・開発プロセスの特性・人の特性のほか、テストした結果も含まれる。検出した欠陥の数と重要度によって再作業が必要となる場合があるからである。",
+        "e": "適切。検出欠陥の数・重要度による再作業もテスト工数に影響する。"
+      },
+      {
+        "t": "プロダクトに関連するリスクが高い、テストベースの品質が悪い、プロダクトの規模が大きい、品質特性の要件が厳しいなどは、どれもテスト工数を大きくする要因である。",
+        "e": "適切。これらはいずれも工数を増やす要因。"
+      },
+      {
+        "t": "使用している開発モデルやテストプロセス、納期のタイトさなどは、基本的にテスト工数に影響しない。開発プロセスが変わっても、やるべきボリュームは一定である。",
+        "e": "これが正解（不適切）。開発モデルやテストプロセス、納期のプレッシャーなどはテスト工数に大きく影響する。やるべきボリュームが一定というのは誤り。"
+      },
+      {
+        "t": "テストを見積る技術には、メトリクスベースとエキスパートベースがある。外挿は前者の例で、ワイドバンドデルファイは後者の例である。",
+        "e": "適切。見積り技法の分類として正しい。"
+      }
+    ],
+    "correct": 2,
+    "why": "開発モデル・テストプロセス・納期のプレッシャーは<b>テスト工数に大きく影響</b>する。影響しないとする記述は誤り。"
+  },
+  {
+    "tag": "5.3 メトリクス",
+    "stem": "テストのモニタリングとコントロールにおけるメトリクスの説明で、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "メトリクスとは、テストベースの各要素とテストケースの関係をひもづけることで、カバレッジの測定に役立つものである。",
+        "e": "誤り。これはトレーサビリティの説明。メトリクスは活動を定量化して管理しやすくした指標。"
+      },
+      {
+        "t": "モニタリングで収集するメトリクスは、テスト途中の品質情報ではなく、対象のテストレベルが完了して情報が確定したときの品質情報サマリーである。",
+        "e": "誤り。テスト完了時だけでなく、テスト活動期間中にもメトリクスを収集し、必要に応じてコントロールする。"
+      },
+      {
+        "t": "テストのコントロールとは、モニタリングで収集した欠陥情報をもとに、欠陥を修正して取り除くことである。",
+        "e": "誤り。コントロールはモニタリング結果をもとに計画を補正するアクションを起こすことで、欠陥を修正（デバッグ）することではない。"
+      },
+      {
+        "t": "代表的なメトリクスとして、テストケースの準備状況、テストケースの実行状況、欠陥情報などの計画と実績値がある。",
+        "e": "正しい。準備状況・実行状況・欠陥情報などの計画値と実績値は代表的なテストメトリクス。"
+      }
+    ],
+    "correct": 3,
+    "why": "メトリクスは活動を定量化した指標で、<b>テストケース準備/実行状況・欠陥情報の計画と実績</b>が代表例。他の選択肢はトレーサビリティの説明、「期間中は収集しない」とする誤り、「コントロール＝欠陥修正」とする誤りを含む。"
+  },
+  {
+    "tag": "5.3 テストレポート",
+    "stem": "テストのモニタリングとコントロールにおけるテストレポートの説明で、適切でないものはどれか。",
+    "opts": [
+      {
+        "t": "テストレポートには、テスト活動期間中に作成するテスト進捗レポートと、テスト完了時に作成するテスト完了レポートがある。",
+        "e": "適切。進捗レポートと完了レポートの2種がある。"
+      },
+      {
+        "t": "テスト完了レポートでは、テスト終了時点における残存リスクを明確にする。その結果、リスクを認識した上で次のフェーズを開始できる。",
+        "e": "適切。完了レポートで残存リスクを明確にする、という記述は正しい。"
+      },
+      {
+        "t": "テストの終盤にテスト完了レポートを作成して、そこに報告されている内容がテスト終了基準を達成しているかを判定する。テスト終了基準を達成していると判定した場合にテストを終了する。",
+        "e": "これが正解（不適切）。手順が逆。テスト活動中にその都度作成するテスト進捗レポートでテスト終了基準の達成を判断し、達成していた場合にテスト完了レポートを作成する。"
+      },
+      {
+        "t": "テストレポートの内容は読み手に応じて変わる。技術に精通した読み手と経営者向けでは、情報の種類や量を変えるべきである。",
+        "e": "適切。読み手に応じて内容を調整するのは正しい。"
+      }
+    ],
+    "correct": 2,
+    "why": "手順が逆。<b>進捗レポートで終了基準の達成を判断</b>し、達成していたら<b>完了レポートを作成</b>する。完了レポートで達成判定するのではない。"
+  },
+  {
+    "tag": "5.2 リスクの種類",
+    "stem": "リスクにはプロダクトリスクとプロジェクトリスクがある。それらの説明で最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "ソフトウェアの意図されている機能が仕様どおりに動かないのは、プロダクトリスクである。",
+        "e": "正しい。プロダクト（成果物）の品質に関わるリスクはプロダクトリスク。"
+      },
+      {
+        "t": "ユーザーエクスペリエンスの反応が期待と異なるのは、プロジェクトリスクである。",
+        "e": "誤り。UXが期待と異なるのはプロダクト（成果物の品質）に関わるのでプロダクトリスク。"
+      },
+      {
+        "t": "テスト要員が不足してテストの進捗が遅れるのは、プロダクトリスクである。",
+        "e": "誤り。要員不足・進捗遅延はプロジェクト（管理・遂行）に関わるのでプロジェクトリスク。"
+      },
+      {
+        "t": "ソフトウェアの機能がユーザーのニーズどおりに動かないのは、プロジェクトリスクである。",
+        "e": "誤り。ニーズどおり動かないのは成果物の品質に関わるのでプロダクトリスク。"
+      }
+    ],
+    "correct": 0,
+    "why": "<b>プロダクトリスク＝成果物の品質</b>（機能不全・UX不適合等）、<b>プロジェクトリスク＝管理/遂行</b>（要員不足・遅延等）。"
+  },
+  {
+    "tag": "5.2 リスクレベル",
+    "stem": "リスクとリスクレベルについて、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "リスクレベルは、リスク（否定的な事象）が起きる可能性（発生確率）と、その影響度（重大さ）の掛け算で評価される。",
+        "e": "正しい。リスクレベル＝発生可能性×影響度で評価する。"
+      },
+      {
+        "t": "リスクレベルは発生可能性のみで決まり、影響度は関係ない。",
+        "e": "誤り。影響度も掛け合わせて評価する。"
+      },
+      {
+        "t": "リスクレベルは影響度のみで決まり、発生可能性は関係ない。",
+        "e": "誤り。発生可能性も掛け合わせて評価する。"
+      },
+      {
+        "t": "リスクレベルはテスト工数の実績値そのものである。",
+        "e": "誤り。リスクレベルは工数の実績値ではなく、可能性×影響度の評価。"
+      }
+    ],
+    "correct": 0,
+    "why": "リスクレベル＝<b>発生可能性 × 影響度</b>。両方を掛け合わせて評価する。"
+  },
+  {
+    "tag": "5.2 リスクベースドテスト",
+    "stem": "リスクベースドテストの考え方として、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "リスクレベルの高い部分に多くのテスト労力を集中させ、リスクの低い部分には相対的に少ない労力を配分する。",
+        "e": "正しい。リスクベースドテストはリスクの高い領域に労力を集中させる（全数テスト不可能への現実的対応）。"
+      },
+      {
+        "t": "すべての部分に均等にテスト労力を配分する。",
+        "e": "誤り。均等配分はリスクベースの考え方ではない。リスクに応じて重み付けする。"
+      },
+      {
+        "t": "リスクの低い部分から優先的にテストする。",
+        "e": "誤り。優先するのはリスクの高い部分。"
+      },
+      {
+        "t": "リスク分析はテスト終了後にのみ行う。",
+        "e": "誤り。リスク分析は早期から継続的に行い、テストの優先度付けに使う。"
+      }
+    ],
+    "correct": 0,
+    "why": "リスクベースドテストは<b>リスクの高い領域に労力を集中</b>する。リスク分析でテストの優先度を決める。"
+  },
+  {
+    "tag": "5.4 構成管理(CM)",
+    "stem": "テストにおける構成管理（CM）を説明する文章の中で、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "構成管理はソフトウェアの内部構成に焦点を当てるテストで、ソフトウェアの内部構造・設計・実装に基づいてテストケースが作成される。",
+        "e": "誤り。これはホワイトボックステストの説明。構成管理はテストである。構成管理は成果物のバージョンや一貫性を維持する管理活動。"
+      },
+      {
+        "t": "テストにおける構成管理の対象アイテムは、テスト計画書やテスト戦略、テストケースなどのテストの作業成果物であるが、テスト環境などの作業成果物でないものは対象としない。",
+        "e": "誤り。テスト環境もテスト実装プロセスの作業成果物の1つであり、構成管理の対象となる。"
+      },
+      {
+        "t": "構成管理のベースラインとは、特定の時点におけるプロジェクトの基準を表したもので、プロジェクトの計画やスケジュールなどの情報が承認された状態である。",
+        "e": "誤り。これはプロジェクト管理における計画・見通しの履歴管理の説明。構成管理のベースラインは、特定の（承認された）時点の構成アイテムの状態で、これを履歴管理して以前の状態に戻すこともできる。"
+      },
+      {
+        "t": "テストにおける構成管理では、テストの作業成果物のバージョンコントロールを行うだけではなく、テスト対象のバージョンとのトレーサビリティを維持する。",
+        "e": "正しい。構成管理はテストウェアのバージョン管理に加え、テスト対象バージョンとのトレーサビリティを維持する。"
+      }
+    ],
+    "correct": 3,
+    "why": "構成管理は<b>テストウェアのバージョン管理＋テスト対象バージョンとのトレーサビリティ維持</b>。ホワイトボックスの説明との混同、「テスト環境は対象外」とする誤り、ベースラインの定義の取り違えに注意。"
+  },
+  {
+    "tag": "5.4 ベースライン",
+    "stem": "構成管理のベースライン（baseline）の説明として、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "特定の（承認された）時点における構成アイテムの状態で、これを基準に履歴管理し、必要なら以前のベースラインに戻すこともできる。",
+        "e": "正しい。ベースラインは承認された時点の構成アイテムの状態で、履歴管理・復元の基準になる。"
+      },
+      {
+        "t": "テスト工数の実績値を集計した指標である。",
+        "e": "誤り。それはメトリクスの話。ベースラインとは別。"
+      },
+      {
+        "t": "リスクレベルを算出する計算式である。",
+        "e": "誤り。リスクレベルとは無関係。"
+      },
+      {
+        "t": "プロジェクトのスケジュールそのものを指す。",
+        "e": "誤り。スケジュールそのものではなく、承認時点の構成アイテムの状態を指す。"
+      }
+    ],
+    "correct": 0,
+    "why": "ベースラインは<b>承認された時点の構成アイテムの状態</b>。履歴管理し、以前の状態へ戻す基準にもなる。"
+  },
+  {
+    "tag": "5.5 欠陥マネジメント",
+    "stem": "欠陥マネジメントの説明として、適切でないものはどれか。",
+    "opts": [
+      {
+        "t": "テストで発見した欠陥は、すべて記録し、調査して、解決に至るまで追跡する。これらの一連の管理を欠陥マネジメントと呼ぶ。",
+        "e": "適切。記録→調査→追跡の一連の管理が欠陥マネジメント。"
+      },
+      {
+        "t": "テストで偽陽性が疑われる欠陥が発見された場合、そのまま記録・報告すると開発担当者の負担を大きくしてしまうので、調査して偽陽性かどうかの判定がつくまで記録・報告はしない。",
+        "e": "これが正解（不適切）。偽陽性を減らすために確認してから記録・報告すべきだが、報告漏れを防ぐために基本的にすべて記録して調査対象とする。判定がつくまで記録・報告しないのは誤り。"
+      },
+      {
+        "t": "欠陥レポートは、開発担当者に調査すべき故障が発生したことを知らせる目的のほかに、テストマネージャーに作業成果物の品質を判断する材料を提供する目的もある。",
+        "e": "適切。欠陥レポートには通知と品質判断材料の提供という目的がある。"
+      },
+      {
+        "t": "動的テストの欠陥レポートには、発見した欠陥の内容だけでなく、テストアイテムやSDLCのフェーズ、修正の緊急度や優先度、欠陥追跡用のステータスなどの情報も含める。",
+        "e": "適切。欠陥レポートには多様な属性情報を含める。"
+      }
+    ],
+    "correct": 1,
+    "why": "偽陽性が疑われても、<b>報告漏れを防ぐため基本的にすべて記録・調査対象</b>とする。判定がつくまで記録・報告しないのは誤り。"
+  },
+  {
+    "tag": "5.5 欠陥レポート",
+    "stem": "動的テストにおける欠陥レポートに含めるべき情報として、最も適切でないものはどれか。",
+    "opts": [
+      {
+        "t": "テストアイテムやSDLCのフェーズ、再現手順などの情報。",
+        "e": "適切。テストアイテム・フェーズ・再現手順は欠陥レポートの基本情報。"
+      },
+      {
+        "t": "修正の緊急度や優先度、欠陥を追跡するためのステータス。",
+        "e": "適切。緊急度・優先度・ステータスも含める。"
+      },
+      {
+        "t": "発見した欠陥（観測した故障と期待結果）の内容。",
+        "e": "適切。観測内容と期待結果は欠陥レポートの中核情報。"
+      },
+      {
+        "t": "開発担当者の人事評価や個人的な能力評価。",
+        "e": "これが正解（不適切）。欠陥レポートに個人の人事評価を含めるのは不適切で、心理的にも好ましくない。"
+      }
+    ],
+    "correct": 3,
+    "why": "欠陥レポートは<b>テストアイテム・フェーズ・再現手順・緊急度・優先度・ステータス・観測内容</b>等を含む。個人の人事評価を含めるのは不適切。"
+  },
+  {
+    "tag": "5.1 テストピラミッド",
+    "stem": "テストピラミッドモデルを説明する文章の中で、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "テストピラミッドは、テストプロセスを階層化したもので、最下層が「テスト計画」、最上位層が「テスト完了」の7層となる。",
+        "e": "誤り。階層化するものはテストプロセスではなく、自動テストの粒度（コンポーネントテストなど下位ほど多く、UI/E2Eなど上位ほど少なく）。7層という記述も誤り。"
+      },
+      {
+        "t": "テストピラミッドは、テストの目的を共有するためのモデルで、「テクノロジー指向」「チームを支援する」「ビジネス指向」「プロダクトを批評する」のどれとどれを目的としているかが明確にわかる。",
+        "e": "誤り。これはテストの四象限の説明。"
+      },
+      {
+        "t": "テストピラミッドは、テストの種類ごとの階層を作り、どのテストにどれだけのリソース（時間・人的資源・コスト）を割り当てるかを判断することで、自動テストの戦略を考えるのに役立つガイドラインである。",
+        "e": "正しい。テストピラミッドは自動テストの粒度ごとに階層化し、リソース配分・自動化戦略を考えるガイドライン。下位（コンポーネント等）を多く、上位（E2E等）を少なく。"
+      },
+      {
+        "t": "テストピラミッドは、プロダクトがユーザーニーズやステークホルダーのビジョンを満たしているかという受け入れ基準をベースとしたテストファーストのモデルである。",
+        "e": "誤り。これは受け入れテスト駆動開発（ATDD）寄りの説明。"
+      }
+    ],
+    "correct": 2,
+    "why": "テストピラミッドは<b>自動テストの粒度ごとに階層化し、リソース配分・自動化戦略を考えるガイドライン</b>。下位を多く・上位を少なく。「7層」とする記述や、四象限・ATDDの説明との取り違えに注意。"
+  },
+  {
+    "tag": "5.1 テストの四象限",
+    "stem": "テストの四象限（テクノロジー指向/ビジネス指向 × チームを支援/プロダクトを批評）の組み合わせを説明した文章の中で、適切でないものはどれか。",
+    "opts": [
+      {
+        "t": "第一象限（テクノロジー指向・チームを支援する）には、通常、コンポーネントテストやコンポーネント統合テストが含まれる。",
+        "e": "適切。第一象限はチームを支援する技術寄りのテスト（単体・統合）。"
+      },
+      {
+        "t": "第二象限（ビジネス指向・チームを支援する）には、通常、機能テストやユーザーストーリーテストが含まれる。",
+        "e": "適切。第二象限はチームを支援するビジネス寄りのテスト（機能・ユーザーストーリー）。"
+      },
+      {
+        "t": "第三象限（ビジネス指向・プロダクトを批評する）には、通常、探索的テストや受け入れテストが含まれる。",
+        "e": "適切。第三象限はプロダクトを批評するビジネス寄りのテスト（探索的・受け入れ・使用性）。"
+      },
+      {
+        "t": "第四象限（テクノロジー指向・プロダクトを批評する）には、通常、セキュリティテストや使用性テストが含まれる。",
+        "e": "これが正解（不適切）。第四象限はセキュリティ・性能などの技術寄りの非機能テスト。使用性テストはユーザビリティでビジネス指向であり第三象限に含まれるため、第四象限の例として使用性を挙げるのは不適切。"
+      }
+    ],
+    "correct": 3,
+    "why": "第四象限は<b>セキュリティ・性能などの技術寄り非機能テスト</b>。使用性（ユーザビリティ）はビジネス指向で第三象限に含まれるため、第四象限に入れるDが不適切。"
+  },
+  {
+    "tag": "5.3 モニタリング",
+    "stem": "テストのモニタリング（test monitoring）の目的として、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "テスト活動の進捗・状況をメトリクスで継続的に把握し、計画との差異を見える化する。",
+        "e": "正しい。モニタリングは進捗・状況を継続的に把握し、計画との差異を可視化する。"
+      },
+      {
+        "t": "欠陥を実際に修正して取り除く。",
+        "e": "誤り。それはデバッグ。"
+      },
+      {
+        "t": "計画を補正する是正アクションを起こす。",
+        "e": "誤り。それはコントロールの活動。モニタリングはその前段の把握。"
+      },
+      {
+        "t": "テストケースの内部構造を解析する。",
+        "e": "誤り。モニタリングの目的ではない。"
+      }
+    ],
+    "correct": 0,
+    "why": "モニタリングは<b>進捗・状況をメトリクスで継続把握し計画との差異を可視化</b>する。差異への是正はコントロール。"
+  },
+  {
+    "tag": "5.2 リスクマネジメント",
+    "stem": "リスクマネジメントの活動の流れとして、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "リスクの識別 → リスクの分析（可能性・影響度の評価）→ リスクの軽減（対応）→ リスクのモニタリング",
+        "e": "正しい。識別→分析→軽減→モニタリングという流れが一般的。"
+      },
+      {
+        "t": "リスクの軽減 → リスクの識別 → リスクの分析 → リスクのモニタリング",
+        "e": "誤り。軽減を最初に行うのは順序として不適切。まず識別する。"
+      },
+      {
+        "t": "リスクのモニタリング → リスクの軽減 → リスクの識別 → リスクの分析",
+        "e": "誤り。順序が崩れている。"
+      },
+      {
+        "t": "リスクの分析 → リスクの識別 → リスクのモニタリング → リスクの軽減",
+        "e": "誤り。識別が分析より後に来ており不正確。"
+      }
+    ],
+    "correct": 0,
+    "why": "リスクマネジメントは<b>識別→分析→軽減→モニタリング</b>の流れ。分析でリスクレベル（可能性×影響度）を評価し、テストの優先度に反映する。"
+  },
+  {
+    "tag": "5.4 構成アイテム",
+    "stem": "テストにおける構成管理の対象（構成アイテム）として、最も適切でないものはどれか。",
+    "opts": [
+      {
+        "t": "テスト計画書・テスト戦略・テストケースなどのテストウェア。",
+        "e": "適切。テストウェアは構成管理の対象。"
+      },
+      {
+        "t": "テスト環境（ツール構成・データなど）。",
+        "e": "適切。テスト環境もテスト実装の成果物として構成管理の対象。"
+      },
+      {
+        "t": "テスト対象（テストアイテム）のバージョン。",
+        "e": "適切。テスト対象のバージョンも管理し、テストウェアとのトレーサビリティを維持する。"
+      },
+      {
+        "t": "開発担当者の勤務時間や残業時間の記録。",
+        "e": "これが正解（不適切）。勤怠記録はテストの構成アイテムではない。"
+      }
+    ],
+    "correct": 3,
+    "why": "構成アイテムは<b>テストウェア・テスト環境・テスト対象バージョン</b>など。勤怠記録は構成管理の対象ではない。"
+  },
+  {
+    "tag": "5.1 三点見積り",
+    "stem": "三点見積り（three-point estimation）の説明として、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "最も楽観的な値(a)・最も可能性の高い値(m)・最も悲観的な値(b)を見積り、加重平均（例：(a+4m+b)/6）で工数を算出する。",
+        "e": "正しい。三点見積りは楽観・最頻・悲観の3値を加重平均する手法。"
+      },
+      {
+        "t": "過去の実績工数を観測し数学モデルで今後を見積る。",
+        "e": "誤り。それは外挿（メトリクスベース）の説明。"
+      },
+      {
+        "t": "複数の専門家が推測し議論して合意する。",
+        "e": "誤り。それはワイドバンドデルファイの説明。"
+      },
+      {
+        "t": "類似プロジェクトの実績に比率をかけて見積る。",
+        "e": "誤り。それは比率に基づく見積りの説明。"
+      }
+    ],
+    "correct": 0,
+    "why": "三点見積りは<b>楽観(a)・最頻(m)・悲観(b)の加重平均</b>（(a+4m+b)/6など）。エキスパートベースの技法。"
+  }
+];
+
+const KEYS=['A','B','C','D'];
+const quiz=document.getElementById('quiz');
+const bar=document.getElementById('bar');
+const answeredEl=document.getElementById('answered');
+const correctEl=document.getElementById('correct');
+const totalEl=document.getElementById('total');
+const live=document.getElementById('live');
+let answered=0, correct=0;
+totalEl.textContent=QUESTIONS.length;
+document.getElementById('scden').textContent='/'+QUESTIONS.length;
+
+/* ===== 選択肢のシャッフル =====
+   ページを開くたびに各設問の選択肢順をランダム化。元データの correct は保持し、表示用に正解位置を再計算する。 */
+function withShuffledOptions(q){
+  const opts = q.opts.map((o, originalIndex) => ({...o, originalIndex}));
+  for(let i = opts.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [opts[i], opts[j]] = [opts[j], opts[i]];
+  }
+  return { ...q, opts, correct: opts.findIndex(o => o.originalIndex === q.correct) };
+}
+
+QUESTIONS.forEach((q,qi)=>{
+  const viewQ = withShuffledOptions(q);
+  const card=document.createElement('section');
+  card.className='q';card.dataset.qi=qi;
+  const head=document.createElement('div');
+  head.className='qhead';
+  head.innerHTML=`<span class="qno">Q${qi+1}</span><span class="qtag">${viewQ.tag}</span>`;
+  card.appendChild(head);
+  const stem=document.createElement('div');
+  stem.className='qstem';
+  stem.innerHTML=viewQ.stem.replace(/(適切でないもの|該当しないもの|含まれないもの|誤っているもの)/g,'<span class="neg">$1</span>');
+  card.appendChild(stem);
+  const ul=document.createElement('ul');
+  ul.className='opts';
+  viewQ.opts.forEach((o,oi)=>{
+    const li=document.createElement('li');
+    li.className='opt';li.dataset.oi=oi;
+    li.innerHTML=`<span class="key">${KEYS[oi]}</span><span class="body">${o.t}</span><span class="mark"></span>`;
+    li.addEventListener('click',()=>choose(card,viewQ,qi,oi));
+    ul.appendChild(li);
+  });
+  card.appendChild(ul);
+  const exp=document.createElement('div');
+  exp.className='exp';
+  const inner=document.createElement('div');
+  inner.className='expinner';
+  inner.innerHTML=`
+    <div class="verdict" data-role="verdict"></div>
+    <p class="why"><b>正解 ${KEYS[viewQ.correct]}：</b>${q.why}</p>
+    <ul class="breakdown">
+      ${viewQ.opts.map((o,oi)=>`
+        <li>
+          <span class="bk ${oi===viewQ.correct?'o':'x'}">${KEYS[oi]}</span>
+          <span class="bktext"><span class="lab">${oi===viewQ.correct?'正解':'誤り'}：</span>${o.e}</span>
+        </li>`).join('')}
+    </ul>`;
+  exp.appendChild(inner);
+  card.appendChild(exp);
+  quiz.appendChild(card);
+});
+
+function choose(card,q,qi,oi){
+  if(card.classList.contains('done')) return;
+  card.classList.add('done');
+  const opts=card.querySelectorAll('.opt');
+  opts.forEach((el,i)=>{
+    el.classList.remove('pick');
+    if(i===q.correct) el.classList.add('correct');
+    if(i===oi && oi!==q.correct) el.classList.add('wrong');
+  });
+  const ok=(oi===q.correct);
+  const v=card.querySelector('[data-role="verdict"]');
+  v.textContent= ok ? '◎ 正解' : '✕ 不正解';
+  v.classList.add(ok?'ok':'ng');
+  answered++; if(ok) correct++;
+  answeredEl.textContent=answered;correctEl.textContent=correct;
+  bar.style.width=(answered/QUESTIONS.length*100)+'%';
+  live.textContent = ok ? `第${qi+1}問 正解` : `第${qi+1}問 不正解、正解は${KEYS[q.correct]}`;
+  if(answered===QUESTIONS.length) showResult();
+}
+
+function showResult(){
+  const r=document.getElementById('result');
+  document.getElementById('sc').textContent=correct;
+  const pct=Math.round(correct/QUESTIONS.length*100);
+  document.getElementById('scpct').textContent=pct+'%';
+  let m;
+  if(pct>=90) m='素晴らしい完成度。本番でも安定して得点できるレベルです。';
+  else if(pct>=75) m='合格圏内。誤った問題の解説を読み直して取りこぼしを潰しましょう。';
+  else if(pct>=60) m='あと一歩。誤り選択肢の「どこを取り違えているか」を重点的に復習を。';
+  else m='基礎の定着が必要。見積り技法・リスク種別・モニタリング/コントロールの定義から整理しましょう。';
+  document.getElementById('scmsg').textContent=m;
+  r.classList.add('show');
+  r.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+document.getElementById('restart').addEventListener('click',()=>{
+  answered=0;correct=0;
+  answeredEl.textContent=0;correctEl.textContent=0;
+  bar.style.width='0%';
+  document.getElementById('result').classList.remove('show');
+  document.querySelectorAll('.q').forEach(card=>{
+    card.classList.remove('done');
+    card.querySelectorAll('.opt').forEach(el=>el.classList.remove('correct','wrong','pick'));
+    const v=card.querySelector('[data-role="verdict"]');
+    v.textContent='';v.classList.remove('ok','ng');
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+</script>
+</body>
+</html>

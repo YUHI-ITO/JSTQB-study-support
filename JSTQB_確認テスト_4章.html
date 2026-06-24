@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>JSTQB FL 第4章 演習問題</title>
+<style>
+  :root{
+    --ink:#1a1d24;--paper:#f7f4ec;--card:#ffffff;--line:#e3ddd0;
+    --accent:#c0392b;--good:#2a7d4f;--good-bg:#e7f3ec;--bad:#b23b3b;--bad-bg:#fae9e7;
+    --muted:#6f6a60;--pick:#3a4250;--pick-bg:#eef1f5;--seal:#1a1d24;
+    --shadow:0 1px 2px rgba(26,29,36,.06),0 8px 24px rgba(26,29,36,.06);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{background:var(--paper);color:var(--ink);
+    font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Yu Gothic",Meiryo,system-ui,sans-serif;
+    line-height:1.75;font-size:16px;-webkit-text-size-adjust:100%;padding-bottom:env(safe-area-inset-bottom);}
+  .wrap{max-width:680px;margin:0 auto;padding:0 16px;}
+  header{position:sticky;top:0;z-index:30;background:rgba(247,244,236,.86);
+    backdrop-filter:saturate(1.2) blur(10px);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top);}
+  .hbar{display:flex;align-items:center;gap:12px;padding:12px 16px;max-width:680px;margin:0 auto;}
+  .seal{flex:0 0 auto;width:42px;height:42px;border-radius:50%;background:var(--seal);color:#f7f4ec;
+    display:grid;place-items:center;font-weight:800;font-size:11px;letter-spacing:.04em;line-height:1.05;text-align:center;
+    box-shadow:inset 0 0 0 2px rgba(247,244,236,.15);}
+  .htext{flex:1 1 auto;min-width:0;}
+  .htext h1{margin:0;font-size:15px;font-weight:800;letter-spacing:.02em;}
+  .htext .sub{margin:0;font-size:11px;color:var(--muted);letter-spacing:.06em;}
+  .progress{height:4px;background:var(--line);border-radius:99px;overflow:hidden;margin:0 16px 10px;max-width:680px;}
+  @media(min-width:712px){.progress{margin-left:auto;margin-right:auto;}}
+  .progress > i{display:block;height:100%;width:0;background:var(--accent);transition:width .35s ease;}
+  .intro{margin:22px 0;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px 20px;box-shadow:var(--shadow);}
+  .intro .eyebrow{font-size:11px;letter-spacing:.22em;color:var(--accent);font-weight:800;text-transform:uppercase;margin-bottom:10px;}
+  .intro h2{margin:0 0 8px;font-size:22px;letter-spacing:.01em;}
+  .intro p{margin:6px 0;color:var(--muted);font-size:14px;}
+  .stats{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;}
+  .stat{flex:1 1 0;min-width:96px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:#fbf9f3;}
+  .stat b{display:block;font-size:20px;}
+  .stat span{font-size:11px;color:var(--muted);letter-spacing:.04em;}
+  .topics{margin:6px 0 0;padding:0;list-style:none;font-size:13px;color:var(--muted);}
+  .topics li{padding:4px 0 4px 18px;position:relative;}
+  .topics li::before{content:"";position:absolute;left:0;top:11px;width:7px;height:7px;border-radius:2px;background:var(--accent);}
+  .q{margin:16px 0;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;}
+  .qhead{display:flex;align-items:baseline;gap:10px;padding:16px 18px 6px;}
+  .qno{flex:0 0 auto;background:var(--seal);color:#f7f4ec;border-radius:8px;font-size:12px;font-weight:800;padding:3px 8px;letter-spacing:.02em;}
+  .qtag{font-size:10px;letter-spacing:.14em;color:var(--muted);font-weight:700;text-transform:uppercase;}
+  .qstem{padding:4px 18px 14px;font-size:15.5px;font-weight:600;}
+  .qstem .neg{color:var(--accent);font-weight:800;border-bottom:2px solid rgba(192,57,43,.3);}
+  .qfig{margin:0 18px 14px;padding:12px 14px;background:#fbf9f3;border:1px solid var(--line);border-radius:10px;font-size:13.5px;color:#46423a;}
+  .qfig table{border-collapse:collapse;width:100%;margin-top:6px;font-size:13px;}
+  .qfig th,.qfig td{border:1px solid var(--line);padding:4px 8px;text-align:left;}
+  .qfig th{background:#efe9dc;}
+  .opts{list-style:none;margin:0;padding:0 14px 8px;}
+  .opt{display:flex;gap:11px;align-items:flex-start;border:1.5px solid var(--line);border-radius:12px;
+    padding:12px 13px;margin:8px 0;cursor:pointer;background:#fff;transition:border-color .15s,background .15s,transform .05s;font-size:14.5px;}
+  .opt:active{transform:scale(.995);}
+  .opt .key{flex:0 0 auto;width:26px;height:26px;border-radius:50%;border:1.5px solid var(--line);
+    display:grid;place-items:center;font-weight:800;font-size:13px;color:var(--pick);background:#fff;transition:all .15s;}
+  .opt .body{flex:1 1 auto;padding-top:1px;}
+  .opt.pick{border-color:var(--pick);background:var(--pick-bg);}
+  .opt.pick .key{background:var(--pick);color:#fff;border-color:var(--pick);}
+  .q.done .opt{cursor:default;}
+  .opt.correct{border-color:var(--good);background:var(--good-bg);}
+  .opt.correct .key{background:var(--good);color:#fff;border-color:var(--good);}
+  .opt.wrong{border-color:var(--bad);background:var(--bad-bg);}
+  .opt.wrong .key{background:var(--bad);color:#fff;border-color:var(--bad);}
+  .opt .mark{margin-left:auto;font-weight:800;font-size:15px;align-self:center;}
+  .opt.correct .mark::after{content:"\2713";color:var(--good);}
+  .opt.wrong .mark::after{content:"\2715";color:var(--bad);}
+  .exp{max-height:0;overflow:hidden;transition:max-height .45s ease;}
+  .q.done .exp{max-height:4000px;}
+  .expinner{margin:4px 14px 16px;border-top:1px dashed var(--line);padding-top:14px;}
+  .verdict{font-size:13px;font-weight:800;letter-spacing:.02em;margin-bottom:10px;}
+  .verdict.ok{color:var(--good);}.verdict.ng{color:var(--bad);}
+  .why{margin:0 0 10px;font-size:14px;background:#fbf9f3;border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:10px 12px;}
+  .why b{color:var(--accent);}
+  .breakdown{margin:0;padding:0;list-style:none;font-size:13.5px;}
+  .breakdown li{display:flex;gap:9px;padding:6px 0;border-bottom:1px solid #f0ece1;align-items:flex-start;}
+  .breakdown li:last-child{border-bottom:none;}
+  .bk{flex:0 0 auto;width:22px;height:22px;border-radius:6px;display:grid;place-items:center;font-weight:800;font-size:12px;}
+  .bk.o{background:var(--good-bg);color:var(--good);}
+  .bk.x{background:var(--bad-bg);color:var(--bad);}
+  .bktext{flex:1;}
+  .bktext .lab{font-weight:700;}
+  #result{margin:26px 0 16px;background:var(--seal);color:#f4f1ea;border-radius:18px;padding:26px 22px;text-align:center;display:none;box-shadow:var(--shadow);}
+  #result.show{display:block;}
+  #result .score{font-size:46px;font-weight:800;letter-spacing:-.02em;}
+  #result .score small{font-size:18px;color:#b9b3a6;font-weight:600;}
+  #result .pct{font-size:13px;letter-spacing:.18em;color:#c7b6a8;text-transform:uppercase;margin-top:2px;}
+  #result .msg{font-size:14px;color:#ddd6c8;margin-top:10px;}
+  #result button{margin-top:18px;background:var(--accent);color:#fff;border:none;border-radius:99px;padding:12px 26px;font-size:14px;font-weight:800;letter-spacing:.04em;cursor:pointer;}
+  footer{text-align:center;color:var(--muted);font-size:11px;letter-spacing:.05em;padding:8px 0 36px;}
+  .live{position:fixed;left:-9999px;}
+</style>
+</head>
+<body>
+<header>
+  <div class="hbar">
+    <div class="seal">JSTQB<br>FL</div>
+    <div class="htext">
+      <h1>第4章 テスト分析と設計</h1>
+      <p class="sub">SYLLABUS 4.0 ・ CHAPTER 4</p>
+    </div>
+  </div>
+  <div class="progress"><i id="bar"></i></div>
+</header>
+
+<main class="wrap">
+  <section class="intro">
+    <div class="eyebrow">Chapter 4 Drill</div>
+    <h2>テスト分析と設計</h2>
+    <p>シラバス4.0 第4章の細かい理解を問う31問演習。テスト技法の分類に加え、<b>同値分割・境界値・デシジョンテーブル・状態遷移・命令/分岐網羅の計算問題</b>も含みます。各設問は全選択肢の正誤理由まで解説します。</p>
+    <div class="stats">
+      <div class="stat"><b id="answered">0</b><span>解答済み</span></div>
+      <div class="stat"><b id="correct">0</b><span>正解</span></div>
+      <div class="stat"><b id="total">0</b><span>総問題数</span></div>
+    </div>
+    <ul class="topics">
+      <li>4.1 技法の分類（ブラック/ホワイト/経験ベース）</li>
+      <li>4.2 ブラックボックス（同値分割・境界値・デシジョンテーブル・状態遷移）</li>
+      <li>4.3 ホワイトボックス（命令網羅・分岐網羅）とその価値</li>
+      <li>4.4 経験ベース（エラー推測・探索的・チェックリスト）</li>
+      <li>4.5 コラボレーションベース（ユーザーストーリー・受け入れ基準・ATDD）</li>
+    </ul>
+  </section>
+
+  <div id="quiz"></div>
+
+  <section id="result">
+    <div class="pct">YOUR SCORE</div>
+    <div class="score"><span id="sc">0</span><small id="scden">/0</small></div>
+    <div class="pct" id="scpct">0%</div>
+    <div class="msg" id="scmsg"></div>
+    <button id="restart">もう一度挑戦する</button>
+  </section>
+
+  <footer>JSTQB Foundation Level シラバス4.0 準拠 ・ 学習用演習</footer>
+</main>
+
+<div class="live" aria-live="polite" id="live"></div>
+
+<script>
+const QUESTIONS = [
+  {
+    "tag": "4.1 技法の分類",
+    "stem": "テスト技法の分類を説明する文章の中で、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "ホワイトボックステスト技法は、テストベースを分析して適切なテスト条件を作成し、テスト対象のソフトウェアの振る舞いに焦点を当てたテストである。",
+        "e": "誤り。これはブラックボックステスト技法の説明。ホワイトボックスは内部構造に焦点を当てる。"
+      },
+      {
+        "t": "ブラックボックステスト技法は、テスト対象の内部構造と処理に重点を置いたテストで、構造ベースの技法とも呼ばれている。",
+        "e": "誤り。これはホワイトボックステスト技法の説明。内部構造に重点を置く構造ベースはホワイトボックス。"
+      },
+      {
+        "t": "経験ベースのテスト技法は、テスト担当者のスキルと直感、および経験をもとにテストする方法である。技法という名前はついているが、担当者に任せる方法なので、特定のやり方・技法があるわけではない。",
+        "e": "誤り。経験ベースにもエラー推測・探索的テスト・チェックリストベースドテストといった、きちんとしたやり方（技法）がある。"
+      },
+      {
+        "t": "ブラックボックステスト技法は機能テストと非機能テストの両方に適用できる。",
+        "e": "正しい。ブラックボックス技法は外部仕様ベースで、機能テストにも非機能テストにも適用できる。"
+      }
+    ],
+    "correct": 3,
+    "why": "ブラックボックス技法は外部仕様ベースで<b>機能・非機能の両方に適用</b>できる。ブラックボックス／ホワイトボックスの説明の取り違えや、「経験ベースには技法がない」とする誤りに注意。"
+  },
+  {
+    "tag": "4.1 技法の分類",
+    "stem": "経験ベースのテスト技法に含まれるものの組み合わせとして、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "エラー推測・探索的テスト・チェックリストベースドテスト",
+        "e": "正しい。経験ベースの代表的技法はこの3つ。"
+      },
+      {
+        "t": "同値分割・境界値分析・デシジョンテーブルテスト",
+        "e": "誤り。これらはブラックボックス技法。"
+      },
+      {
+        "t": "ステートメントテスト（命令網羅）・ブランチテスト（分岐網羅）",
+        "e": "誤り。これらはホワイトボックス技法（構造ベース）。シラバス4.0のホワイトボックス技法はこの2つ。"
+      },
+      {
+        "t": "状態遷移テスト・同値分割法・境界値分析",
+        "e": "誤り。これらはすべてブラックボックス技法に分類される。"
+      }
+    ],
+    "correct": 0,
+    "why": "経験ベースは<b>エラー推測・探索的テスト・チェックリストベースドテスト</b>。同値分割等はブラック、命令網羅等はホワイト。"
+  },
+  {
+    "tag": "4.2 同値分割（計算）",
+    "stem": "救急搬送される人を年齢で「新生児（生後28日未満）・乳幼児（28日以上7歳未満）・少年（7歳以上18歳未満）・成人（18歳以上65歳未満）・高齢者（65歳以上）」に分類する。年齢がマイナス値や150以上の場合は生年月日が正しくないとしてエラーとする。同値分割法で同値パーティションに振り分けたとき、正しいものはどれか。",
+    "opts": [
+      {
+        "t": "有効同値パーティションが5、無効同値パーティションが0",
+        "e": "誤り。エラーとなる「マイナス値」と「150以上」の2つの無効パーティションを見落としている。"
+      },
+      {
+        "t": "有効同値パーティションが6、無効同値パーティションが1",
+        "e": "誤り。有効は分類の5つで6ではない。無効も1ではなく2つ。"
+      },
+      {
+        "t": "有効同値パーティションが5、無効同値パーティションが1",
+        "e": "誤り。有効5は正しいが、無効はマイナス値と150以上の2つあるため1ではない。"
+      },
+      {
+        "t": "有効同値パーティションが5、無効同値パーティションが2",
+        "e": "正しい。同等に処理される有効グループは分類の5つ。無効はマイナス値と150以上の2つ。"
+      }
+    ],
+    "correct": 3,
+    "why": "有効同値は分類5つ。無効同値は<b>マイナス値</b>と<b>150以上</b>の2つ。よって有効5・無効2。"
+  },
+  {
+    "tag": "4.2 同値分割（イーチチョイス）",
+    "stem": "ある申込フォームには、入力項目として「会員区分」と「支払い方法」がある。会員区分は「一般会員」「プレミアム会員」「法人会員」の3つ、支払い方法は「クレジットカード」「銀行振込」「コンビニ払い」の3つである。イーチチョイスカバレッジ100%を満たす最小のテストケース数として、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "3ケース",
+        "e": "正しい。各パーティションセットの各パーティションを少なくとも1回ずつ通せばよい。例：一般会員×クレジットカード、プレミアム会員×銀行振込、法人会員×コンビニ払いの3ケースで、両方のセットの全パーティションを1回以上カバーできる。"
+      },
+      {
+        "t": "6ケース",
+        "e": "誤り。各セットのパーティション数を足した数として考えているが、1つのテストケースで会員区分と支払い方法を同時に1つずつカバーできるため、6ケースは最小ではない。"
+      },
+      {
+        "t": "9ケース",
+        "e": "誤り。3×3の全組み合わせをすべて試す数であり、イーチチョイスカバレッジでは組み合わせまでは考慮しない。"
+      },
+      {
+        "t": "2ケース",
+        "e": "誤り。各項目に3つのパーティションがあるため、2ケースでは少なくともどれか1つのパーティションが未カバーになる。"
+      }
+    ],
+    "correct": 0,
+    "why": "イーチチョイスカバレッジは、複数のパーティションセットがある場合に、<b>各セットの各パーティションを少なくとも1回</b>通す基準。<b>組み合わせは考慮しない</b>ため、3×3=9ケースは不要。今回の最小ケース数は、最大のパーティション数である<b>3ケース</b>。"
+  },
+  {
+    "tag": "4.2 境界値（計算）",
+    "stem": "血圧計（0〜300mmHgまで測定でき、それ以外のデータは入力されない）の測定値について、収縮期血圧は120・130・140を区切り値として4区分に分類し、拡張期血圧は80・90を区切り値として3区分に分類する。境界値分析（2値）で境界値を見つけるとき、正しいものはどれか。（入力範囲端0・300も境界値に含める）",
+    "opts": [
+      {
+        "t": "拡張期血圧の境界値は4つ、収縮期血圧の境界値は6つ",
+        "e": "誤り。両方とも個数が不足している。入力範囲端(0,300)と各区切り値・区切り値＋1を数える必要がある。"
+      },
+      {
+        "t": "拡張期血圧の境界値は5つ、収縮期血圧の境界値は7つ",
+        "e": "誤り。やや不足。拡張期は0・80・81・90・91・300の6つ、収縮期は0・120・121・130・131・140・141・300の8つ。"
+      },
+      {
+        "t": "拡張期血圧の境界値は6つ、収縮期血圧の境界値は8つ",
+        "e": "正しい。拡張期＝0,80,81,90,91,300の6つ。収縮期＝0,120,121,130,131,140,141,300の8つ。"
+      },
+      {
+        "t": "拡張期血圧の境界値は8つ、収縮期血圧の境界値は10",
+        "e": "誤り。数え過ぎ。-1や301は入力されない（範囲外）ので境界値に含めない。"
+      }
+    ],
+    "correct": 2,
+    "why": "拡張期＝0,80,81,90,91,300の<b>6つ</b>、収縮期＝0,120,121,130,131,140,141,300の<b>8つ</b>。範囲外(-1,301)は入力されないので含めない。"
+  },
+  {
+    "tag": "4.2 デシジョンテーブル（計算）",
+    "stem": "年齢区分（大人・子供・幼児）をもとに入場料を計算する。大人（中学生以上）は非会員1,000円・会員800円、子供（4歳〜小学生）は非会員500円・会員400円、幼児（4歳未満）は会員/非会員に関係なく無料。これをデシジョンテーブルでテストする場合の条件の組み合わせはいくつあるか。",
+    "opts": [
+      {
+        "t": "条件の組み合わせは4つ",
+        "e": "誤り。大人は会員/非会員で2通り、子供も会員/非会員で2通りあり、幼児は1通りに縮約できるため、合計は5通り。"
+      },
+      {
+        "t": "条件の組み合わせは5つ",
+        "e": "正しい。大人2通り＋子供2通り＋幼児1通り＝5通り。幼児は会員/非会員で料金が変わらないため、会員区分を1通りに縮約できる。"
+      },
+      {
+        "t": "条件の組み合わせは6つ",
+        "e": "誤り。年齢3区分×会員2区分を単純に数えると6通りだが、幼児の会員区分は料金に影響しないため1通りにまとめる。"
+      },
+      {
+        "t": "条件の組み合わせは7つ",
+        "e": "誤り。多すぎる。必要な組み合わせは、大人2通り、子供2通り、幼児1通りの合計5通り。"
+      }
+    ],
+    "correct": 1,
+    "why": "大人は会員/非会員で料金が変わるため2通り、子供も会員/非会員で料金が変わるため2通り。幼児は会員/非会員に関係なく無料なので、会員区分は結果に影響せず1通りに縮約できる。したがって、<b>2＋2＋1＝5通り</b>。"
+  },
+  {
+    "tag": "4.2 状態遷移テスト",
+    "stem": "状態遷移テストはブラックボックステスト技法の1つである。状態遷移テストを説明する文章の中で、適切でないものはどれか。",
+    "opts": [
+      {
+        "t": "状態遷移テストは、画面の遷移に焦点を当てたテストで、ある画面から別の画面に正しく画面が切り替わることを確認するものである。",
+        "e": "これが正解（不適切）。これは画面遷移テストの説明。状態遷移テストは状態がイベントによってどう変化するかに焦点を当てるもので、画面遷移と状態遷移は区別する。"
+      },
+      {
+        "t": "状態遷移テストは、コンポーネントやシステムの状態がイベントによってどのように変化するかに焦点を当てたテストで、組み込みソフトウェア業界で幅広く使われている。",
+        "e": "適切。状態遷移テストの説明として正しい。"
+      },
+      {
+        "t": "状態遷移テストで使用する状態遷移表には、状態間の有効な遷移と無効だと思われる遷移の両方を記載する。",
+        "e": "適切。状態遷移表は有効遷移と無効遷移の両方を表現できる。"
+      },
+      {
+        "t": "状態遷移の有効遷移カバレッジは、テスト対象の状態が有効に遷移する数の合計数のうち、テストでカバーした遷移の数の割合で計測する。",
+        "e": "適切。有効遷移カバレッジの定義として正しい。"
+      }
+    ],
+    "correct": 0,
+    "why": "状態遷移テストは<b>状態がイベントでどう変化するか</b>に焦点を当てる。画面遷移テストの説明と取り違える誤答に注意。"
+  },
+  {
+    "tag": "4.2 状態遷移カバレッジ",
+    "stem": "状態遷移図および状態遷移表に基づく状態遷移テストを説明する文章の中で、適切でないものはどれか。",
+    "opts": [
+      {
+        "t": "有効遷移カバレッジ100%は、全状態カバレッジ100%を保証しないが、全状態カバレッジ100%は、有効遷移カバレッジ100%を保証する。",
+        "e": "これが正解（不適切）。関係が逆。有効遷移カバレッジ100%は全状態カバレッジ100%を保証するが、全状態カバレッジ100%は有効遷移カバレッジ100%を保証しない。"
+      },
+      {
+        "t": "全状態カバレッジとは、テストで通過した状態の数をすべての状態の数で割った値である。",
+        "e": "適切。全状態カバレッジの定義として正しい。"
+      },
+      {
+        "t": "100%の全遷移カバレッジを達成するには、すべての有効遷移だけでなく無効遷移もテストで通過しなければならないが、無効遷移はテスト実行を試みることが可能なものだけでよい。",
+        "e": "適切。全遷移カバレッジは有効・無効の両方を対象とするが、無効遷移は実行を試みられるものだけでよい。"
+      },
+      {
+        "t": "通常、状態遷移図は有効遷移を記載するが、状態遷移表は有効遷移に加えて無効遷移も表現できるので、全遷移カバレッジを測定しやすい。",
+        "e": "適切。状態遷移表は無効遷移も表現でき、全遷移カバレッジ測定に向く。"
+      }
+    ],
+    "correct": 0,
+    "why": "関係が逆。<b>有効遷移カバレッジ100%→全状態カバレッジ100%を保証</b>するが、その逆（全状態100%→有効遷移100%）は成り立たない。"
+  },
+  {
+    "tag": "4.3 命令網羅/分岐網羅",
+    "stem": "ステートメントテスト（命令網羅）とブランチテスト（分岐網羅）は代表的なホワイトボックステスト技法である。この2つを説明する文章の中で、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "ブランチテストは、システムが実装すべきビジネスルールを表現するのに適したデシジョンテーブルを作成してテストする技法である。",
+        "e": "誤り。これはデシジョンテーブルテスト（ブラックボックス）の説明。ブランチテストはコード内の分岐を網羅する技法。"
+      },
+      {
+        "t": "ステートメントテストは、ステートメント（コード内の文）を通すテストであり、コード内の命令と判定すべてを最低1回は通るようにテストする技法である。",
+        "e": "誤り。ステートメントテストは命令（文）を通すだけで、判定（分岐）すべてを通すとは限らない。判定を通すのはブランチテスト。"
+      },
+      {
+        "t": "ステートメントテストのカバレッジ100%は、ブランチテストのカバレッジ100%を保証しないが、ブランチテストのカバレッジ100%は、ステートメントテストのカバレッジ100%を保証する。",
+        "e": "正しい。分岐網羅100%は命令網羅100%を内包する（より強い基準）が、その逆は成り立たない。"
+      },
+      {
+        "t": "ブランチテストは、コード内の判定を最低1回は通るようにテストするもので、判定結果が真と偽の2つある場合は、どちらか1つを通せばよい。",
+        "e": "誤り。ブランチテストは判定の真・偽の両方の結果を通す必要がある。どちらか1つでよいのは不正確。"
+      }
+    ],
+    "correct": 2,
+    "why": "<b>分岐網羅100%→命令網羅100%を保証</b>（分岐網羅の方が強い基準）。逆は不成立。ブランチは真偽の両方を通す必要がある。"
+  },
+  {
+    "tag": "4.3 命令網羅/分岐網羅",
+    "stem": "命令網羅（ステートメントカバレッジ）と分岐網羅（ブランチカバレッジ）の強さの関係として、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "分岐網羅は命令網羅より強い基準で、分岐網羅100%なら命令網羅100%も達成される。",
+        "e": "正しい。分岐網羅は命令網羅を包含する、より強い（厳しい）基準。"
+      },
+      {
+        "t": "命令網羅は分岐網羅より強い基準である。",
+        "e": "誤り。逆。命令網羅は分岐網羅より弱い基準。"
+      },
+      {
+        "t": "命令網羅100%なら分岐網羅100%が必ず達成される。",
+        "e": "誤り。命令を全て通しても、分岐の片方（例：if が偽になる経路）を通さない場合があり、分岐網羅100%は保証されない。"
+      },
+      {
+        "t": "両者は同じ強さで違いはない。",
+        "e": "誤り。分岐網羅の方が強い。違いがある。"
+      }
+    ],
+    "correct": 0,
+    "why": "<b>分岐網羅 ⊃ 命令網羅</b>。分岐網羅100%は命令網羅100%を含むが、命令網羅100%は分岐網羅100%を保証しない。"
+  },
+  {
+    "tag": "4.3 ホワイトボックスの価値",
+    "stem": "ホワイトボックステストの価値を説明する文章の中で、適切でないものはどれか。",
+    "opts": [
+      {
+        "t": "ソフトウェアが要件そのものを実装漏れしていた場合、ブラックボックステストに比べてホワイトボックステストの方がこの欠落を欠陥として検出しやすい。",
+        "e": "これが正解（不適切）。逆。ホワイトボックスはテスト対象（実装）を直接見るため、そもそも要件が実装漏れしていると気づきにくい。ブラックボックスは要件と照らし合わせるので実装漏れに気づける。"
+      },
+      {
+        "t": "ブラックボックステストは仕様と照らし合わせるので、仕様が曖昧だとテストできないが、ホワイトボックステストは実装状態を直接見るので、欠陥を検出しやすい。",
+        "e": "適切。仕様が曖昧でも実装を直接見て欠陥を検出できるのはホワイトボックスの価値。"
+      },
+      {
+        "t": "コードのドライランはコードを直接見るホワイトボックステストだが、テスト対象を実行しない静的テストである。",
+        "e": "適切。ドライランは内部を見るホワイトボックス的だが実行しない静的テスト、という記述は正しい。"
+      },
+      {
+        "t": "ブラックボックステストは外側の振る舞いに焦点を当てるので、内部のコードがすべて通ったかはわからない。内部に焦点を当てるホワイトボックステストならツールでステートメントカバレッジやブランチカバレッジを測定できる。",
+        "e": "適切。コードカバレッジの測定はホワイトボックスの価値。"
+      }
+    ],
+    "correct": 0,
+    "why": "要件の<b>実装漏れ</b>は、要件と照らすブラックボックスの方が気づきやすい。実装を直接見るホワイトボックスは「無いもの」に気づきにくいので、Aは逆。"
+  },
+  {
+    "tag": "4.4 エラー推測/探索的",
+    "stem": "エラー推測と探索的テストは代表的な経験ベースのテスト技法である。この2つを説明する文章の中で、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "エラー推測は、テストデータを複数のパーティションに分類して、各パーティションの代表的な要素だけをテストする技法である。",
+        "e": "誤り。これは同値分割法の説明。エラー推測は経験からエラー・欠陥・故障を予測してテストを設計する技法。"
+      },
+      {
+        "t": "探索的テストは形式的ではないテストであるが、活動を体系的に行うためにテストチャーターを作ってセッションベースドテストを行う場合がある。",
+        "e": "正しい。探索的テストは非形式的だが、チャーターやセッションベースで体系性をもたせることができる。"
+      },
+      {
+        "t": "探索的テストはフォールト攻撃という系統的なアプローチを用い、最初に経験を用いて起こりうるエラー・欠陥・故障のリストを作り、それを引き起こすテストケースを設計する技法である。",
+        "e": "誤り。これはエラー推測（フォールト攻撃）の説明。探索的テストはテスト実行時に動的に設計・実行・記録・評価する技法。"
+      },
+      {
+        "t": "エラー推測は、経験に基づいてチェックリストを作成し、それに基づいてテストする技法である。チェックリストはテストケースに比べてハイレベルなテストである。",
+        "e": "誤り。これはチェックリストベースドテストの説明。"
+      }
+    ],
+    "correct": 1,
+    "why": "探索的テストは<b>テスト実行時に動的に設計・実行・記録・評価</b>する非形式的技法で、チャーターやセッションで体系化できる。他の選択肢は同値分割・エラー推測・チェックリストの説明である。"
+  },
+  {
+    "tag": "4.4 探索的テスト",
+    "stem": "探索的テストの説明として、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "テスト実行時に、テスト担当者が動的に学習しながらテストを設計・実行・記録・評価する非形式的な技法である。",
+        "e": "正しい。探索的テストは実行と設計を同時並行で進める動的・非形式的な技法。"
+      },
+      {
+        "t": "事前にすべてのテストケースを詳細に文書化してから実行する技法である。",
+        "e": "誤り。事前の詳細文書化はスクリプトテスト寄り。探索的テストは実行時に動的に設計する。"
+      },
+      {
+        "t": "内部構造を解析して命令網羅を達成する技法である。",
+        "e": "誤り。それはホワイトボックス（命令網羅）の話。"
+      },
+      {
+        "t": "状態遷移表を作って全遷移を網羅する技法である。",
+        "e": "誤り。それは状態遷移テスト（ブラックボックス）の話。"
+      }
+    ],
+    "correct": 0,
+    "why": "探索的テストは<b>実行しながら動的に設計・記録・評価</b>する非形式的技法。チャーター（探索の指針）を使うこともある。"
+  },
+  {
+    "tag": "4.4 エラー推測",
+    "stem": "エラー推測（error guessing）の説明として、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "過去の経験から起こりうるエラー・欠陥・故障を予測し、それを引き起こすテストを設計する。フォールト攻撃という系統的アプローチもある。",
+        "e": "正しい。エラー推測は経験に基づき欠陥を予測する技法で、フォールト攻撃として体系化されることもある。"
+      },
+      {
+        "t": "テスト実行時に動的に設計しながら進める技法である。",
+        "e": "誤り。それは探索的テストの説明。"
+      },
+      {
+        "t": "チェックリストの各項目をカバーするようにテストする技法である。",
+        "e": "誤り。それはチェックリストベースドテストの説明。"
+      },
+      {
+        "t": "入力範囲を分割して代表値をテストする技法である。",
+        "e": "誤り。それは同値分割法（ブラックボックス）の説明。"
+      }
+    ],
+    "correct": 0,
+    "why": "エラー推測は<b>経験から欠陥を予測</b>し、それを突くテストを設計する。フォールト攻撃として系統化できる。"
+  },
+  {
+    "tag": "4.4 チェックリストベース",
+    "stem": "チェックリストベースドテストは経験ベースのテスト技法である。この技法を説明する文章の中で、適切でないものはどれか。",
+    "opts": [
+      {
+        "t": "チェックリストは、機能テストや非機能テストを含む様々なテストタイプのために作成できる。",
+        "e": "適切。チェックリストは様々なテストタイプ向けに作成できる。"
+      },
+      {
+        "t": "チェックリストはハイレベルのリストであるため、実際にテストをする際には複数の解釈が発生し、同じテストを再現するのは困難になる。",
+        "e": "適切。ハイレベルゆえに解釈の幅があり、再現性が下がるという特徴は正しい。"
+      },
+      {
+        "t": "チェックリストをテストケース作成のベースとして使う場合は、チェックリストに記載された条件をカバーするように、テストケースを設計・実装・実行する。",
+        "e": "適切。チェックリスト項目をカバーするようテストケースを作る、という使い方は正しい。"
+      },
+      {
+        "t": "チェックリストベースドテストは条件が複雑な場合に有効な方法で、すべての条件の組み合わせをリストに書き出してテストケースの漏れを防止する技法である。",
+        "e": "これが正解（不適切）。これはデシジョンテーブルテストの説明。チェックリストベースドテストは条件の全組み合わせを網羅する技法ではない。"
+      }
+    ],
+    "correct": 3,
+    "why": "すべての条件の組み合わせを書き出すのは<b>デシジョンテーブルテスト</b>。チェックリストベースドテストは経験ベースのハイレベルなリストに基づく技法であり、デシジョンテーブルと取り違える誤答に注意。"
+  },
+  {
+    "tag": "4.5 ユーザーストーリー",
+    "stem": "コラボレーションベースのテストアプローチであるユーザーストーリーの共同執筆に関する文章の中で、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "ユーザーストーリーとは、プロジェクト進行中に実施する必要があるタスクのリストで、バグの修正も含まれる。これを共同執筆することで、どのような欠陥がどこに多いかという品質情報を共有できる。",
+        "e": "誤り。これはバックログの説明寄り。バックログにはユーザーストーリーやバグ修正が含まれるが、ユーザーストーリー自体にバグ修正は含まれない。"
+      },
+      {
+        "t": "ユーザーストーリー作成における3つの要素は、Efficiency（効率）・Effectiveness（効果）・Equity（公平）であり、頭文字をとって「3つのE」とも呼ばれる。",
+        "e": "誤り。ユーザーストーリーの3要素は「3つのC」＝Card（カード）・Conversation（会話）・Confirmation（確認）。3つのEではない。"
+      },
+      {
+        "t": "ユーザーストーリーの共同執筆とは、同じ業界のステークホルダーが数社集まって、ブレーンストーミングやマインドマップを用いて業界全体に役立つユーザーストーリーを執筆することである。",
+        "e": "誤り。共同執筆は、ビジネス・開発・テストの3つの視点でユーザーストーリーを作るもので、メンバーはステークホルダー・開発担当者・テスト担当者。業界横断の執筆ではない。"
+      },
+      {
+        "t": "優れたユーザーストーリーに必要な特性は「INVEST」と呼ばれている。これは、Independent（独立性）・Negotiable（交渉可能）・Valuable（価値がある）・Estimable（見積り可能）・Small（小さい）・Testable（テスト可能）の頭文字からとったものである。",
+        "e": "正しい。良いユーザーストーリーの特性INVESTの説明として正しい。"
+      }
+    ],
+    "correct": 3,
+    "why": "良いユーザーストーリーの特性は<b>INVEST</b>（Independent/Negotiable/Valuable/Estimable/Small/Testable）。他の選択肢はバックログ、3つのC（Card/Conversation/Confirmation）、共同執筆の主体を取り違えている。"
+  },
+  {
+    "tag": "4.5 ユーザーストーリー",
+    "stem": "ユーザーストーリーの3つの要素「3つのC」の組み合わせとして、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "Card（カード）・Conversation（会話）・Confirmation（確認）",
+        "e": "正しい。ユーザーストーリーの3Cはこの組み合わせ。"
+      },
+      {
+        "t": "Cost（コスト）・Capacity（容量）・Coverage（網羅）",
+        "e": "誤り。3つのCの正しい構成要素ではない。"
+      },
+      {
+        "t": "Card（カード）・Code（コード）・Coverage（網羅）",
+        "e": "誤り。CodeとCoverageは3つのCには含まれない。"
+      },
+      {
+        "t": "Customer（顧客）・Contract（契約）・Confirmation（確認）",
+        "e": "誤り。CustomerとContractは3つのCには含まれない。"
+      }
+    ],
+    "correct": 0,
+    "why": "3つのC＝<b>Card（カード）・Conversation（会話）・Confirmation（確認）</b>。カードを単位に、会話で詳細を詰め、確認（受け入れ基準）を記載する。"
+  },
+  {
+    "tag": "4.5 ATDD",
+    "stem": "受け入れテスト駆動開発（Acceptance Test-Driven Development：ATDD）を説明する文章の中で、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "受け入れテスト駆動開発は、最後に行うテストレベルで、受け入れ基準に基づいてテストを行う。主にシステムの妥当性確認とデプロイの準備ができていることの実証に焦点を当てる。",
+        "e": "誤り。これは受け入れテスト（テストレベル）の説明。ATDDはテストレベルではなく、テストファーストのアプローチ（開発手法）である。"
+      },
+      {
+        "t": "受け入れ基準は、ユーザーストーリーの実装をステークホルダーが受け入れるための条件を記述したもので、書き方として「シナリオ指向」と「ルール指向」の2つの形式が一般的である。",
+        "e": "正しい。受け入れ基準はステークホルダーが受け入れる条件で、シナリオ指向／ルール指向という2形式が一般的。"
+      },
+      {
+        "t": "受け入れテスト駆動開発では、最初に非機能的な品質特性を確認し、次にエラー条件や例外処理などのネガティブな動作の確認、最後にエラーを含まないポジティブな動作の確認、という順番でテストケースを作成する。",
+        "e": "誤り。順番が違う。一般には、最初にエラー処理を含まないポジティブなテスト、次にネガティブなテスト、最後に非機能要件、という順番でテストする。"
+      },
+      {
+        "t": "受け入れテスト駆動開発の最初のステップは仕様化のワークショップである。テスト担当チームでユーザーストーリーとその受け入れ基準を分析・議論する。そして次のステップでテストケースを作成する。",
+        "e": "誤り。ワークショップはテスト担当チームだけでなく、ステークホルダー・開発担当者・テスト担当者などチームメンバーが参画して共同で行う。"
+      }
+    ],
+    "correct": 1,
+    "why": "受け入れ基準は<b>シナリオ指向／ルール指向</b>の2形式が一般的。他の選択肢は受け入れテスト（レベル）の説明、順番の逆転、ワークショップ参加者の限定し過ぎといった誤りを含む。"
+  },
+  {
+    "tag": "4.5 ATDD",
+    "stem": "ATDDにおけるテストケース作成の一般的な順番として、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "ポジティブなテスト（正常系）→ ネガティブなテスト（異常系）→ 非機能要件のテスト",
+        "e": "正しい。一般に、エラーを含まない正常系→例外・エラーなどの異常系→非機能、という順で作成する。"
+      },
+      {
+        "t": "非機能要件 → ネガティブなテスト → ポジティブなテスト",
+        "e": "誤り。順番が逆。最初に非機能から始めるのは一般的でない。"
+      },
+      {
+        "t": "ネガティブなテスト → ポジティブなテスト → 非機能要件",
+        "e": "誤り。異常系を先に置くのは一般的な順番ではない。"
+      },
+      {
+        "t": "非機能要件 → ポジティブなテスト → ネガティブなテスト",
+        "e": "誤り。非機能を先頭に置くのは一般的でない。"
+      }
+    ],
+    "correct": 0,
+    "why": "一般的な順番は<b>ポジティブ（正常系）→ネガティブ（異常系）→非機能</b>。"
+  },
+  {
+    "tag": "4.5 受け入れ基準",
+    "stem": "受け入れ基準（acceptance criteria）の説明として、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "ユーザーストーリーの実装をステークホルダーが受け入れるための条件で、Confirmation（確認）として記載される。",
+        "e": "正しい。受け入れ基準はステークホルダーが受け入れる条件で、ユーザーストーリーの確認（Confirmation）に対応する。"
+      },
+      {
+        "t": "コードの内部構造の網羅率を表す指標である。",
+        "e": "誤り。それはコードカバレッジ（ホワイトボックス）の話。"
+      },
+      {
+        "t": "プロジェクトのタスク一覧であるバックログそのものである。",
+        "e": "誤り。バックログとは別物。受け入れ基準は個々のストーリーの受け入れ条件。"
+      },
+      {
+        "t": "開発担当者だけが定義する技術仕様である。",
+        "e": "誤り。受け入れ基準はステークホルダー視点の条件で、開発者単独の技術仕様ではない。"
+      }
+    ],
+    "correct": 0,
+    "why": "受け入れ基準は<b>ステークホルダーが受け入れる条件</b>で、3つのCのConfirmation（確認）に対応する。シナリオ指向／ルール指向で書く。"
+  },
+  {
+    "tag": "4.2 同値分割",
+    "stem": "同値分割法（equivalence partitioning）の基本的な考え方として、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "同じように処理されると考えられる入力（や出力）のグループ（パーティション）に分け、各パーティションから代表値を1つ選んでテストする。",
+        "e": "正しい。同値分割は同等処理されるグループに分け、代表値でテストする技法。"
+      },
+      {
+        "t": "各パーティションの境界の前後の値をテストする技法である。",
+        "e": "誤り。それは境界値分析の説明。"
+      },
+      {
+        "t": "条件の全組み合わせを表にして網羅する技法である。",
+        "e": "誤り。それはデシジョンテーブルテストの説明。"
+      },
+      {
+        "t": "状態がイベントでどう変化するかをテストする技法である。",
+        "e": "誤り。それは状態遷移テストの説明。"
+      }
+    ],
+    "correct": 0,
+    "why": "同値分割は<b>同等処理されるグループに分け、代表値でテスト</b>する。有効/無効の両パーティションを考える。"
+  },
+  {
+    "tag": "4.2 境界値分析",
+    "stem": "境界値分析（boundary value analysis）の考え方として、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "パーティションの境界付近で欠陥が発生しやすいため、境界とその前後の値を重点的にテストする。",
+        "e": "正しい。境界値分析は境界付近に欠陥が集中する経験則に基づき、境界とその近傍をテストする。"
+      },
+      {
+        "t": "パーティションの中央の代表値だけをテストする。",
+        "e": "誤り。中央の代表値だけは同値分割寄り。境界値分析は境界付近を重視する。"
+      },
+      {
+        "t": "内部のコードの分岐を網羅する。",
+        "e": "誤り。それはホワイトボックス（分岐網羅）。"
+      },
+      {
+        "t": "経験から欠陥を予測してテストする。",
+        "e": "誤り。それはエラー推測（経験ベース）。"
+      }
+    ],
+    "correct": 0,
+    "why": "境界値分析は<b>境界付近に欠陥が集中</b>する経験則に基づき、境界とその前後の値を重点的にテストする。同値分割と併用されることが多い。"
+  },
+  {
+    "tag": "4.2 デシジョンテーブル",
+    "stem": "デシジョンテーブルテスト（decision table testing）の説明として、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "条件（入力）の組み合わせと、それに対応するアクション（出力）を表に整理し、組み合わせを網羅的にテストする。",
+        "e": "正しい。デシジョンテーブルは条件の組み合わせとアクションを表で整理し網羅する技法。"
+      },
+      {
+        "t": "状態がイベントでどう変化するかを図表で表してテストする。",
+        "e": "誤り。それは状態遷移テスト。"
+      },
+      {
+        "t": "入力範囲を分割して代表値をテストする。",
+        "e": "誤り。それは同値分割法。"
+      },
+      {
+        "t": "コードの命令をすべて通すようにテストする。",
+        "e": "誤り。それは命令網羅（ホワイトボックス）。"
+      }
+    ],
+    "correct": 0,
+    "why": "デシジョンテーブルは<b>条件の組み合わせとアクションを表で網羅</b>する。複数条件が絡むビジネスルールのテストに有効。"
+  },
+  {
+    "tag": "4.2 状態遷移カバレッジ",
+    "stem": "全状態カバレッジの定義として、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "テストで通過した状態の数を、すべての状態の数で割った値。",
+        "e": "正しい。全状態カバレッジは通過した状態の割合。"
+      },
+      {
+        "t": "テストで通過した有効遷移の数を、すべての有効遷移の数で割った値。",
+        "e": "誤り。それは有効遷移カバレッジの定義。"
+      },
+      {
+        "t": "テストで通過した命令の数を、すべての命令の数で割った値。",
+        "e": "誤り。それは命令網羅（ホワイトボックス）の定義。"
+      },
+      {
+        "t": "テストで通過した分岐の数を、すべての分岐の数で割った値。",
+        "e": "誤り。それは分岐網羅（ホワイトボックス）の定義。"
+      }
+    ],
+    "correct": 0,
+    "why": "全状態カバレッジ＝<b>通過した状態／全状態</b>。有効遷移カバレッジ100%なら全状態カバレッジ100%が保証される（逆は不成立）。"
+  },
+  {
+    "tag": "4.2 全遷移カバレッジ",
+    "stem": "全遷移カバレッジ（無効遷移を含む）について、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "有効遷移だけでなく無効遷移も対象とするが、無効遷移はテスト実行を試みることが可能なものだけでよい。",
+        "e": "正しい。全遷移カバレッジは有効・無効の両方を対象とし、無効遷移は実行を試みられるものに限る。"
+      },
+      {
+        "t": "有効遷移だけを対象とすればよい。",
+        "e": "誤り。全遷移カバレッジは無効遷移も対象に含む。"
+      },
+      {
+        "t": "状態遷移図だけで測定でき、状態遷移表は不要である。",
+        "e": "誤り。無効遷移も表現できる状態遷移表の方が全遷移カバレッジの測定に向く。"
+      },
+      {
+        "t": "命令網羅の一種である。",
+        "e": "誤り。状態遷移テスト（ブラックボックス）の指標で、命令網羅とは別。"
+      }
+    ],
+    "correct": 0,
+    "why": "全遷移カバレッジは<b>有効＋無効遷移</b>を対象。無効遷移は実行を試みられるものだけでよい。状態遷移表が測定に向く。"
+  },
+  {
+    "tag": "4.3 ステートメントテスト",
+    "stem": "ステートメントテスト（命令網羅）が「最低1回」通すことを目標とする対象として、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "コード内の実行可能なステートメント（命令文）。",
+        "e": "正しい。命令網羅は各実行可能ステートメントを最低1回通すことを目標とする。"
+      },
+      {
+        "t": "コード内のすべての判定の真・偽の両方の結果。",
+        "e": "誤り。それは分岐網羅（ブランチテスト）の目標。"
+      },
+      {
+        "t": "状態遷移表のすべての有効遷移。",
+        "e": "誤り。それは状態遷移テストの話。"
+      },
+      {
+        "t": "条件のすべての組み合わせ。",
+        "e": "誤り。それはデシジョンテーブルテスト寄りの話。"
+      }
+    ],
+    "correct": 0,
+    "why": "命令網羅は<b>各実行可能ステートメントを最低1回</b>通すのが目標。判定の真偽両方を通すのは分岐網羅。"
+  },
+  {
+    "tag": "4.3 ブランチテスト",
+    "stem": "ブランチテスト（分岐網羅）が網羅対象とするものとして、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "コード内の各判定（分岐）の真・偽の両方の結果。",
+        "e": "正しい。分岐網羅は各判定の真・偽の両方の結果を通すことを目標とする。"
+      },
+      {
+        "t": "コード内のステートメントのみ（判定は対象外）。",
+        "e": "誤り。それは命令網羅。分岐網羅は判定の真偽を対象とする。"
+      },
+      {
+        "t": "入力パーティションの代表値。",
+        "e": "誤り。それは同値分割（ブラックボックス）。"
+      },
+      {
+        "t": "状態のすべての組み合わせ。",
+        "e": "誤り。それは状態遷移テスト寄りの話。"
+      }
+    ],
+    "correct": 0,
+    "why": "分岐網羅は<b>各判定の真・偽の両方</b>を通すのが目標。命令網羅より強い基準。"
+  },
+  {
+    "tag": "4.1 技法の使い分け",
+    "stem": "テスト技法の使い分けについて、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "ブラック・ホワイト・経験ベースは排他的ではなく、状況に応じて組み合わせて使うのが一般的である。",
+        "e": "正しい。各技法は補完的で、組み合わせて使うのが実務的。"
+      },
+      {
+        "t": "ホワイトボックステストを使えばブラックボックステストは不要である。",
+        "e": "誤り。外部仕様の妥当性はブラックボックスでないと確認しにくく、不要にはならない。"
+      },
+      {
+        "t": "経験ベースの技法は他の技法より常に劣るので使うべきでない。",
+        "e": "誤り。経験ベースは仕様が不十分な場面などで有効で、補完的に価値がある。"
+      },
+      {
+        "t": "1つのプロジェクトでは必ず1つの技法だけを選ぶべきである。",
+        "e": "誤り。複数技法の組み合わせが一般的で、1つに限定する必要はない。"
+      }
+    ],
+    "correct": 0,
+    "why": "ブラック・ホワイト・経験ベースは<b>補完的で組み合わせて使う</b>。状況（リスク・仕様の有無等）に応じて選ぶ。"
+  },
+  {
+    "tag": "4.2 ブラックボックステスト技法",
+    "stem": "ブラックボックステスト技法（同値分割・境界値分析・デシジョンテーブルテスト・状態遷移テスト）に共通する特徴として、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "テスト対象の入力と出力（外部から見た振る舞い）に着目し、内部構造は参照しない。",
+        "e": "正しい。ブラックボックス技法はテストベース（仕様等）の分析に基づき、入力と出力に着目する。内部構造は参照しない。"
+      },
+      {
+        "t": "ソースコードの内部構造に基づいてテストケースを設計し、構造カバレッジを測定する。",
+        "e": "誤り。それはホワイトボックステスト技法の特徴。"
+      },
+      {
+        "t": "テスト担当者の知識や経験のみに頼り、仕様は参照しない。",
+        "e": "誤り。それは経験ベースのテスト技法の特徴。ブラックボックスはテストベース（仕様）に基づく。"
+      },
+      {
+        "t": "機能テストには使えるが、非機能テストには適用できない。",
+        "e": "誤り。ブラックボックス技法は機能テスト・非機能テストの両方に適用できる。"
+      }
+    ],
+    "correct": 0,
+    "why": "ブラックボックス技法は<b>テストベース（仕様等）に基づき入力と出力に着目</b>し、内部構造を参照しない。機能・非機能の両方に適用できる。"
+  },
+  {
+    "tag": "4.4 セッションベース",
+    "stem": "探索的テストを体系的に行うための「セッションベースドテスト」「テストチャーター」について、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "テストチャーターは探索の目的・範囲を示すもので、時間を区切ったセッションの中で探索的テストを行い記録する。",
+        "e": "正しい。チャーターが探索の指針となり、セッション単位で時間を区切って探索・記録する。"
+      },
+      {
+        "t": "チャーターはコードの命令網羅率を示す指標である。",
+        "e": "誤り。チャーターはカバレッジ指標ではなく、探索の指針。"
+      },
+      {
+        "t": "セッションベースドテストは事前に全テストケースを文書化する手法である。",
+        "e": "誤り。探索的テストは実行時に動的に設計する。事前の全文書化はスクリプトテスト寄り。"
+      },
+      {
+        "t": "チャーターは受け入れ基準の別名である。",
+        "e": "誤り。受け入れ基準とは別概念。チャーターは探索の指針。"
+      }
+    ],
+    "correct": 0,
+    "why": "テストチャーターは<b>探索の目的・範囲を示す指針</b>。時間を区切った<b>セッション</b>で探索的テストを行い記録することで体系性をもたせる。"
+  },
+  {
+    "tag": "4.5 受け入れ基準の形式",
+    "stem": "受け入れ基準の代表的な記述形式の組み合わせとして、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "シナリオ指向（例：Given/When/Then）と、ルール指向（条件のリスト）",
+        "e": "正しい。受け入れ基準はシナリオ指向（Given/When/Then等）とルール指向（条件箇条書き）が一般的。"
+      },
+      {
+        "t": "命令網羅形式と分岐網羅形式",
+        "e": "誤り。それはホワイトボックスのカバレッジの話で、受け入れ基準の形式ではない。"
+      },
+      {
+        "t": "状態遷移図形式とデシジョンテーブル形式",
+        "e": "誤り。それらはブラックボックス技法の表現で、受け入れ基準の一般的な記述形式ではない。"
+      },
+      {
+        "t": "同値分割形式と境界値形式",
+        "e": "誤り。それらはテスト技法であり、受け入れ基準の記述形式ではない。"
+      }
+    ],
+    "correct": 0,
+    "why": "受け入れ基準は<b>シナリオ指向（Given/When/Then）</b>と<b>ルール指向（条件リスト）</b>の2形式が一般的。"
+  }
+];
+
+const KEYS=['A','B','C','D'];
+const quiz=document.getElementById('quiz');
+const bar=document.getElementById('bar');
+const answeredEl=document.getElementById('answered');
+const correctEl=document.getElementById('correct');
+const totalEl=document.getElementById('total');
+const live=document.getElementById('live');
+let answered=0, correct=0;
+totalEl.textContent=QUESTIONS.length;
+document.getElementById('scden').textContent='/'+QUESTIONS.length;
+
+/* ===== 選択肢のシャッフル =====
+   ページを開くたびに各設問の選択肢順をランダム化。元データの correct は保持し、表示用に正解位置を再計算する。 */
+function withShuffledOptions(q){
+  const opts = q.opts.map((o, originalIndex) => ({...o, originalIndex}));
+  for(let i = opts.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [opts[i], opts[j]] = [opts[j], opts[i]];
+  }
+  return { ...q, opts, correct: opts.findIndex(o => o.originalIndex === q.correct) };
+}
+
+QUESTIONS.forEach((q,qi)=>{
+  const viewQ = withShuffledOptions(q);
+  const card=document.createElement('section');
+  card.className='q';card.dataset.qi=qi;
+  const head=document.createElement('div');
+  head.className='qhead';
+  head.innerHTML=`<span class="qno">Q${qi+1}</span><span class="qtag">${viewQ.tag}</span>`;
+  card.appendChild(head);
+  const stem=document.createElement('div');
+  stem.className='qstem';
+  stem.innerHTML=viewQ.stem.replace(/(適切でないもの|該当しないもの|含まれないもの|誤っているもの)/g,'<span class="neg">$1</span>');
+  card.appendChild(stem);
+  if(viewQ.fig){
+    const f=document.createElement('div');
+    f.className='qfig';f.innerHTML=viewQ.fig;card.appendChild(f);
+  }
+  const ul=document.createElement('ul');
+  ul.className='opts';
+  viewQ.opts.forEach((o,oi)=>{
+    const li=document.createElement('li');
+    li.className='opt';li.dataset.oi=oi;
+    li.innerHTML=`<span class="key">${KEYS[oi]}</span><span class="body">${o.t}</span><span class="mark"></span>`;
+    li.addEventListener('click',()=>choose(card,viewQ,qi,oi));
+    ul.appendChild(li);
+  });
+  card.appendChild(ul);
+  const exp=document.createElement('div');
+  exp.className='exp';
+  const inner=document.createElement('div');
+  inner.className='expinner';
+  inner.innerHTML=`
+    <div class="verdict" data-role="verdict"></div>
+    <p class="why"><b>正解 ${KEYS[viewQ.correct]}：</b>${q.why}</p>
+    <ul class="breakdown">
+      ${viewQ.opts.map((o,oi)=>`
+        <li>
+          <span class="bk ${oi===viewQ.correct?'o':'x'}">${KEYS[oi]}</span>
+          <span class="bktext"><span class="lab">${oi===viewQ.correct?'正解':'誤り'}：</span>${o.e}</span>
+        </li>`).join('')}
+    </ul>`;
+  exp.appendChild(inner);
+  card.appendChild(exp);
+  quiz.appendChild(card);
+});
+
+function choose(card,q,qi,oi){
+  if(card.classList.contains('done')) return;
+  card.classList.add('done');
+  const opts=card.querySelectorAll('.opt');
+  opts.forEach((el,i)=>{
+    el.classList.remove('pick');
+    if(i===q.correct) el.classList.add('correct');
+    if(i===oi && oi!==q.correct) el.classList.add('wrong');
+  });
+  const ok=(oi===q.correct);
+  const v=card.querySelector('[data-role="verdict"]');
+  v.textContent= ok ? '◎ 正解' : '✕ 不正解';
+  v.classList.add(ok?'ok':'ng');
+  answered++; if(ok) correct++;
+  answeredEl.textContent=answered;correctEl.textContent=correct;
+  bar.style.width=(answered/QUESTIONS.length*100)+'%';
+  live.textContent = ok ? `第${qi+1}問 正解` : `第${qi+1}問 不正解、正解は${KEYS[q.correct]}`;
+  if(answered===QUESTIONS.length) showResult();
+}
+
+function showResult(){
+  const r=document.getElementById('result');
+  document.getElementById('sc').textContent=correct;
+  const pct=Math.round(correct/QUESTIONS.length*100);
+  document.getElementById('scpct').textContent=pct+'%';
+  let m;
+  if(pct>=90) m='素晴らしい完成度。本番でも安定して得点できるレベルです。';
+  else if(pct>=75) m='合格圏内。誤った問題の解説を読み直して取りこぼしを潰しましょう。';
+  else if(pct>=60) m='あと一歩。計算問題と「どこを取り違えているか」を重点的に復習を。';
+  else m='基礎の定着が必要。同値分割・境界値・状態遷移カバレッジの定義から整理しましょう。';
+  document.getElementById('scmsg').textContent=m;
+  r.classList.add('show');
+  r.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+document.getElementById('restart').addEventListener('click',()=>{
+  answered=0;correct=0;
+  answeredEl.textContent=0;correctEl.textContent=0;
+  bar.style.width='0%';
+  document.getElementById('result').classList.remove('show');
+  document.querySelectorAll('.q').forEach(card=>{
+    card.classList.remove('done');
+    card.querySelectorAll('.opt').forEach(el=>el.classList.remove('correct','wrong','pick'));
+    const v=card.querySelector('[data-role="verdict"]');
+    v.textContent='';v.classList.remove('ok','ng');
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+</script>
+</body>
+</html>

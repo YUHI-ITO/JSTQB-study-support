@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>JSTQB FL 第3章 演習問題</title>
+<style>
+  :root{
+    --ink:#1a1d24;--paper:#f7f4ec;--card:#ffffff;--line:#e3ddd0;
+    --accent:#c0392b;--good:#2a7d4f;--good-bg:#e7f3ec;--bad:#b23b3b;--bad-bg:#fae9e7;
+    --muted:#6f6a60;--pick:#3a4250;--pick-bg:#eef1f5;--seal:#1a1d24;
+    --shadow:0 1px 2px rgba(26,29,36,.06),0 8px 24px rgba(26,29,36,.06);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{background:var(--paper);color:var(--ink);
+    font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Yu Gothic",Meiryo,system-ui,sans-serif;
+    line-height:1.75;font-size:16px;-webkit-text-size-adjust:100%;padding-bottom:env(safe-area-inset-bottom);}
+  .wrap{max-width:680px;margin:0 auto;padding:0 16px;}
+  header{position:sticky;top:0;z-index:30;background:rgba(247,244,236,.86);
+    backdrop-filter:saturate(1.2) blur(10px);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top);}
+  .hbar{display:flex;align-items:center;gap:12px;padding:12px 16px;max-width:680px;margin:0 auto;}
+  .seal{flex:0 0 auto;width:42px;height:42px;border-radius:50%;background:var(--seal);color:#f7f4ec;
+    display:grid;place-items:center;font-weight:800;font-size:11px;letter-spacing:.04em;line-height:1.05;text-align:center;
+    box-shadow:inset 0 0 0 2px rgba(247,244,236,.15);}
+  .htext{flex:1 1 auto;min-width:0;}
+  .htext h1{margin:0;font-size:15px;font-weight:800;letter-spacing:.02em;}
+  .htext .sub{margin:0;font-size:11px;color:var(--muted);letter-spacing:.06em;}
+  .progress{height:4px;background:var(--line);border-radius:99px;overflow:hidden;margin:0 16px 10px;max-width:680px;}
+  @media(min-width:712px){.progress{margin-left:auto;margin-right:auto;}}
+  .progress > i{display:block;height:100%;width:0;background:var(--accent);transition:width .35s ease;}
+  .intro{margin:22px 0;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px 20px;box-shadow:var(--shadow);}
+  .intro .eyebrow{font-size:11px;letter-spacing:.22em;color:var(--accent);font-weight:800;text-transform:uppercase;margin-bottom:10px;}
+  .intro h2{margin:0 0 8px;font-size:22px;letter-spacing:.01em;}
+  .intro p{margin:6px 0;color:var(--muted);font-size:14px;}
+  .stats{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;}
+  .stat{flex:1 1 0;min-width:96px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:#fbf9f3;}
+  .stat b{display:block;font-size:20px;}
+  .stat span{font-size:11px;color:var(--muted);letter-spacing:.04em;}
+  .topics{margin:6px 0 0;padding:0;list-style:none;font-size:13px;color:var(--muted);}
+  .topics li{padding:4px 0 4px 18px;position:relative;}
+  .topics li::before{content:"";position:absolute;left:0;top:11px;width:7px;height:7px;border-radius:2px;background:var(--accent);}
+  .q{margin:16px 0;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;}
+  .qhead{display:flex;align-items:baseline;gap:10px;padding:16px 18px 6px;}
+  .qno{flex:0 0 auto;background:var(--seal);color:#f7f4ec;border-radius:8px;font-size:12px;font-weight:800;padding:3px 8px;letter-spacing:.02em;}
+  .qtag{font-size:10px;letter-spacing:.14em;color:var(--muted);font-weight:700;text-transform:uppercase;}
+  .qstem{padding:4px 18px 14px;font-size:15.5px;font-weight:600;}
+  .qstem .neg{color:var(--accent);font-weight:800;border-bottom:2px solid rgba(192,57,43,.3);}
+  .opts{list-style:none;margin:0;padding:0 14px 8px;}
+  .opt{display:flex;gap:11px;align-items:flex-start;border:1.5px solid var(--line);border-radius:12px;
+    padding:12px 13px;margin:8px 0;cursor:pointer;background:#fff;transition:border-color .15s,background .15s,transform .05s;font-size:14.5px;}
+  .opt:active{transform:scale(.995);}
+  .opt .key{flex:0 0 auto;width:26px;height:26px;border-radius:50%;border:1.5px solid var(--line);
+    display:grid;place-items:center;font-weight:800;font-size:13px;color:var(--pick);background:#fff;transition:all .15s;}
+  .opt .body{flex:1 1 auto;padding-top:1px;}
+  .opt.pick{border-color:var(--pick);background:var(--pick-bg);}
+  .opt.pick .key{background:var(--pick);color:#fff;border-color:var(--pick);}
+  .q.done .opt{cursor:default;}
+  .opt.correct{border-color:var(--good);background:var(--good-bg);}
+  .opt.correct .key{background:var(--good);color:#fff;border-color:var(--good);}
+  .opt.wrong{border-color:var(--bad);background:var(--bad-bg);}
+  .opt.wrong .key{background:var(--bad);color:#fff;border-color:var(--bad);}
+  .opt .mark{margin-left:auto;font-weight:800;font-size:15px;align-self:center;}
+  .opt.correct .mark::after{content:"\2713";color:var(--good);}
+  .opt.wrong .mark::after{content:"\2715";color:var(--bad);}
+  .exp{max-height:0;overflow:hidden;transition:max-height .4s ease;}
+  .q.done .exp{max-height:3000px;}
+  .expinner{margin:4px 14px 16px;border-top:1px dashed var(--line);padding-top:14px;}
+  .verdict{font-size:13px;font-weight:800;letter-spacing:.02em;margin-bottom:10px;}
+  .verdict.ok{color:var(--good);}.verdict.ng{color:var(--bad);}
+  .why{margin:0 0 10px;font-size:14px;background:#fbf9f3;border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:10px 12px;}
+  .why b{color:var(--accent);}
+  .breakdown{margin:0;padding:0;list-style:none;font-size:13.5px;}
+  .breakdown li{display:flex;gap:9px;padding:6px 0;border-bottom:1px solid #f0ece1;align-items:flex-start;}
+  .breakdown li:last-child{border-bottom:none;}
+  .bk{flex:0 0 auto;width:22px;height:22px;border-radius:6px;display:grid;place-items:center;font-weight:800;font-size:12px;}
+  .bk.o{background:var(--good-bg);color:var(--good);}
+  .bk.x{background:var(--bad-bg);color:var(--bad);}
+  .bktext{flex:1;}
+  .bktext .lab{font-weight:700;}
+  #result{margin:26px 0 16px;background:var(--seal);color:#f4f1ea;border-radius:18px;padding:26px 22px;text-align:center;display:none;box-shadow:var(--shadow);}
+  #result.show{display:block;}
+  #result .score{font-size:46px;font-weight:800;letter-spacing:-.02em;}
+  #result .score small{font-size:18px;color:#b9b3a6;font-weight:600;}
+  #result .pct{font-size:13px;letter-spacing:.18em;color:#c7b6a8;text-transform:uppercase;margin-top:2px;}
+  #result .msg{font-size:14px;color:#ddd6c8;margin-top:10px;}
+  #result button{margin-top:18px;background:var(--accent);color:#fff;border:none;border-radius:99px;padding:12px 26px;font-size:14px;font-weight:800;letter-spacing:.04em;cursor:pointer;}
+  footer{text-align:center;color:var(--muted);font-size:11px;letter-spacing:.05em;padding:8px 0 36px;}
+  .live{position:fixed;left:-9999px;}
+</style>
+</head>
+<body>
+<header>
+  <div class="hbar">
+    <div class="seal">JSTQB<br>FL</div>
+    <div class="htext">
+      <h1>第3章 静的テスト</h1>
+      <p class="sub">SYLLABUS 4.0 ・ CHAPTER 3</p>
+    </div>
+  </div>
+  <div class="progress"><i id="bar"></i></div>
+</header>
+
+<main class="wrap">
+  <section class="intro">
+    <div class="eyebrow">Chapter 3 Drill</div>
+    <h2>静的テスト</h2>
+    <p>シラバス4.0 第3章の細かい理解を問う21問演習。各設問は「なぜその選択肢が正解か」だけでなく、誤りの選択肢が<b>どこをどう取り違えているか</b>まで解説します。第3章は範囲が狭いため少なめの構成です。</p>
+    <div class="stats">
+      <div class="stat"><b id="answered">0</b><span>解答済み</span></div>
+      <div class="stat"><b id="correct">0</b><span>正解</span></div>
+      <div class="stat"><b id="total">0</b><span>総問題数</span></div>
+    </div>
+    <ul class="topics">
+      <li>3.1 静的テストの基礎（対象・静的解析・利点）</li>
+      <li>3.1 静的テストと動的テストの違い・相補性</li>
+      <li>3.2 早期かつ頻繁なステークホルダーフィードバック</li>
+      <li>3.2 レビュープロセス（5つの活動）と役割</li>
+      <li>3.2 レビュー種別（非形式/ウォークスルー/テクニカル/インスペクション）・成功要因</li>
+    </ul>
+  </section>
+
+  <div id="quiz"></div>
+
+  <section id="result">
+    <div class="pct">YOUR SCORE</div>
+    <div class="score"><span id="sc">0</span><small id="scden">/0</small></div>
+    <div class="pct" id="scpct">0%</div>
+    <div class="msg" id="scmsg"></div>
+    <button id="restart">もう一度挑戦する</button>
+  </section>
+
+  <footer>JSTQB Foundation Level シラバス4.0 準拠 ・ 学習用演習</footer>
+</main>
+
+<div class="live" aria-live="polite" id="live"></div>
+
+<script>
+const QUESTIONS = [
+  {
+    "tag": "3.1 静的テストの基礎",
+    "stem": "静的テストには、レビューと静的解析があり、ほとんどの作業成果物がテスト対象となる。静的テストの説明として、適切でないものはどれか。",
+    "opts": [
+      {
+        "t": "レビューの対象には、仕様書やユーザーストーリー、ユーザーガイドなどの作業成果物だけでなく、コードも含まれる。",
+        "e": "適切。レビューの対象は文書類だけでなくコードも含む。"
+      },
+      {
+        "t": "静的解析ツールを使うと、コードやモデルなどの構造的な作業成果物を効率的にテストでき、レビューでは自然言語で書かれた成果物の誤字脱字・文法・読みやすさを評価できる。",
+        "e": "適切。静的解析（ツール）とレビュー（人）の対象・得意分野の説明として正しい。"
+      },
+      {
+        "t": "テスト計画書やテストケースなどのテストウェアは、システム開発の作業成果物ではなくテストのための成果物なので、静的テストの対象には含まれない。",
+        "e": "これが正解（不適切）。テストウェア（テスト計画書・テストケース等）に対してもレビューを行い品質を高めるべきであり、静的テストの対象に含まれる。"
+      },
+      {
+        "t": "静的解析は、航空や医療などのセーフティクリティカルシステムだけでなく、他分野のシステムでも重要かつ一般的になってきている。",
+        "e": "適切。静的解析の適用範囲は広がっており、安全性重要システム以外でも一般的。"
+      }
+    ],
+    "correct": 2,
+    "why": "テストウェア（テスト計画書・テストケース等）も<b>レビュー＝静的テストの対象</b>に含まれる。品質を高めるべき成果物なので、これを対象外とする記述は誤り。"
+  },
+  {
+    "tag": "3.1 静的テストの利点",
+    "stem": "静的テストの利点として、適切でないものはどれか。",
+    "opts": [
+      {
+        "t": "動的テストを実行する前に欠陥を早期に検出できる。",
+        "e": "適切。静的テストは実行前の上流段階で欠陥を早期検出できる（早期テスト）。"
+      },
+      {
+        "t": "動的テストでは容易に検出できない欠陥を識別できる。",
+        "e": "適切。要件の曖昧さ・矛盾・到達不能コードなど、実行では見つけにくい欠陥を識別できる。"
+      },
+      {
+        "t": "テストプロシジャーとテスト実行の突き合わせにより、テストカバレッジを計測できる。",
+        "e": "これが正解（不適切）。これはテスト実行プロセス（動的テスト）におけるトレーサビリティ／カバレッジ計測の話で、静的テストの利点ではない。"
+      },
+      {
+        "t": "設計の改善や保守性の高いコードに貢献し、開発やメンテナンスの生産性を向上できる。",
+        "e": "適切。静的テストは内部品質・保守性の向上に寄与する。"
+      }
+    ],
+    "correct": 2,
+    "why": "テストプロシジャーとテスト実行の突き合わせによるカバレッジ計測は<b>動的テスト（実行）</b>側の話。静的テストの利点ではない。"
+  },
+  {
+    "tag": "3.1 静的 vs 動的",
+    "stem": "静的テストと動的テストの違いを説明する文章として、適切でないものはどれか。",
+    "opts": [
+      {
+        "t": "動的テストは保守性の欠陥を検出するのに向いており、静的テストは機能的欠陥を検出するのに向いている。",
+        "e": "これが正解（不適切）。利点が逆。静的テストは保守性などの欠陥検出に向き、動的テストは（実行による）機能的な故障から欠陥を見つけるのに向く。"
+      },
+      {
+        "t": "動的テストはソフトウェアを実行して発生した故障をもとに欠陥を見つけるが、静的テストは作業成果物の欠陥を直接検出できる。",
+        "e": "適切。動的＝実行→故障→欠陥、静的＝成果物の欠陥を直接検出。"
+      },
+      {
+        "t": "動的テストは外部から見える振る舞いに焦点を置くことが多いが、静的テストは作業成果物の整合性と内部品質を向上させる特徴をもつ。",
+        "e": "適切。動的＝外部の振る舞い、静的＝整合性・内部品質の向上。"
+      },
+      {
+        "t": "静的テストと動的テストは、それぞれ異なる種類の欠陥を検出できるため、相互に補完する関係にある。",
+        "e": "適切。両者は補完的で、組み合わせることで幅広い欠陥に対応できる。"
+      }
+    ],
+    "correct": 0,
+    "why": "利点が逆。<b>静的テスト＝保守性などの欠陥に向く</b>、<b>動的テスト＝機能的（実行時の故障から）欠陥に向く</b>。"
+  },
+  {
+    "tag": "3.1 静的解析",
+    "stem": "静的解析（static analysis）についての説明として、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "ツールを用いてコードやモデルなどを実行せずに解析し、規約違反・到達不能コード・依存関係などの欠陥を検出する。",
+        "e": "正しい。静的解析はツールにより実行せずに構造的成果物を解析する。"
+      },
+      {
+        "t": "ソフトウェアを実行して応答時間を測定する手法である。",
+        "e": "誤り。それは動的テスト（性能テスト）。静的解析は実行しない。"
+      },
+      {
+        "t": "人手でドキュメントを読み合わせる活動のみを指す。",
+        "e": "誤り。それはレビュー寄り。静的解析は主にツールによる自動解析を指す。"
+      },
+      {
+        "t": "欠陥を修正する作業そのものを指す。",
+        "e": "誤り。それはデバッグ。静的解析は欠陥の検出であり修正ではない。"
+      }
+    ],
+    "correct": 0,
+    "why": "静的解析は<b>ツールで実行せずに</b>コード・モデルを解析し、規約違反・到達不能コード等を検出する。"
+  },
+  {
+    "tag": "3.1 レビュー対象",
+    "stem": "静的テスト（特にレビュー）で見つけやすい欠陥の例として、最も適切でないものはどれか。",
+    "opts": [
+      {
+        "t": "要件の曖昧さ・矛盾・抜け漏れ",
+        "e": "適切。レビューは要件の曖昧さや矛盾を早期に見つけやすい。"
+      },
+      {
+        "t": "設計上の不備や標準への非準拠",
+        "e": "適切。設計の不備や規約違反はレビュー／静的解析で見つかる。"
+      },
+      {
+        "t": "実行時にのみ顕在化する性能上のボトルネック",
+        "e": "これが正解（不適切）。性能上のボトルネックは実際に実行して測定する動的テストで見つけるもので、静的テストでは見つけにくい。"
+      },
+      {
+        "t": "仕様書の誤字脱字・読みにくさ",
+        "e": "適切。自然言語成果物の誤字脱字や読みやすさはレビューで評価できる。"
+      }
+    ],
+    "correct": 2,
+    "why": "実行時にのみ現れる性能ボトルネックは<b>動的テスト</b>で測る領域。静的テストは実行しないため見つけにくい。"
+  },
+  {
+    "tag": "3.2 早期フィードバック",
+    "stem": "早期かつ頻繁なステークホルダーからのフィードバックの利点を説明した文章のうち、適切なものはどれか。",
+    "opts": [
+      {
+        "t": "ステークホルダーは技術面での専門家なので、SDLCの早い段階から頻繁にテクニカルレビューに参加してもらい、技術的に問題がないかの検証を支援してもらう。",
+        "e": "誤り。ステークホルダーは通常、顧客やビジネス側の代表者であり、技術面の専門家ではない。"
+      },
+      {
+        "t": "ステークホルダーが主導して行う静的テストがウォークスルーである。ウォークスルーは好きなタイミングで行えるので、関心ある内容に関して頻繁に行える。",
+        "e": "誤り。ウォークスルーの開催を主導するのはステークホルダーではなく作業成果物の作成者。"
+      },
+      {
+        "t": "ステークホルダーが早期かつ頻繁にレビューに加わると、指摘により変更は増えるが、変更しないままステークホルダーのビジョンを満たさないものを開発するリスクを軽減できる。",
+        "e": "正しい。早期フィードバックは手戻りや変更を生むが、ビジョンと乖離したものを作り込むリスクを下げる。"
+      },
+      {
+        "t": "ステークホルダーにはモデレーターとして早期かつ頻繁にレビューに参加してもらい、開発担当者やテスト担当者の意見の調整を行ってもらうとスムーズに運営される。",
+        "e": "誤り。ステークホルダーはレビュー運営（モデレーター）の役割は担わない。モデレーターは通常プロジェクトチーム側が行う。"
+      }
+    ],
+    "correct": 2,
+    "why": "早期・頻繁なステークホルダーフィードバックは、<b>ビジョンと乖離したものを作り込むリスクを軽減</b>する。ステークホルダーはビジネス側代表でモデレーターや技術専門家ではない。"
+  },
+  {
+    "tag": "3.2 レビュープロセス",
+    "stem": "レビュープロセスを説明する文章として、適切でないものはどれか。",
+    "opts": [
+      {
+        "t": "計画プロセスの主な作業は、レビューの目的・レビュー対象のドキュメント・評価すべき品質特性を定義することである。",
+        "e": "適切。計画（planning）では目的・対象・品質特性・終了基準などを定義する。"
+      },
+      {
+        "t": "修正と報告プロセスの主な作業は、作業成果物をレビューして不正な点・提案・質問を書き出すことである。",
+        "e": "これが正解（不適切）。作業成果物をレビューして不正・提案・質問を書き出すのは「個々のレビュー（個別レビュー）」プロセスの作業。修正と報告（fixing & reporting）は、見つけた欠陥のうち変更が必要なものを欠陥レポートに書き出し、作成者に修正してもらうプロセス。"
+      },
+      {
+        "t": "共有と分析プロセスの主な作業は、識別した不正を分析し、オーナー・ステータス・必要なアクションを割り当て、品質特性を評価して文書化し、それらをもとにレビュー判定することである。",
+        "e": "適切。コミュニケーションと分析（communication & analysis）の説明として正しい。"
+      },
+      {
+        "t": "レビューの立ち上げプロセスは、個々のレビューに入る前に参加者同士で情報を共有する作業である。具体的には、成果物を参加者に共有しレビュー範囲を説明し、質問に答えて意思疎通を図るなどである。",
+        "e": "適切。開始（initiate review）の説明として正しい。"
+      }
+    ],
+    "correct": 1,
+    "why": "成果物をレビューして不正・提案・質問を書き出すのは<b>個々のレビュー</b>の作業。<b>修正と報告</b>は欠陥レポート作成と作成者への修正依頼を行うプロセスであり、これと取り違える誤答に注意。"
+  },
+  {
+    "tag": "3.2 レビュープロセス",
+    "stem": "レビュープロセスの活動を一般的な順序で並べたものとして、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "計画 → 開始（立ち上げ）→ 個々のレビュー → コミュニケーションと分析 → 修正と報告",
+        "e": "正しい。計画→開始→個々のレビュー→共有と分析→修正と報告、という流れが標準的。"
+      },
+      {
+        "t": "修正と報告 → 計画 → 個々のレビュー → 開始 → 共有と分析",
+        "e": "誤り。順序が崩れている。修正と報告は最後の方の活動。"
+      },
+      {
+        "t": "個々のレビュー → 計画 → 修正と報告 → 開始 → 共有と分析",
+        "e": "誤り。計画と開始が後ろに来ており不正確。"
+      },
+      {
+        "t": "共有と分析 → 修正と報告 → 計画 → 開始 → 個々のレビュー",
+        "e": "誤り。計画・開始が末尾に来ており不正確。"
+      }
+    ],
+    "correct": 0,
+    "why": "標準的な順序は<b>計画→開始→個々のレビュー→共有と分析→修正と報告</b>。"
+  },
+  {
+    "tag": "3.2 役割と責務",
+    "stem": "レビューにおける参加者の役割と責務を説明する文章として、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "マネージャーは、作業成果物のレビューを行って不正を識別する。",
+        "e": "誤り。それはレビューア（reviewer）の役割。マネージャーはレビューの実施可否や資源配分などを決める立場。"
+      },
+      {
+        "t": "レビューアとは、レビュー対象の作業成果物を作成した人のことである。指摘されて不正を識別したら、自分の作った作業成果物を修正する。",
+        "e": "誤り。それは作成者（author）の役割。レビューアは成果物を作成した人とは限らず、欠陥を識別する人。"
+      },
+      {
+        "t": "モデレーターは、効果的なレビューミーティングを運営する人である。参加者の様々な意見の調整を行い、レビューを成功に導く役割を担う。",
+        "e": "正しい。モデレーター（facilitator）はミーティングを円滑に運営し意見を調整する役割。"
+      },
+      {
+        "t": "レビューリーダーは、レビューの計画を行う人である。レビューの計画を立て、実行を決定する。また、不適切な結果が発生した場合は適切にコントロールする役割を担う。",
+        "e": "誤り。レビューリーダーはレビュー全体に責任をもつが、計画策定や実行の決定は上位者であるマネージャーの役割。記述がマネージャーの責務と混ざっている。"
+      }
+    ],
+    "correct": 2,
+    "why": "モデレーターは<b>ミーティングを円滑に運営し意見を調整</b>する。他の選択肢はレビューア・作成者・マネージャーの責務を、モデレーターのものと取り違えている。"
+  },
+  {
+    "tag": "3.2 役割と責務",
+    "stem": "レビューにおけるマネージャーの責務として、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "レビューの実施可否を判断し、必要な資源（人・時間）の割り当てなどを決定する。",
+        "e": "正しい。マネージャーはレビュー実施の決定や資源配分など上位の意思決定を担う。"
+      },
+      {
+        "t": "作業成果物を読み込み、欠陥を識別する中心的な作業を行う。",
+        "e": "誤り。それはレビューアの役割。"
+      },
+      {
+        "t": "レビューミーティングを進行し、参加者の意見を調整する。",
+        "e": "誤り。それはモデレーターの役割。"
+      },
+      {
+        "t": "指摘された欠陥を実際に修正する。",
+        "e": "誤り。それは作成者の役割。"
+      }
+    ],
+    "correct": 0,
+    "why": "マネージャーは<b>実施可否の判断・資源配分</b>など上位の意思決定を担う。実作業（識別・進行・修正）は他の役割。"
+  },
+  {
+    "tag": "3.2 レビュー種別",
+    "stem": "インスペクションの特徴として、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "最も形式的なレビュー種別で、役割（モデレーター等）が明確に定義され、ルールやチェックリストに基づき、メトリクスを収集する。",
+        "e": "正しい。インスペクションは最も形式的で、役割定義・ルール・メトリクス収集を伴う。"
+      },
+      {
+        "t": "役割を定めず、同僚同士が気軽に行う簡易なレビューである。",
+        "e": "誤り。それは非形式的レビュー（ピアレビュー）寄り。"
+      },
+      {
+        "t": "作成者が主導してシナリオに沿って説明していくレビューである。",
+        "e": "誤り。それはウォークスルーの特徴。"
+      },
+      {
+        "t": "主に技術的側面に焦点を当て、同僚や専門家がレビューする。",
+        "e": "誤り。それはテクニカルレビューの特徴。"
+      }
+    ],
+    "correct": 0,
+    "why": "インスペクションは<b>最も形式的</b>で、役割定義・ルール・メトリクス収集を伴う。形式度はインスペクションが最上位。"
+  },
+  {
+    "tag": "3.2 レビュー種別",
+    "stem": "非形式的レビュー（informal review）の特徴として、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "役割や手順が厳密に定められておらず、同僚同士などで気軽に行える。成果はレビューアのスキルに依存しやすい。",
+        "e": "正しい。非形式的レビューは手順・役割が緩く、レビューアのスキル依存度が高い。"
+      },
+      {
+        "t": "モデレーターを必須とし、メトリクスを収集する最も形式的なレビューである。",
+        "e": "誤り。それはインスペクションの特徴。"
+      },
+      {
+        "t": "作成者が必ず主導するレビューである。",
+        "e": "誤り。それはウォークスルーの特徴。"
+      },
+      {
+        "t": "技術専門家が技術面に集中して行うレビューである。",
+        "e": "誤り。それはテクニカルレビューの特徴。"
+      }
+    ],
+    "correct": 0,
+    "why": "非形式的レビューは<b>手順・役割が緩く気軽</b>で、成果はレビューアのスキルに依存しやすい。"
+  },
+  {
+    "tag": "3.2 レビュー種別",
+    "stem": "ウォークスルーの特徴として、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "作成者がレビューを主導し、シナリオやドキュメントを順に説明しながら、参加者からの指摘や質問を受ける。",
+        "e": "正しい。ウォークスルーは作成者主導で、内容を順に説明しながら進める。"
+      },
+      {
+        "t": "最も形式的で、役割定義とメトリクス収集を伴う。",
+        "e": "誤り。それはインスペクション。"
+      },
+      {
+        "t": "役割を定めず気軽に行う簡易なレビューである。",
+        "e": "誤り。それは非形式的レビュー。"
+      },
+      {
+        "t": "マネージャーが主導してレビューを進める。",
+        "e": "誤り。ウォークスルーを主導するのは作成者であり、マネージャーではない。"
+      }
+    ],
+    "correct": 0,
+    "why": "ウォークスルーは<b>作成者が主導</b>し、内容を順に説明しながら指摘を受ける形式。"
+  },
+  {
+    "tag": "3.2 レビュー種別",
+    "stem": "テクニカルレビューの特徴として、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "主に技術的側面に焦点を当て、作成者の同僚や別分野の技術専門家がレビューアとなることが多い。",
+        "e": "正しい。テクニカルレビューは技術面に焦点を当て、専門家が参加することが多い。"
+      },
+      {
+        "t": "最も形式度が低く、役割を一切定めない。",
+        "e": "誤り。それは非形式的レビュー寄り。テクニカルレビューは形式的に行われることもある。"
+      },
+      {
+        "t": "必ず作成者が主導する。",
+        "e": "誤り。それはウォークスルーの特徴。"
+      },
+      {
+        "t": "ビジネス側のステークホルダーが主導する。",
+        "e": "誤り。技術面に焦点を当てるレビューであり、ビジネス側主導とは限らない。"
+      }
+    ],
+    "correct": 0,
+    "why": "テクニカルレビューは<b>技術的側面に焦点</b>を当て、技術専門家が参加することが多い。"
+  },
+  {
+    "tag": "3.2 レビュー種別の形式度",
+    "stem": "レビュー種別を形式度（フォーマリティ）の低い順に並べたものとして、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "非形式的レビュー → ウォークスルー → テクニカルレビュー → インスペクション",
+        "e": "正しい。一般に非形式的が最も緩く、インスペクションが最も形式的とされる。"
+      },
+      {
+        "t": "インスペクション → テクニカルレビュー → ウォークスルー → 非形式的レビュー",
+        "e": "誤り。順序が逆。これは形式度の高い順。"
+      },
+      {
+        "t": "ウォークスルー → 非形式的レビュー → インスペクション → テクニカルレビュー",
+        "e": "誤り。順序が崩れている。"
+      },
+      {
+        "t": "テクニカルレビュー → インスペクション → 非形式的レビュー → ウォークスルー",
+        "e": "誤り。順序が崩れている。"
+      }
+    ],
+    "correct": 0,
+    "why": "形式度は概ね<b>非形式的＜ウォークスルー＜テクニカル＜インスペクション</b>の順に高くなる。"
+  },
+  {
+    "tag": "3.2 レビュー成功要因",
+    "stem": "レビューを成功させる要因を説明する文章として、適切でないものはどれか。",
+    "opts": [
+      {
+        "t": "レビューを計画するときにレビューの終了基準を明確に定義することは、レビューを成功させる要因の1つである。",
+        "e": "適切。明確な終了基準は成功要因。"
+      },
+      {
+        "t": "レビューでは、レビューアが集中力を維持できるようにする。そのためにレビュー対象を細かくせず、一連の大きなかたまりにすることが推奨される。",
+        "e": "これが正解（不適切）。逆。集中力を維持するには、レビュー対象を小さく分割して実施する方がよい。大きなかたまりは集中力低下を招く。"
+      },
+      {
+        "t": "レビュー結果を早期かつ頻繁にステークホルダーや作成者にフィードバックすることは、レビューの成果を高める要因になる。",
+        "e": "適切。早期・頻繁なフィードバックは成果を高める。"
+      },
+      {
+        "t": "組織でレビュー文化を定着させ、適切なトレーニングを行い、参加前に準備時間を与えることは、レビューを成功させる要因となる。",
+        "e": "適切。文化の定着・トレーニング・準備時間の確保は成功要因。"
+      }
+    ],
+    "correct": 1,
+    "why": "集中力維持のためには<b>レビュー対象を小さく分割</b>して実施する方がよい。大きなかたまりにするのは逆効果で、Bが不適切。"
+  },
+  {
+    "tag": "3.2 レビューと心理面",
+    "stem": "レビューにおける心理面・人間関係への配慮として、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "指摘は作成者個人への攻撃ではなく、作業成果物の改善を目的とした事実として中立的に扱う。",
+        "e": "正しい。人ではなく成果物に焦点を当て、建設的・中立的に扱うのが望ましい。"
+      },
+      {
+        "t": "作成者の能力不足を明確に指摘し、反省を促すことが重要である。",
+        "e": "誤り。個人への非難は防御反応を招き、レビューの効果を損なう。"
+      },
+      {
+        "t": "欠陥はできるだけ伝えず、作成者が自分で気づくのを待つ。",
+        "e": "誤り。欠陥を伝えないのはレビューの目的に反する。"
+      },
+      {
+        "t": "指摘の量を競い合い、最も多く指摘した人を評価する。",
+        "e": "誤り。指摘数の競争はレビューの本質ではなく、心理的悪影響を招きうる。"
+      }
+    ],
+    "correct": 0,
+    "why": "レビューは<b>人ではなく成果物</b>に焦点を当て、中立的・建設的に指摘するのが要。個人攻撃は逆効果。"
+  },
+  {
+    "tag": "3.1 静的解析 vs レビュー",
+    "stem": "静的解析（ツール）とレビュー（人）の使い分けについて、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "構造的な成果物（コード・モデル）は静的解析ツールで効率的に、自然言語の成果物（仕様書等）はレビューで評価するのが効果的である。",
+        "e": "正しい。ツールは構造的成果物の機械的検査に強く、人によるレビューは自然言語成果物の意味・読みやすさの評価に強い。"
+      },
+      {
+        "t": "静的解析はすべての種類の欠陥をレビューより確実に検出できるので、レビューは不要である。",
+        "e": "誤り。静的解析は意図・要件の妥当性などは判断できず、レビューと補完関係にある。"
+      },
+      {
+        "t": "レビューはコードを実行して欠陥を検出する活動である。",
+        "e": "誤り。レビューは静的テストであり、実行はしない。"
+      },
+      {
+        "t": "静的解析は自然言語の文章の読みやすさを評価するのに最適である。",
+        "e": "誤り。読みやすさ・意味の評価は人によるレビューの領域。"
+      }
+    ],
+    "correct": 0,
+    "why": "<b>静的解析＝構造的成果物に強い</b>、<b>レビュー＝自然言語成果物の意味・読みやすさに強い</b>。両者は補完的。"
+  },
+  {
+    "tag": "3.2 計画プロセス",
+    "stem": "レビューの計画（planning）プロセスで定義する内容として、最も適切でないものはどれか。",
+    "opts": [
+      {
+        "t": "レビューの目的とスコープ（対象範囲）。",
+        "e": "適切。計画では目的とスコープを定義する。"
+      },
+      {
+        "t": "評価すべき品質特性とレビューの終了基準。",
+        "e": "適切。品質特性と終了基準も計画で定める。"
+      },
+      {
+        "t": "参加者の役割や必要な労力・時間の見積り。",
+        "e": "適切。役割や工数の計画も計画プロセスに含まれる。"
+      },
+      {
+        "t": "見つかった欠陥を実際に修正し、作成者へ修正依頼を行う。",
+        "e": "これが正解（不適切）。欠陥の修正依頼は「修正と報告」プロセスの作業であり、計画プロセスではない。"
+      }
+    ],
+    "correct": 3,
+    "why": "計画では<b>目的・スコープ・品質特性・終了基準・役割・工数</b>を定める。欠陥の修正依頼は「修正と報告」プロセスの作業。"
+  },
+  {
+    "tag": "3.2 共有と分析",
+    "stem": "レビューの「コミュニケーションと分析（共有と分析）」プロセスの作業として、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "識別した不正を分析し、オーナー・ステータス・必要なアクションを割り当て、品質特性を評価してレビュー判定を行う。",
+        "e": "正しい。共有と分析では不正の分析・割り当て・品質評価・判定を行う。"
+      },
+      {
+        "t": "レビューの目的や対象、品質特性を定義する。",
+        "e": "誤り。それは計画プロセスの作業。"
+      },
+      {
+        "t": "参加者に成果物を共有し、レビュー範囲を説明して質問に答える。",
+        "e": "誤り。それは開始（立ち上げ）プロセスの作業。"
+      },
+      {
+        "t": "欠陥レポートを作成し、作成者に修正してもらう。",
+        "e": "誤り。それは修正と報告プロセスの作業。"
+      }
+    ],
+    "correct": 0,
+    "why": "共有と分析は<b>不正の分析・割り当て・品質評価・レビュー判定</b>を行うプロセス。"
+  },
+  {
+    "tag": "3.2 修正と報告",
+    "stem": "レビューの「修正と報告」プロセスの作業として、最も適切なものはどれか。",
+    "opts": [
+      {
+        "t": "識別した欠陥のうち変更が必要なものを欠陥レポートに書き出し、作成者に修正してもらう。",
+        "e": "正しい。修正と報告では欠陥レポートを作り、作成者に修正を依頼する。"
+      },
+      {
+        "t": "レビューの目的・対象・品質特性を定義する。",
+        "e": "誤り。それは計画プロセス。"
+      },
+      {
+        "t": "成果物を実際に読み込んで不正・提案・質問を書き出す。",
+        "e": "誤り。それは個々のレビューの作業。"
+      },
+      {
+        "t": "参加者間で事前に情報を共有しレビュー範囲を説明する。",
+        "e": "誤り。それは開始（立ち上げ）プロセス。"
+      }
+    ],
+    "correct": 0,
+    "why": "修正と報告は<b>欠陥レポートの作成と作成者への修正依頼</b>を行うプロセス。"
+  }
+];
+
+const KEYS=['A','B','C','D'];
+const quiz=document.getElementById('quiz');
+const bar=document.getElementById('bar');
+const answeredEl=document.getElementById('answered');
+const correctEl=document.getElementById('correct');
+const totalEl=document.getElementById('total');
+const live=document.getElementById('live');
+let answered=0, correct=0;
+totalEl.textContent=QUESTIONS.length;
+document.getElementById('scden').textContent='/'+QUESTIONS.length;
+
+/* ===== 選択肢のシャッフル =====
+   ページを開くたびに各設問の選択肢順をランダム化。元データの correct は保持し、表示用に正解位置を再計算する。 */
+function withShuffledOptions(q){
+  const opts = q.opts.map((o, originalIndex) => ({...o, originalIndex}));
+  for(let i = opts.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [opts[i], opts[j]] = [opts[j], opts[i]];
+  }
+  return { ...q, opts, correct: opts.findIndex(o => o.originalIndex === q.correct) };
+}
+
+QUESTIONS.forEach((q,qi)=>{
+  const viewQ = withShuffledOptions(q);
+  const card=document.createElement('section');
+  card.className='q';card.dataset.qi=qi;
+  const head=document.createElement('div');
+  head.className='qhead';
+  head.innerHTML=`<span class="qno">Q${qi+1}</span><span class="qtag">${viewQ.tag}</span>`;
+  card.appendChild(head);
+  const stem=document.createElement('div');
+  stem.className='qstem';
+  stem.innerHTML=viewQ.stem.replace(/(適切でないもの|該当しないもの|含まれないもの|誤っているもの)/g,'<span class="neg">$1</span>');
+  card.appendChild(stem);
+  const ul=document.createElement('ul');
+  ul.className='opts';
+  viewQ.opts.forEach((o,oi)=>{
+    const li=document.createElement('li');
+    li.className='opt';li.dataset.oi=oi;
+    li.innerHTML=`<span class="key">${KEYS[oi]}</span><span class="body">${o.t}</span><span class="mark"></span>`;
+    li.addEventListener('click',()=>choose(card,viewQ,qi,oi));
+    ul.appendChild(li);
+  });
+  card.appendChild(ul);
+  const exp=document.createElement('div');
+  exp.className='exp';
+  const inner=document.createElement('div');
+  inner.className='expinner';
+  inner.innerHTML=`
+    <div class="verdict" data-role="verdict"></div>
+    <p class="why"><b>正解 ${KEYS[viewQ.correct]}：</b>${q.why}</p>
+    <ul class="breakdown">
+      ${viewQ.opts.map((o,oi)=>`
+        <li>
+          <span class="bk ${oi===viewQ.correct?'o':'x'}">${KEYS[oi]}</span>
+          <span class="bktext"><span class="lab">${oi===viewQ.correct?'正解':'誤り'}：</span>${o.e}</span>
+        </li>`).join('')}
+    </ul>`;
+  exp.appendChild(inner);
+  card.appendChild(exp);
+  quiz.appendChild(card);
+});
+
+function choose(card,q,qi,oi){
+  if(card.classList.contains('done')) return;
+  card.classList.add('done');
+  const opts=card.querySelectorAll('.opt');
+  opts.forEach((el,i)=>{
+    el.classList.remove('pick');
+    if(i===q.correct) el.classList.add('correct');
+    if(i===oi && oi!==q.correct) el.classList.add('wrong');
+  });
+  const ok=(oi===q.correct);
+  const v=card.querySelector('[data-role="verdict"]');
+  v.textContent= ok ? '◎ 正解' : '✕ 不正解';
+  v.classList.add(ok?'ok':'ng');
+  answered++; if(ok) correct++;
+  answeredEl.textContent=answered;correctEl.textContent=correct;
+  bar.style.width=(answered/QUESTIONS.length*100)+'%';
+  live.textContent = ok ? `第${qi+1}問 正解` : `第${qi+1}問 不正解、正解は${KEYS[q.correct]}`;
+  if(answered===QUESTIONS.length) showResult();
+}
+
+function showResult(){
+  const r=document.getElementById('result');
+  document.getElementById('sc').textContent=correct;
+  const pct=Math.round(correct/QUESTIONS.length*100);
+  document.getElementById('scpct').textContent=pct+'%';
+  let m;
+  if(pct>=90) m='素晴らしい完成度。本番でも安定して得点できるレベルです。';
+  else if(pct>=75) m='合格圏内。誤った問題の解説を読み直して取りこぼしを潰しましょう。';
+  else if(pct>=60) m='あと一歩。誤り選択肢の「どこを取り違えているか」を重点的に復習を。';
+  else m='基礎の定着が必要。レビュー種別・役割・プロセスの定義から整理しましょう。';
+  document.getElementById('scmsg').textContent=m;
+  r.classList.add('show');
+  r.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+document.getElementById('restart').addEventListener('click',()=>{
+  answered=0;correct=0;
+  answeredEl.textContent=0;correctEl.textContent=0;
+  bar.style.width='0%';
+  document.getElementById('result').classList.remove('show');
+  document.querySelectorAll('.q').forEach(card=>{
+    card.classList.remove('done');
+    card.querySelectorAll('.opt').forEach(el=>el.classList.remove('correct','wrong','pick'));
+    const v=card.querySelector('[data-role="verdict"]');
+    v.textContent='';v.classList.remove('ok','ng');
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+</script>
+</body>
+</html>

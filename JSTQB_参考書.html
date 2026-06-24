@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>JSTQB FL 頻出用語・重要論点 解説参考書</title>
+<style>
+  :root{
+    --ink:#1c1b18;--paper:#faf8f3;--card:#ffffff;--line:#e7e1d4;
+    --accent:#9c4221;--accent2:#c2703d;--good:#2a7d4f;--good-bg:#e7f3ec;
+    --bad:#b23b3b;--bad-bg:#fae9e7;--muted:#726b5e;--seal:#1c1b18;
+    --blue:#2d5b8a;--blue-bg:#e8eff6;--amber:#9a6b0b;--amber-bg:#fbf4e3;
+    --ink-soft:#3a352c;
+    --shadow:0 1px 2px rgba(28,27,24,.05),0 10px 30px rgba(28,27,24,.06);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html{scroll-behavior:smooth;}
+  html,body{margin:0;padding:0;}
+  body{background:var(--paper);color:var(--ink);
+    font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Yu Gothic",Meiryo,system-ui,sans-serif;
+    line-height:1.85;font-size:15.5px;-webkit-text-size-adjust:100%;padding-bottom:env(safe-area-inset-bottom);}
+  .wrap{max-width:720px;margin:0 auto;padding:0 16px;}
+
+  header{position:sticky;top:0;z-index:40;background:rgba(250,248,243,.92);
+    backdrop-filter:saturate(1.3) blur(12px);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top);}
+  .hbar{display:flex;align-items:center;gap:12px;padding:11px 16px 7px;max-width:720px;margin:0 auto;}
+  .sealmark{flex:0 0 auto;width:40px;height:40px;border-radius:9px;background:var(--seal);color:var(--paper);
+    display:grid;place-items:center;font-weight:800;font-size:10.5px;letter-spacing:.04em;line-height:1.05;text-align:center;}
+  .htext h1{margin:0;font-size:14.5px;font-weight:800;letter-spacing:.01em;}
+  .htext .sub{margin:0;font-size:10.5px;color:var(--muted);letter-spacing:.05em;}
+  nav{display:flex;gap:6px;overflow-x:auto;padding:0 16px 9px;max-width:720px;margin:0 auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+  nav::-webkit-scrollbar{display:none;}
+  nav a{flex:0 0 auto;font-size:12px;font-weight:800;color:var(--ink);text-decoration:none;
+    background:#fff;border:1px solid var(--line);border-radius:99px;padding:5px 13px;}
+  nav a:active{background:var(--seal);color:#fff;}
+
+  .intro{margin:22px 0;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px 20px;box-shadow:var(--shadow);}
+  .eyebrow{font-size:11px;letter-spacing:.22em;color:var(--accent);font-weight:800;text-transform:uppercase;margin-bottom:10px;}
+  .intro h2{margin:0 0 8px;font-size:21px;}
+  .intro p{margin:7px 0;color:var(--ink-soft);font-size:14px;}
+  .legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;}
+  .legend span{font-size:11.5px;border-radius:7px;padding:3px 9px;font-weight:700;}
+  .lg-def{background:#eef1f5;color:#3a4250;}
+  .lg-trap{background:var(--bad-bg);color:var(--bad);}
+  .lg-point{background:var(--amber-bg);color:var(--amber);}
+
+  section.ch{margin:32px 0 24px;scroll-margin-top:104px;}
+  .chhead{display:flex;align-items:center;gap:12px;margin-bottom:4px;padding-bottom:10px;border-bottom:2px solid var(--seal);}
+  .chnum{flex:0 0 auto;width:44px;height:44px;border-radius:11px;background:var(--seal);color:var(--paper);
+    display:grid;place-items:center;font-weight:800;font-size:18px;}
+  .chhead h2{margin:0;font-size:19px;letter-spacing:.01em;}
+  .chhead .range{font-size:10.5px;color:var(--muted);letter-spacing:.06em;display:block;font-weight:700;margin-top:2px;}
+
+  .sec{margin:18px 0 8px;}
+  .sec > h3{font-size:15.5px;margin:0 0 4px;padding:7px 0 7px 13px;border-left:4px solid var(--accent);
+    background:linear-gradient(90deg,#f3ece1,transparent);border-radius:0 8px 8px 0;}
+  .sec > .lo{font-size:11.5px;color:var(--muted);margin:0 0 10px 13px;font-weight:600;letter-spacing:.02em;}
+
+  /* term card */
+  .term{margin:11px 0;background:var(--card);border:1px solid var(--line);border-radius:13px;box-shadow:var(--shadow);overflow:hidden;}
+  .term > .t-head{padding:11px 15px 9px;background:#fbf8f2;border-bottom:1px solid var(--line);}
+  .term > .t-head .jp{font-size:15px;font-weight:800;letter-spacing:.01em;}
+  .term > .t-head .en{font-size:11px;color:var(--muted);font-weight:600;letter-spacing:.03em;margin-left:2px;}
+  .term > .t-body{padding:12px 15px 14px;font-size:14px;}
+  .term > .t-body p{margin:6px 0;}
+  .term > .t-body p.def{margin-top:0;}
+  .term > .t-body b{color:var(--accent);font-weight:800;}
+  .term > .t-body .kw{font-weight:800;background:linear-gradient(transparent 62%, #f1deba 62%);}
+
+  /* nested sub-terms list inside a card */
+  ul.sub{margin:10px 0 2px;padding:0;list-style:none;}
+  ul.sub > li{position:relative;padding:10px 0 10px 16px;border-top:1px solid #f1ece1;}
+  ul.sub > li:first-child{border-top:none;}
+  ul.sub > li::before{content:"";position:absolute;left:0;top:17px;width:7px;height:7px;border-radius:2px;background:var(--accent2);}
+  ul.sub > li b{color:var(--ink);}
+  ul.sub > li .lbl{
+    display:block;
+    font-weight:800;color:var(--accent);
+    margin-bottom:3px;
+    padding-bottom:3px;
+    border-bottom:1px dotted rgba(156,66,33,.28);
+  }
+  /* .lbl の後の解説テキストはインラインのまま（b 等を改行させない） */
+  ul.sub > li{font-size:13.8px;}
+
+  table.cmp{border-collapse:collapse;width:100%;margin:10px 0 4px;font-size:13px;}
+  table.cmp th,table.cmp td{border:1px solid var(--line);padding:7px 9px;vertical-align:top;text-align:left;}
+  table.cmp th{background:#efe9dc;font-size:12px;white-space:nowrap;}
+  table.cmp td .em{font-weight:800;color:var(--accent);}
+  /* 見積り技法など、カテゴリ見出しで区切る表 */
+  table.cmp .ghead th{
+    background:var(--accent);color:#fff;letter-spacing:.04em;
+    text-align:left;white-space:normal;font-size:12px;
+    border-color:var(--accent);
+  }
+  table.cmp .ghead-gap th{
+    border-top:6px solid var(--paper);
+  }
+  table.cmp.grp{border-top:none;}
+
+  .trap{margin:10px 0 2px;border:1.5px dashed rgba(156,66,33,.5);border-radius:10px;background:#fdf5f1;padding:9px 12px;font-size:13px;position:relative;}
+  .trap::before{content:"試験の罠";position:absolute;top:-10px;left:11px;background:var(--accent);color:#fff;
+    font-size:10px;font-weight:800;letter-spacing:.1em;border-radius:6px;padding:2px 9px;}
+  .trap p{margin:4px 0;}
+  .trap .x{color:var(--bad);font-weight:800;}
+  .trap .o{color:var(--good);font-weight:800;}
+
+  .point{margin:10px 0 2px;border-left:4px solid var(--amber);background:var(--amber-bg);border-radius:0 9px 9px 0;padding:8px 12px;font-size:13px;}
+  .point .pl{font-size:10px;font-weight:800;letter-spacing:.14em;color:var(--amber);margin-bottom:3px;}
+
+  .fig{margin:11px 0 4px;background:#fbf8f2;border:1px solid var(--line);border-radius:10px;padding:11px;overflow-x:auto;}
+  .fig .cap{font-size:11px;color:var(--muted);letter-spacing:.05em;text-align:center;margin-top:6px;font-weight:700;}
+  .fig svg{display:block;margin:0 auto;max-width:100%;height:auto;}
+  .fig text{font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans",Meiryo,sans-serif;}
+
+  .calc{margin:10px 0 4px;border:1px solid var(--line);border-radius:10px;background:var(--blue-bg);padding:10px 13px;font-size:13px;}
+  .calc .cl{font-size:10px;font-weight:800;letter-spacing:.14em;color:var(--blue);margin-bottom:5px;}
+  .calc ol{margin:4px 0;padding-left:20px;}
+  .calc .ans{font-weight:800;color:var(--blue);}
+
+  footer{text-align:center;color:var(--muted);font-size:11px;letter-spacing:.05em;padding:14px 0 44px;}
+  .toc-mini{font-size:12px;color:var(--muted);margin:2px 0 0 13px;}
+</style>
+</head>
+<body>
+<header>
+  <div class="hbar">
+    <div class="sealmark">JSTQB<br>FL</div>
+    <div class="htext">
+      <h1>頻出用語・重要論点 解説参考書</h1>
+      <p class="sub">SYLLABUS 4.0 ・ 試験頻出論点を重点整理</p>
+    </div>
+  </div>
+  <nav>
+    <a href="#ch1">1. 基礎</a><a href="#ch2">2. SDLC</a><a href="#ch3">3. 静的</a>
+    <a href="#ch4">4. 技法</a><a href="#ch5">5. 管理</a><a href="#ch6">6. ツール</a>
+  </nav>
+</header>
+
+<main class="wrap">
+
+<section class="intro">
+  <div class="eyebrow">Study Guide</div>
+  <h2>JSTQB FL 頻出用語・重要論点 解説参考書</h2>
+  <p>シラバス4.0の6章すべての<b>主要学習項目と頻出キーワード</b>を、試験で問われる粒度で整理した参考書です。単なる用語暗記ではなく、似た概念の違い、選択肢で入れ替えられやすいポイント、演習問題で迷いやすい判断基準まで確認できる構成にしています。</p>
+  <div class="legend">
+    <span class="lg-def">■ 用語カード＝定義と意味</span>
+    <span class="lg-trap">■ 試験の罠＝定義すり替え</span>
+    <span class="lg-point">■ 暗記ポイント</span>
+  </div>
+</section>
+
+<!-- ============================================================ 第1章 -->
+<section class="ch" id="ch1">
+  <div class="chhead">
+    <div class="chnum">1</div>
+    <div><h2>テストの基礎</h2><span class="range">1.1 テストとは何か／1.2 なぜテストが必要か／1.3 テストの原則／1.4 テスト活動・テストウェア・役割／1.5 テストにおける必須スキルと優れた実践</span></div>
+  </div>
+
+  <!-- 1.1 -->
+  <div class="sec">
+    <h3>1.1 テストとは何か</h3>
+    <p class="lo">LO：テストの目的の例を挙げる／テストとデバッグを区別する</p>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">テスト</span><span class="en">testing</span></div>
+      <div class="t-body">
+        <p class="def">ソフトウェアの品質を評価し、運用環境での故障のリスクを低減するための<b>あらゆる活動</b>。動的テスト（実行を伴う）と静的テスト（実行を伴わない）の両方を含み、テスト計画から完了までの一連のプロセス全体を指す。「テスト＝実行」だけではない点に注意。</p>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">テストの目的</span><span class="en">test objectives</span></div>
+      <div class="t-body">
+        <p class="def">プロジェクトにより重点は変わるが、代表的な目的は次の通り。これらは<b>すべて「評価・発見・低減・情報提供」</b>に集約され、欠陥の「修正」は含まない。</p>
+        <ul class="sub">
+          <li><span class="lbl">欠陥の作り込み防止</span>要件やユーザーストーリーなどを評価（静的テスト）して、欠陥が作り込まれるのを防ぐ。</li>
+          <li><span class="lbl">要件の検証・妥当性確認</span>要件が満たされているか、期待どおりに動くかを確かめる。</li>
+          <li><span class="lbl">テスト対象の品質に対する信頼の積み上げ</span>品質レベルへの確信を高める。</li>
+          <li><span class="lbl">欠陥と故障の発見</span>欠陥・故障を見つける。</li>
+          <li><span class="lbl">ステークホルダーへの情報提供</span>意思決定に必要な品質情報を提供する。</li>
+          <li><span class="lbl">品質リスクのレベル低減</span>不適切な品質によるリスクを下げる。</li>
+          <li><span class="lbl">契約上・法的・規制上の要件や標準の順守</span>準拠を確認・実証する。</li>
+        </ul>
+        <div class="trap"><p><span class="x">✕</span>「コード変更からリリースまでを自動化して効率を上げる」「テスト担当者が欠陥を修正する」はテストの目的ではない（前者は開発効率、後者はデバッグ）。</p></div>
+      </div>
+    </div>
+
+
+    <div class="term">
+      <div class="t-head"><span class="jp">検証／妥当性確認</span><span class="en">verification / validation</span></div>
+      <div class="t-body">
+        <p class="def">どちらも品質確認に関わるが、確認する観点が異なる。<b>検証</b>は「仕様どおりに作っているか」、<b>妥当性確認</b>は「ユーザーやステークホルダーのニーズを満たすものを作っているか」を確認する。</p>
+        <table class="cmp">
+          <tr><th></th><th>検証（verification）</th><th>妥当性確認（validation）</th></tr>
+          <tr><td>観点</td><td><span class="em">仕様・要件への適合</span></td><td><span class="em">ニーズ・利用目的への適合</span></td></tr>
+          <tr><td>覚え方</td><td>正しく作っているか</td><td>正しいものを作っているか</td></tr>
+        </table>
+        <div class="trap"><p><span class="x">✕</span>「検証＝ユーザーニーズの確認」「妥当性確認＝仕様どおりかの確認」とする<b>逆転</b>が頻出。仕様適合は検証、ニーズ適合は妥当性確認。</p></div>
+      </div>
+    </div>
+    <div class="term">
+      <div class="t-head"><span class="jp">デバッグ</span><span class="en">debugging</span></div>
+      <div class="t-body">
+        <p class="def">故障の<b>原因（欠陥）を見つけ、分析し、除去する</b>開発側の活動。手順は「故障の再現 → 欠陥の診断（原因特定）→ 修正」。修正後は確認テストで直ったことを、リグレッションテストで副作用がないことを確かめる。</p>
+        <table class="cmp">
+          <tr><th></th><th>テスト（動的）</th><th>デバッグ</th></tr>
+          <tr><td>目的</td><td><span class="em">故障を引き起こす</span></td><td><span class="em">原因を特定し修正</span></td></tr>
+          <tr><td>主体</td><td>テスト担当者</td><td>主に開発担当者</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1.2 -->
+  <div class="sec">
+    <h3>1.2 なぜテストが必要か</h3>
+    <p class="lo">LO：テストの貢献例／テストとQAの関係／誤り・欠陥・故障・根本原因を区別する</p>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">エラー（誤り）／欠陥／故障</span><span class="en">error / defect / failure</span></div>
+      <div class="t-body">
+        <div class="fig">
+          <svg viewBox="0 0 640 112" width="640" height="112">
+            <defs><marker id="a1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#1c1b18"/></marker></defs>
+            <rect x="2" y="34" width="120" height="46" rx="10" fill="#fff" stroke="#9c4221" stroke-width="2"/>
+            <text x="62" y="54" text-anchor="middle" font-size="13.5" font-weight="800">エラー(誤り)</text>
+            <text x="62" y="71" text-anchor="middle" font-size="10" fill="#726b5e">人が犯す</text>
+            <rect x="182" y="34" width="110" height="46" rx="10" fill="#fff" stroke="#9c4221" stroke-width="2"/>
+            <text x="237" y="54" text-anchor="middle" font-size="13.5" font-weight="800">欠陥</text>
+            <text x="237" y="71" text-anchor="middle" font-size="10" fill="#726b5e">成果物の中</text>
+            <rect x="352" y="34" width="110" height="46" rx="10" fill="#fff" stroke="#9c4221" stroke-width="2"/>
+            <text x="407" y="54" text-anchor="middle" font-size="13.5" font-weight="800">故障</text>
+            <text x="407" y="71" text-anchor="middle" font-size="10" fill="#726b5e">実行時に発生</text>
+            <rect x="520" y="34" width="116" height="46" rx="10" fill="#fff" stroke="#726b5e" stroke-width="1.5" stroke-dasharray="4 3"/>
+            <text x="578" y="54" text-anchor="middle" font-size="12.5" font-weight="800">影響</text>
+            <text x="578" y="71" text-anchor="middle" font-size="9.5" fill="#726b5e">損失・信用低下</text>
+            <line x1="122" y1="57" x2="178" y2="57" stroke="#1c1b18" stroke-width="2" marker-end="url(#a1)"/>
+            <line x1="292" y1="57" x2="348" y2="57" stroke="#1c1b18" stroke-width="2" marker-end="url(#a1)"/>
+            <line x1="462" y1="57" x2="516" y2="57" stroke="#1c1b18" stroke-width="2" marker-end="url(#a1)"/>
+            <text x="320" y="26" text-anchor="middle" font-size="10" fill="#726b5e">実行されると</text>
+          </svg>
+          <div class="cap">根本原因 →（人の）エラー → 欠陥 → 故障 → 影響</div>
+        </div>
+        <ul class="sub">
+          <li><span class="lbl">エラー（誤り）</span>人間が犯す誤った行為。勘違い・知識不足・時間的プレッシャー等が原因。</li>
+          <li><span class="lbl">欠陥（フォールト、バグ）</span>エラーの結果として作業成果物の中に作り込まれる不具合。コード・要件・設計などに潜む。</li>
+          <li><span class="lbl">故障（フェイラー）</span>欠陥のある箇所が<b>実行された</b>ときに、コンポーネントやシステムが期待どおりに動かない現象。</li>
+        </ul>
+        <p><b>欠陥以外でも故障は起こる</b>：放射線・電磁波・環境条件・ハードウェアの劣化などが原因で故障することもある。</p>
+        <div class="point"><div class="pl">暗記</div>「人がエラー → 成果物に欠陥 → 実行で故障」。順序と主語を固定で覚える。</div>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">根本原因</span><span class="en">root cause</span></div>
+      <div class="t-body">
+        <p class="def">欠陥が作り込まれた<b>大もとの原因</b>。根本原因分析で特定し、対策すれば同種の欠陥の再発を防げる。事例問題では「セキュリティ基準がなかった」「レビューで検討が抜けた」など<b>プロセス上の原因</b>が根本原因にあたる。</p>
+        <p>連鎖の対応：<span class="kw">根本原因（基準・プロセスの欠如）</span> → <span class="kw">欠陥（対策漏れのコード等）</span> → <span class="kw">故障（漏洩・誤動作の発生）</span> → <span class="kw">影響（売上減・信用低下）</span>。</p>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">偽陽性／偽陰性</span><span class="en">false positive / false negative</span></div>
+      <div class="t-body">
+        <ul class="sub">
+          <li><span class="lbl">偽陽性（false positive）</span>実際には欠陥がないのに、テストが<b>故障として報告</b>してしまうもの＝<b>誤検出</b>。テスト方法やデータの問題で起こる。</li>
+          <li><span class="lbl">偽陰性（false negative）</span>実際には欠陥があるのに、テストが<b>検出できず見逃す</b>もの＝<b>検出漏れ</b>。</li>
+        </ul>
+        <div class="trap"><p><span class="x">✕</span>この2つを<b>逆</b>にした選択肢が定番。「陽性＝（欠陥が）あると言う、でも実は無い」と覚えると逆転しない。</p></div>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">品質マネジメント／品質保証／品質コントロール</span><span class="en">QM / QA / QC</span></div>
+      <div class="t-body">
+        <ul class="sub">
+          <li><span class="lbl">品質マネジメント（QM）</span>品質に関して<b>組織の方向を示し、組織をコントロールする活動すべて</b>を含む最上位の概念。QAとQCを包含する。</li>
+          <li><span class="lbl">品質保証（QA）</span><b>プロセス指向</b>。適切なプロセスが守られているという信頼を提供し、品質コントロールが効果的に働くよう支える。</li>
+          <li><span class="lbl">品質コントロール（QC）</span><b>プロダクト指向</b>。テストを含む各種活動で、適切な品質レベルの達成を支援する。</li>
+        </ul>
+        <div class="trap"><p><span class="x">✕</span>QA＝プロダクト指向／QC＝プロセス指向の<b>逆転</b>に注意。✕「組織の方向を示す活動」をQAやQCと答えさせる引っかけ（正解はQM）。</p></div>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">エラー・欠陥・故障の根本原因の例</span><span class="en">causes & effects</span></div>
+      <div class="t-body">
+        <p class="def">テストが品質に貢献する理由：欠陥を早く見つけて取り除けば、<b>品質が上がり、リスクが下がる</b>。直接的・間接的に開発・保守コストの削減にもつながる。組織の評判・顧客満足にも影響する。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1.3 -->
+  <div class="sec">
+    <h3>1.3 テストの原則</h3>
+    <p class="lo">LO：7つの原則を説明する</p>
+    <div class="term">
+      <div class="t-head"><span class="jp">テストの7原則</span><span class="en">seven testing principles</span></div>
+      <div class="t-body">
+        <ul class="sub">
+          <li><span class="lbl">1. 欠陥の存在は示せるが、不在は示せない</span>テストは欠陥が「ある」ことは示せるが、「ない」ことは証明できない。</li>
+          <li><span class="lbl">2. 全数テストは不可能</span>自明なケースを除き、すべての入力・組み合わせをテストするのは不可能。リスクと優先度で絞る。</li>
+          <li><span class="lbl">3. 早期テストで時間とコストを節約</span>ライフサイクルの早い段階でテスト（静的テスト含む）を始めるほど、修正が安い。＝<b>シフトレフト</b>。</li>
+          <li><span class="lbl">4. 欠陥の偏在（クラスタリング）</span>欠陥は少数のモジュールに集中する傾向。リスク分析でそこに労力を集中。</li>
+          <li><span class="lbl">5. テストの弱化（旧称：殺虫剤のパラドックス）</span>同じテストを繰り返すと、新たな欠陥の検出に対する効果は薄れてくる。テストやテストデータの見直し・新規作成が必要。ただし自動化したリグレッションテストのように、繰り返すことが有益な場合もある。</li>
+          <li><span class="lbl">6. テストはコンテキスト次第（旧称：テストは状況次第）</span>状況（安全性重視か等）によって最適なテストは異なる。唯一普遍的に適用できるアプローチは存在しない。</li>
+          <li><span class="lbl">7. 「欠陥ゼロ」の落とし穴（旧称：バグゼロの落とし穴）</span>欠陥をすべて直してもユーザーのニーズを満たすとは限らない。検証だけでなく妥当性確認も実施すべき。</li>
+        </ul>
+        <div class="trap"><p><span class="x">✕</span>「テスト工数節約のため後工程（システム/受け入れ）に集中」→ 原則3（早期テスト）違反。後ろ倒しは常に誤り。</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1.4 -->
+  <div class="sec">
+    <h3>1.4 テスト活動・テストウェア・テストの役割</h3>
+    <p class="lo">LO：テスト活動とタスク／テストプロセスのコンテキスト／テストウェア／トレーサビリティ／役割</p>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">テストプロセス（テスト活動）</span><span class="en">test activities</span></div>
+      <div class="t-body">
+        <ul class="sub">
+          <li><span class="lbl">テスト計画</span>目的を定め、制約の中で目的を達成する<b>アプローチ</b>を決める。</li>
+          <li><span class="lbl">テストのモニタリングとコントロール</span>（横断的活動）進捗をメトリクスで把握（モニタリング）し、計画とのずれに対し是正アクションを取る（コントロール）。</li>
+          <li><span class="lbl">テスト分析</span>テストベースを分析し「<b>何を</b>テストするか」＝テスト条件を識別する。</li>
+          <li><span class="lbl">テスト設計</span>テスト条件を「<b>どう</b>テストするか」に落とし込み、ハイレベルテストケースなどを作る。</li>
+          <li><span class="lbl">テスト実装</span>実行に必要な<b>テストウェアを作成・準備</b>（テスト手順・データ・環境の構築）。</li>
+          <li><span class="lbl">テスト実行</span>テストを実施し、結果と期待結果を比較・記録する。</li>
+          <li><span class="lbl">テスト完了</span>テストウェアの保管・引き継ぎ、振り返り、テスト完了レポート作成。</li>
+        </ul>
+        <div class="trap"><p><span class="x">✕</span>分析（何を）と設計（どう）の説明<b>入れ替え</b>が頻出。実装は「作る」、実行は「動かす」。</p></div>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">テストベース／テスト条件／テストケース／テスト手順</span><span class="en">test basis / condition / case / procedure</span></div>
+      <div class="t-body">
+        <ul class="sub">
+          <li><span class="lbl">テストベース</span>テストケースを導き出すための<b>情報源</b>（要件・仕様・設計・コード・リスク等）。</li>
+          <li><span class="lbl">テスト条件</span>テストベースから識別された、<b>テストすべき側面</b>（機能・トランザクション・品質特性など）。</li>
+          <li><span class="lbl">テストケース</span>入力・前提条件・<b>期待結果</b>などの集合。ハイレベル（具体値なし）とローレベル（具体値あり）がある。</li>
+          <li><span class="lbl">テスト手順（テストプロシジャー）</span>テストケースを実行する<b>順序・手順</b>。</li>
+          <li><span class="lbl">テストスイート</span>まとめて実行するテストケース／手順の<b>集まり</b>。</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">テストウェア</span><span class="en">testware</span></div>
+      <div class="t-body">
+        <p class="def">テスト活動で<b>作成される作業成果物</b>の総称。各活動の主な成果物：計画→テスト計画書、モニタリング→進捗レポート/コントロール指示、分析→テスト条件、設計→テストケース/カバレッジアイテム、実装→テスト手順/テストデータ/テスト環境、実行→テストログ/欠陥レポート、完了→テスト完了レポート。<b>構成管理の対象</b>になる。</p>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">トレーサビリティ</span><span class="en">traceability</span></div>
+      <div class="t-body">
+        <p class="def">テストベースの各要素と、テスト条件・テストケース・テスト結果などを<b>対応づける</b>こと。これにより<b>カバレッジの評価</b>、変更時の<b>影響度分析</b>、テスト結果の監査が可能になる。「テスト活動を定量化した指標（＝メトリクス）」とは別物。</p>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">テストの役割</span><span class="en">test roles</span></div>
+      <div class="t-body">
+        <ul class="sub">
+          <li><span class="lbl">テストマネジメントの役割</span>テストプロセス全体やチームの<b>マネジメント</b>に責任を持つ。計画・モニタリングとコントロール・完了に重点。</li>
+          <li><span class="lbl">テストの役割</span>テストの<b>技術的（エンジニアリング）側面</b>に責任を持つ。分析・設計・実装・実行に重点。</li>
+        </ul>
+        <p>1人が両方を担うこともあり、コンテキストによって配分は変わる。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1.5 -->
+  <div class="sec">
+    <h3>1.5 テストにおける必須スキルと優れた実践</h3>
+    <p class="lo">LO：必須スキル／独立性の価値とリスク／チーム全体アプローチ</p>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">テストに必要なスキル</span><span class="en">generic skills</span></div>
+      <div class="t-body">
+        <p class="def">テスト知識に加え、<b>分析的思考・批判的思考</b>、好奇心、コミュニケーション能力（特に欠陥を建設的に伝える）、ドメイン知識、技術知識などが求められる。チーム内の良好な人間関係も重要。</p>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">独立したテスト</span><span class="en">independence of testing</span></div>
+      <div class="t-body">
+        <p class="def">テスト対象を作った人とは異なる立場の人がテストする度合い。独立性には段階がある（開発者自身→同じチームの別の人→別チーム→組織外）。</p>
+        <table class="cmp">
+          <tr><th>利点</th><td>異なる背景・視点・バイアスで<span class="em">別種の故障を検出</span>／仮定を検証・反証できる／政治的圧力なしに<span class="em">客観的に報告</span>できる</td></tr>
+          <tr><th>欠点</th><td>開発チームと<span class="em">隔絶し協力関係が希薄</span>／<span class="em">ボトルネック</span>化・情報共有不足／開発者が品質への責任を持たなくなる恐れ</td></tr>
+        </table>
+        <div class="trap"><p><span class="x">✕</span>「隔絶で協力関係が深まる」「独立性が高いほど情報共有が密」は<b>欠点を利点に偽装</b>した誤り。</p></div>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">チーム全体アプローチ</span><span class="en">whole-team approach</span></div>
+      <div class="t-body">
+        <p class="def">必要なスキルを持つ<b>チーム全員が品質に責任を持つ</b>協働アプローチ。同じワークスペースを共有し、情報伝達とコラボレーションを強化する。テスト担当者はビジネス側と協力して受け入れテストを作ったり、開発者と協働して自動化したりする。</p>
+        <div class="trap"><p><span class="x">✕</span>「チーム全体アプローチは独立性が<b>高く</b>なる」→ 逆。責任を共有するため<b>独立性は低くなる</b>。高い独立性が要るセーフティクリティカルな文脈には必ずしも向かない。</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ 第2章 -->
+<section class="ch" id="ch2">
+  <div class="chhead">
+    <div class="chnum">2</div>
+    <div><h2>ソフトウェア開発ライフサイクル全体を通したテスト</h2><span class="range">2.1 SDLCのコンテキストにおけるテスト／2.2 テストレベルとテストタイプ／2.3 メンテナンス（保守）テスト</span></div>
+  </div>
+
+  <!-- 2.1 -->
+  <div class="sec">
+    <h3>2.1 ソフトウェア開発ライフサイクル（SDLC）のコンテキストにおけるテスト</h3>
+    <p class="lo">LO：SDLCがテストに与える影響／優れた実践／シフトレフト／レトロスペクティブとプロセス改善</p>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">ソフトウェア開発ライフサイクル（SDLC）モデル</span><span class="en">SDLC models</span></div>
+      <div class="t-body">
+        <ul class="sub">
+          <li><span class="lbl">シーケンシャル開発モデル</span>各活動を<b>順番に逐次完了</b>する。ウォーターフォール（各フェーズ完了後にテスト）、<b>V字モデル</b>（開発の各段階に対応するテストレベルを定義し、早期テストを実装）。</li>
+          <li><span class="lbl">イテレーティブ開発モデル</span>フィーチャー群を<b>固定期間のサイクル</b>で仕様化〜テストし、毎回動くソフトウェアを提供。</li>
+          <li><span class="lbl">インクリメンタル開発モデル</span>システムを<b>小さく分割して段階的に積み上げ</b>、機能を増やしながら完成させる。</li>
+        </ul>
+        <p>アジャイル開発はイテレーティブかつインクリメンタルの代表例。</p>
+        <div class="trap"><p><span class="x">✕</span>V字モデルを「イテレーティブの一種」→ V字は<b>シーケンシャル</b>。</p></div>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">SDLCとテストの良い実践</span><span class="en">good practices</span></div>
+      <div class="t-body">
+        <p class="def">どのSDLCでも、各開発活動に<b>対応するテスト活動</b>がある／テストレベルごとに<b>固有の目的</b>を持つ／テスト分析・設計を<b>対応する開発フェーズで早めに始める</b>／テスト担当者を<b>要件定義など早期から関与</b>させる、といった実践が重要。SDLCは<b>プロジェクト・プロダクトの特性に応じて選択・調整</b>し、組み合わせることもできる。</p>
+        <div class="trap"><p><span class="x">✕</span>「一度選んだモデルは単独で固定」「習熟度を理由に選んではいけない」「並行実施は禁止」はいずれも誤り。状況で調整・組み合わせ可能。</p></div>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">DevOps</span><span class="en">DevOps</span></div>
+      <div class="t-body">
+        <p class="def">開発（Dev）と運用（Ops）が<b>協調</b>し、CI/CD・自動化により迅速かつ高頻度にリリースする組織的アプローチ。テスト自動化や継続的な品質フィードバックの利点がある一方、自動化パイプラインの構築・維持コスト等の課題もある。<b>テストが主導する開発手法ではない</b>。</p>
+      </div>
+    </div>
+
+
+    <div class="term">
+      <div class="t-head"><span class="jp">テストファースト系の開発手法</span><span class="en">TDD / ATDD / BDD</span></div>
+      <div class="t-body">
+        <p class="def">実装の後ではなく、<b>実装の前にテストや期待する振る舞いを定義する</b>開発アプローチ。テストを先に考えることで、期待結果の明確化、早期フィードバック、設計の改善に役立つ。</p>
+        <ul class="sub">
+          <li><span class="lbl">テスト駆動開発（TDD）</span>コードを書く前に、主にコンポーネントレベルのテストを書き、そのテストに合格する最小限のコードを書いてリファクタリングする。</li>
+          <li><span class="lbl">受け入れテスト駆動開発（ATDD）</span>ユーザーストーリーや受け入れ基準をもとに、受け入れテストを先に作り、それを満たすように開発する。ビジネス・開発・テストの協働が重要。</li>
+          <li><span class="lbl">振る舞い駆動開発（BDD）</span>ユーザーから見た期待される振る舞いを、自然言語に近い形で先に定義し、その振る舞いを満たすように開発する。</li>
+        </ul>
+        <div class="trap"><p><span class="x">✕</span>「まずコードを書き、後からテストを書く」がテストファースト、という説明は誤り。TDD・ATDD・BDDはいずれも<b>先に期待結果やテストを定義する</b>点が共通。</p></div>
+      </div>
+    </div>
+    <div class="term">
+      <div class="t-head"><span class="jp">シフトレフト</span><span class="en">shift-left</span></div>
+      <div class="t-body">
+        <p class="def">テストを<b>できるだけ早く（ライフサイクルの左側で）</b>実施する考え方。実践例：テスト観点での仕様レビュー、コードを書く前にテストを書く、動的テスト前の静的解析、CIでのコンポーネントテスト自動実行。早めの投資が後の手戻りを減らす。</p>
+        <div class="trap"><p><span class="x">✕</span>「受け入れテストで初めてテスト担当者が参加」「コンポーネントテストで顧客が妥当性確認」はシフトレフトの例ではない。</p></div>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">レトロスペクティブ（振り返り）とプロセス改善</span><span class="en">retrospectives</span></div>
+      <div class="t-body">
+        <p class="def">イテレーション・マイルストーン・プロジェクトの節目に行う会議。<b>うまくいったこと・改善点・教訓</b>を議論し、<b>プロセス改善</b>と<b>学習</b>につなげる。テストに関する成果（自動化の改善点、コミュニケーション、テストの有効性など）も対象。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2.2 -->
+  <div class="sec">
+    <h3>2.2 テストレベルとテストタイプ</h3>
+    <p class="lo">LO：テストレベルとテストタイプを区別する／確認テストとリグレッションテスト</p>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">テストレベル</span><span class="en">test levels</span></div>
+      <div class="t-body">
+        <p class="def">テスト活動を<b>系統立ててまとめたグループ</b>。レベルごとに焦点と目的が異なる。</p>
+        <ul class="sub">
+          <li><span class="lbl">コンポーネントテスト（ユニットテスト）</span><b>単一のコンポーネント</b>に焦点。仕様どおりかを検証し、内部の欠陥を検出する。多くは開発者が実施・自動化。</li>
+          <li><span class="lbl">コンポーネント統合テスト</span>コンポーネント<b>間のインターフェースと相互処理</b>に焦点。インターフェース品質への信頼を積み上げる。</li>
+          <li><span class="lbl">システムテスト</span><b>システム/プロダクト全体</b>の振る舞い（エンドツーエンド）に焦点。機能・非機能の両方を確認。</li>
+          <li><span class="lbl">システム統合テスト</span>システムと<b>外部システム・外部サービス</b>との相互運用に焦点。</li>
+          <li><span class="lbl">受け入れテスト</span><b>本番想定の使用方法との合致・妥当性確認</b>に焦点。リリース可否の判断材料。ユーザー受け入れ（UAT）・運用受け入れ・契約/規制受け入れ・アルファ/ベータテストなどの形態。</li>
+        </ul>
+        <p><b>補足：統合の進め方</b>として、すべてを一度に結合して確認する<b>ビッグバン統合</b>と、少しずつ結合して確認する<b>漸増的統合</b>がある。ビッグバン統合は一見単純だが、故障時の原因特定が難しくなりやすい。漸増的統合は段階的に確認できるため、問題の切り分けがしやすい。</p>
+        <div class="trap"><p><span class="x">✕</span>コンポーネントテストの選択肢に「インターフェースの検証」が混じる→それは<b>統合</b>。「単体の中」か「間」か「全体」かで判別。</p></div>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">テストタイプ</span><span class="en">test types</span></div>
+      <div class="t-body">
+        <ul class="sub">
+          <li><span class="lbl">機能テスト</span>システムが「<b>何をするか</b>」を評価。ブラックボックス技法で導出。</li>
+          <li><span class="lbl">非機能テスト</span>「<b>どれだけうまく</b>振る舞うか」を評価。使用性・性能効率性・信頼性・互換性・セキュリティ・保守性・移植性などの品質特性（ISO/IEC 25010）。</li>
+          <li><span class="lbl">ブラックボックステスト</span>仕様（外部の振る舞い）<b>ベース</b>。内部構造を参照しない。</li>
+          <li><span class="lbl">ホワイトボックステスト</span>内部構造・実装<b>ベース</b>。<b>構造カバレッジ</b>でテストの十分性を測れる。</li>
+        </ul>
+        <p><b>すべてのテストタイプはすべてのテストレベルで実施できる</b>。</p>
+        <div class="trap"><p><span class="x">✕</span>「セキュリティテストは機能テスト」「性能テストは機能テスト」→ どちらも<b>非機能テスト</b>。</p></div>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">確認テスト／リグレッションテスト</span><span class="en">confirmation / regression testing</span></div>
+      <div class="t-body">
+        <ul class="sub">
+          <li><span class="lbl">確認テスト</span>修正により<b>元の欠陥が確実に除去された</b>ことを確認する。</li>
+          <li><span class="lbl">リグレッションテスト</span>変更が<b>変更箇所以外に悪影響（デグレード）を与えていない</b>ことを確認する。繰り返し実行されるため<b>自動化に向く</b>。実施前に<b>影響度分析</b>を行うとよい。</li>
+        </ul>
+        <div class="trap"><p><span class="x">✕</span>確認とリグレッションの説明<b>入れ替え</b>が超頻出。✕「確認テストの方が自動化効果が大きい」→ 反復実行される<b>リグレッション</b>の方が大きい。</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2.3 -->
+  <div class="sec">
+    <h3>2.3 メンテナンス（保守）テスト</h3>
+    <p class="lo">LO：メンテナンステストのトリガーと役割</p>
+    <div class="term">
+      <div class="t-head"><span class="jp">メンテナンス（保守）テスト</span><span class="en">maintenance testing</span></div>
+      <div class="t-body">
+        <p class="def"><b>運用中のシステム</b>に変更を加えた際に行うテスト。変更部分の確認テストと、影響範囲のリグレッションテストが中心。トリガーは次の通り。</p>
+        <ul class="sub">
+          <li><span class="lbl">是正（修正）</span>運用中に見つかった欠陥の修正。緊急の場合もある。</li>
+          <li><span class="lbl">適応</span>環境変化への対応（OS/ブラウザのバージョンアップ、法改正対応など）。計画的でもメンテナンス。</li>
+          <li><span class="lbl">改良（完全化）／予防</span>機能改善や、将来の欠陥を防ぐための改修。</li>
+          <li><span class="lbl">移行・廃棄</span>別環境への移行、システムの廃棄（データ移行・アーカイブのテスト）。</li>
+        </ul>
+        <div class="trap"><p><span class="x">✕</span>「新規システムの初回開発」はメンテナンステストに該当しない（運用中システムへの変更ではない）。</p></div>
+      </div>
+    </div>
+    <div class="term">
+      <div class="t-head"><span class="jp">影響度分析</span><span class="en">impact analysis</span></div>
+      <div class="t-body">
+        <p class="def">変更によって<b>どこに影響が及ぶか</b>を分析する活動。意図した結果、予想される副作用、変更が影響する領域、必要な確認テストとリグレッションテストの範囲を識別する。</p>
+        <ul class="sub">
+          <li><span class="lbl">実施タイミング</span>変更前に行って対応可否や範囲を判断することも、変更後・リリース前に実際の影響を確認することもある。</li>
+          <li><span class="lbl">難しくなる要因</span>仕様が古い、テストケースが文書化されていない、トレーサビリティが弱い、システムに詳しい担当者がいない、など。</li>
+          <li><span class="lbl">テストとの関係</span>変更箇所には確認テスト、影響を受けそうな既存領域にはリグレッションテストを計画する。</li>
+        </ul>
+        <div class="trap"><p><span class="x">✕</span>「影響度分析は変更前だけで、変更後に行ってはならない」は誤り。実際に変更しないと影響を正確に割り出せない場合もある。</p></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================ 第3章 -->
+<section class="ch" id="ch3">
+  <div class="chhead">
+    <div class="chnum">3</div>
+    <div><h2>静的テスト</h2><span class="range">3.1 静的テストの基礎／3.2 フィードバックとレビュープロセス</span></div>
+  </div>
+
+  <!-- 3.1 -->
+  <div class="sec">
+    <h3>3.1 静的テストの基礎</h3>
+    <p class="lo">LO：静的テストで調べる作業成果物／静的テストの価値／静的テストと動的テストの違い</p>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">静的テスト</span><span class="en">static testing</span></div>
+      <div class="t-body">
+        <p class="def">作業成果物を<b>実行せずに</b>評価するテスト。2つの方式がある。</p>
+        <ul class="sub">
+          <li><span class="lbl">レビュー</span>人手で成果物を検査して欠陥を見つける（要件・設計・コード・テストウェアなど）。</li>
+          <li><span class="lbl">静的解析</span>ツールでコードやモデルを<b>実行せずに解析</b>し、規約違反・到達不能コード・循環的複雑度・セキュリティ脆弱性などを検出する。</li>
+        </ul>
+        <p>対象は<b>ほぼすべての作業成果物</b>（仕様・コード・Webページ・契約書・<b>テスト計画書やテストケースなどのテストウェアも含む</b>）。ただし<b>人（ステークホルダー）は対象外</b>。読める・構文構造を持つものが対象。</p>
+        <div class="trap"><p><span class="x">✕</span>「テストウェアは静的テストの対象外」→ 対象に<b>含まれる</b>。✕「実行中の応答時間を測る」→ それは動的テスト。</p></div>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">静的テストの価値</span><span class="en">value of static testing</span></div>
+      <div class="t-body">
+        <p class="def"><b>早期に欠陥を検出</b>でき（早期テストの原則）、修正が安い。動的テストでは見つけにくい欠陥（要件の曖昧さ・矛盾・抜け、保守性の問題、設計の欠陥など）を見つけられる。開発の生産性向上やコミュニケーション改善にも寄与する。</p>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">静的テストと動的テストの違い</span><span class="en">static vs dynamic</span></div>
+      <div class="t-body">
+        <table class="cmp">
+          <tr><th></th><th>静的テスト</th><th>動的テスト</th></tr>
+          <tr><td>実行</td><td>しない</td><td>する</td></tr>
+          <tr><td>見つけ方</td><td>欠陥を<span class="em">直接</span>検出</td><td>故障を観測し<span class="em">欠陥を間接的に</span>特定</td></tr>
+          <tr><td>得意な欠陥</td><td>要件の曖昧さ、<span class="em">保守性</span>の欠陥、抜け・矛盾</td><td>外部の振る舞い、<span class="em">機能</span>的欠陥、性能</td></tr>
+        </table>
+        <div class="trap"><p><span class="x">✕</span>「保守性の欠陥検出は動的テストが適する」→ <b>静的テスト</b>が適する（利点の逆転）。</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3.2 -->
+  <div class="sec">
+    <h3>3.2 フィードバックとレビュープロセス</h3>
+    <p class="lo">LO：早期・頻繁なフィードバックの利点／レビュープロセスの活動／役割と責務／レビュー種別／成功要因</p>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">早期かつ頻繁なステークホルダーフィードバックの利点</span><span class="en">early & frequent feedback</span></div>
+      <div class="t-body">
+        <p class="def">SDLCの早期からステークホルダーが関与し頻繁にフィードバックすることで、<b>誤解や要件の取り違えを早く是正</b>でき、開発中のプロダクトがステークホルダーのビジョンと乖離するリスクを軽減できる。変更要求は増えうるが、後半での大きな手戻りを防げる。</p>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">レビュープロセスの活動（5ステップ）</span><span class="en">review process</span></div>
+      <div class="t-body">
+        <div class="fig">
+          <svg viewBox="0 0 640 64" width="640" height="64">
+            <defs><marker id="a2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#1c1b18"/></marker></defs>
+            <g font-size="11.5" font-weight="800" text-anchor="middle">
+              <rect x="2" y="16" width="84" height="36" rx="8" fill="#fff" stroke="#1c1b18" stroke-width="1.5"/><text x="44" y="39">計画</text>
+              <rect x="116" y="16" width="84" height="36" rx="8" fill="#fff" stroke="#1c1b18" stroke-width="1.5"/><text x="158" y="39">開始</text>
+              <rect x="230" y="16" width="110" height="36" rx="8" fill="#fff" stroke="#1c1b18" stroke-width="1.5"/><text x="285" y="39">個々のレビュー</text>
+              <rect x="370" y="16" width="100" height="36" rx="8" fill="#fff" stroke="#1c1b18" stroke-width="1.5"/><text x="420" y="39">共有と分析</text>
+              <rect x="500" y="16" width="100" height="36" rx="8" fill="#fff" stroke="#1c1b18" stroke-width="1.5"/><text x="550" y="39">修正と報告</text>
+            </g>
+            <line x1="86" y1="34" x2="112" y2="34" stroke="#1c1b18" stroke-width="1.8" marker-end="url(#a2)"/>
+            <line x1="200" y1="34" x2="226" y2="34" stroke="#1c1b18" stroke-width="1.8" marker-end="url(#a2)"/>
+            <line x1="340" y1="34" x2="366" y2="34" stroke="#1c1b18" stroke-width="1.8" marker-end="url(#a2)"/>
+            <line x1="470" y1="34" x2="496" y2="34" stroke="#1c1b18" stroke-width="1.8" marker-end="url(#a2)"/>
+          </svg>
+          <div class="cap">計画 → 開始（立ち上げ）→ 個々のレビュー → 共有と分析 → 修正と報告</div>
+        </div>
+        <ul class="sub">
+          <li><span class="lbl">計画</span>目的・対象・品質特性を定め、<b>工数と時間枠から範囲を決め</b>、参加者と役割、終了基準を決める。</li>
+          <li><span class="lbl">レビューの開始（立ち上げ）</span>成果物や資料を<b>配付・共有</b>し、範囲・目的・役割・責務を説明、質問に答える。</li>
+          <li><span class="lbl">個々のレビュー</span>各レビューアが成果物を調べ、<b>不正・提案・質問を書き出す</b>。</li>
+          <li><span class="lbl">共有と分析（コミュニケーションと分析）</span>不正を<b>議論・分析</b>し、オーナーとステータスを割り当て、品質を評価してレビュー結果を判定。</li>
+          <li><span class="lbl">修正と報告</span>変更が必要な不正の<b>欠陥レポートを作成</b>し、作成者が修正、終了基準の達成を確認・報告。</li>
+        </ul>
+        <div class="trap"><p><span class="x">✕</span>各活動の中身の<b>入れ替え</b>が定番（例：「修正と報告＝不正を書き出す」）。表の太字で対応づける。</p></div>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">レビューの役割と責務</span><span class="en">roles in a review</span></div>
+      <div class="t-body">
+        <ul class="sub">
+          <li><span class="lbl">マネージャー</span>レビューの<b>実施を決定</b>し、人・予算・時間などの<b>資源を割り当てる</b>。</li>
+          <li><span class="lbl">作成者（オーサー）</span>レビュー対象の成果物を作り、指摘された<b>欠陥を修正</b>する。</li>
+          <li><span class="lbl">モデレーター（ファシリテーター）</span>レビューミーティングを<b>効果的に運営し意見を調整</b>。成功の鍵。</li>
+          <li><span class="lbl">レビューリーダー</span>レビュー<b>全体の責任</b>。参加者の人選、実施期間・場所の決定。</li>
+          <li><span class="lbl">レビューア</span>成果物をレビューし<b>不正（欠陥）を識別</b>する。ドメイン専門家など。</li>
+          <li><span class="lbl">書記（スクライブ）</span>不正・未解決の問題・決定事項を<b>記録</b>する。</li>
+        </ul>
+        <div class="trap"><p><span class="x">✕</span>マネージャーとレビューリーダー、モデレーターと作成者の責務取り違えに注意。「実施決定と資源＝マネージャー」「運営調整＝モデレーター」。</p></div>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">レビュー種別</span><span class="en">review types</span></div>
+      <div class="t-body">
+        <div class="fig">
+          <svg viewBox="0 0 640 70" width="640" height="70">
+            <defs><marker id="a3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#9c4221"/></marker></defs>
+            <line x1="18" y1="38" x2="622" y2="38" stroke="#9c4221" stroke-width="2.4" marker-end="url(#a3)"/>
+            <g font-size="11.5" font-weight="800" text-anchor="middle">
+              <text x="80" y="24">非形式的</text><text x="240" y="24">ウォークスルー</text>
+              <text x="400" y="24">テクニカル</text><text x="552" y="24">インスペクション</text>
+            </g>
+            <g font-size="9.5" fill="#726b5e" text-anchor="middle">
+              <text x="80" y="58">役割なし/手軽</text><text x="240" y="58">作成者が主導</text>
+              <text x="400" y="58">技術専門家/技術面</text><text x="552" y="58">最も形式的/書記必須</text>
+            </g>
+            <circle cx="80" cy="38" r="4" fill="#9c4221"/><circle cx="240" cy="38" r="4" fill="#9c4221"/>
+            <circle cx="400" cy="38" r="4" fill="#9c4221"/><circle cx="552" cy="38" r="4" fill="#9c4221"/>
+          </svg>
+          <div class="cap">形式度：低 ───────────────→ 高</div>
+        </div>
+        <ul class="sub">
+          <li><span class="lbl">非形式的レビュー</span>形式的プロセスに基づかない。同僚による確認（バディチェック）など。アジャイルで一般的。</li>
+          <li><span class="lbl">ウォークスルー</span><b>作成者が主導</b>。シナリオ・ドライラン・シミュレーションの形態をとる。欠陥検出・知識共有・合意形成が目的。</li>
+          <li><span class="lbl">テクニカルレビュー</span>技術的な<b>専門家</b>が実施。<b>技術面</b>に焦点。合意形成・問題解決が目的。</li>
+          <li><span class="lbl">インスペクション</span><b>最も形式的</b>。ルール・チェックリスト・開始/終了基準があり、訓練された進行役が主導、<b>書記が必須</b>でメトリクスを収集する。</li>
+        </ul>
+        <div class="trap"><p><span class="x">✕</span>「テクニカルレビューが最も形式的」→ <b>インスペクション</b>。「ウォークスルーはマネージャーが主導」→ <b>作成者</b>が主導。</p></div>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">レビューの成功要因</span><span class="en">success factors</span></div>
+      <div class="t-body">
+        <p class="def"><b>組織面</b>：明確な目的と測定可能な終了基準／適切な人選／対象を<b>小さく分割</b>（大きな塊は集中力低下で逆効果）／準備時間の確保。<b>人の面</b>：心理的安全（人ではなく成果物に焦点）／参加者のトレーニング／レビューを組織文化として定着させる。</p>
+        <div class="trap"><p><span class="x">✕</span>「ドキュメントはできるだけ大きな単位でレビュー」→ 集中力が落ち逆効果。<b>小さく分割</b>が正解。</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ 第4章 -->
+<section class="ch" id="ch4">
+  <div class="chhead">
+    <div class="chnum">4</div>
+    <div><h2>テスト分析と設計</h2><span class="range">4.1 テスト技法の概要／4.2 ブラックボックステスト技法／4.3 ホワイトボックステスト技法／4.4 経験ベースのテスト技法／4.5 コラボレーションによるテストアプローチ</span></div>
+  </div>
+
+  <!-- 4.1 -->
+  <div class="sec">
+    <h3>4.1 テスト技法の概要</h3>
+    <p class="lo">LO：ブラックボックス・ホワイトボックス・経験ベースの各技法を区別する</p>
+    <div class="term">
+      <div class="t-head"><span class="jp">テスト技法の3分類</span><span class="en">categories of test techniques</span></div>
+      <div class="t-body">
+        <ul class="sub">
+          <li><span class="lbl">ブラックボックステスト技法（仕様ベース）</span>テストベース（要件・仕様等）の分析に基づき、<b>入力と出力</b>に着目。内部構造は参照しない。</li>
+          <li><span class="lbl">ホワイトボックステスト技法（構造ベース）</span>システムの<b>内部構造・実装（コード・アーキテクチャ等）</b>の分析に基づく。</li>
+          <li><span class="lbl">経験ベースのテスト技法</span>テスト担当者の<b>知識・経験・スキル</b>を活用する。仕様や構造ベースで見逃しがちな欠陥を補う。</li>
+        </ul>
+        <div class="point"><div class="pl">暗記</div>ブラック＝入出力、ホワイト＝内部構造、経験＝人の知識。穴埋めで頻出。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4.2 -->
+  <div class="sec">
+    <h3>4.2 ブラックボックステスト技法</h3>
+    <p class="lo">LO：同値分割・境界値分析・デシジョンテーブルテスト・状態遷移テストを適用する</p>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">同値分割法</span><span class="en">equivalence partitioning</span></div>
+      <div class="t-body">
+        <p class="def">入力（や出力）を、<b>同じように扱われると想定されるグループ（同値パーティション）</b>に分け、各グループから代表値を1つテストする。<b>有効同値</b>（受理される値）と<b>無効同値</b>（拒否・エラーになる値）に分けられる。</p>
+        <p><b>イーチチョイスカバレッジ</b>：複数のパーティションセットがある場合に、<b>各セットの各パーティションを少なくとも1回</b>テストで通すカバレッジ基準。<b>組み合わせは考慮しない</b>。</p>
+        <div class="calc">
+          <div class="cl">数え方</div>
+          <ol>
+            <li>仕様の区分ごとに有効同値を数える</li>
+            <li>エラーになる範囲（多くは下側・上側の2つ）を無効同値として数える</li>
+          </ol>
+          例：合計値が7未満/7/7超で扱いが変わり、1以下・13以上はエラー → <span class="ans">有効3・無効2</span>
+        </div>
+        <div class="trap"><p><span class="x">✕</span>無効同値の<b>見落とし</b>（0や1にする）が定番。エラー条件は下側・上側で2つあることが多い。</p></div>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">境界値分析</span><span class="en">boundary value analysis(通称：BVA)</span></div>
+      <div class="t-body">
+        <p class="def">同値パーティションの<b>境界（端）</b>付近で欠陥が起きやすいことを利用し、境界値を重点的にテストする。順序付けできる同値パーティションに適用。</p>
+        <div class="fig">
+          <svg viewBox="0 0 620 110" width="620" height="110">
+            <line x1="30" y1="58" x2="600" y2="58" stroke="#1c1b18" stroke-width="2"/>
+            <g font-size="10.5" text-anchor="middle">
+              <line x1="190" y1="46" x2="190" y2="70" stroke="#1c1b18" stroke-width="2"/><text x="190" y="38" font-weight="800">境界</text>
+              <circle cx="152" cy="58" r="5.5" fill="#2d5b8a"/><text x="152" y="88" fill="#2d5b8a" font-weight="800">前</text>
+              <circle cx="190" cy="58" r="5.5" fill="#9c4221"/><text x="190" y="88" fill="#9c4221" font-weight="800">境界上</text>
+              <circle cx="228" cy="58" r="5.5" fill="#2d5b8a"/><text x="228" y="88" fill="#2d5b8a" font-weight="800">後</text>
+              <text x="190" y="104" fill="#726b5e">3値境界値＝1境界に3値</text>
+              <line x1="440" y1="46" x2="440" y2="70" stroke="#1c1b18" stroke-width="2"/><text x="440" y="38" font-weight="800">境界</text>
+              <circle cx="420" cy="58" r="5.5" fill="#2d5b8a"/><circle cx="460" cy="58" r="5.5" fill="#2d5b8a"/>
+              <text x="420" y="88" fill="#2d5b8a" font-weight="800">直前</text><text x="460" y="88" fill="#2d5b8a" font-weight="800">直後</text>
+              <text x="440" y="104" fill="#726b5e">2値境界値＝1境界に2値</text>
+            </g>
+          </svg>
+          <div class="cap">3値境界値（境界上＋前後）／2値境界値（境界の直前・直後）</div>
+        </div>
+        <div class="calc">
+          <div class="cl">数え方</div>
+          <ol><li>境界の数を数える（区分の仕切りの数）</li><li>境界の数 ×（2 or 3）。範囲外の値は数えない</li></ol>
+          例：顧客ステータス4区分（仕切り3つ）× 3値 ＝ <span class="ans">9個</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">デシジョンテーブルテスト</span><span class="en">decision table testing</span></div>
+      <div class="t-body">
+        <p class="def">複数の<b>条件の組み合わせ</b>と、それぞれがもたらす<b>結果（アクション）</b>を表にまとめる技法。条件の組み合わせ仕様の<b>確認漏れを防ぐ</b>のに効果的。条件が複数あり結果が組み合わせで決まる場合に有効。</p>
+        <div class="calc">
+          <div class="cl">数え方</div>
+          <ol><li>各条件の取りうる値を掛け合わせる</li><li><b>結果が変わらない条件は縮約</b>する</li></ol>
+          例：客種3 × 会員2 だが、特定の客種では会員区分が結果に影響しない → 縮約して組み合わせ数が減る
+        </div>
+        <div class="trap"><p><span class="x">✕</span>単純な総当たり（全部掛け算）で答えさせる選択肢に注意。<b>結果が同じ条件は縮約</b>される。</p></div>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">状態遷移テスト</span><span class="en">state transition testing</span></div>
+      <div class="t-body">
+        <p class="def">システムの<b>状態</b>と、イベントによる<b>状態の遷移</b>を状態遷移図/表で表し、それをもとにテストする。状態・イベント・ガード条件・アクションからなる。</p>
+        <div class="fig">
+          <svg viewBox="0 0 620 224" width="620" height="224">
+            <defs><marker id="a4" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#9c4221"/></marker></defs>
+            <g font-size="11.5" font-weight="800" text-anchor="middle">
+              <rect x="14" y="86" width="96" height="38" rx="9" fill="#fff" stroke="#1c1b18" stroke-width="1.6"/><text x="62" y="110">通常</text>
+              <rect x="244" y="14" width="124" height="38" rx="9" fill="#fff" stroke="#1c1b18" stroke-width="1.6"/><text x="306" y="38">アラーム予約</text>
+              <rect x="486" y="86" width="124" height="38" rx="9" fill="#fff" stroke="#1c1b18" stroke-width="1.6"/><text x="548" y="110">アラーム発生</text>
+              <rect x="244" y="160" width="124" height="38" rx="9" fill="#fff" stroke="#1c1b18" stroke-width="1.6"/><text x="306" y="184">スヌーズ</text>
+            </g>
+            <g font-size="9.5" fill="#726b5e">
+              <path d="M104,86 Q166,38 240,34" fill="none" stroke="#9c4221" stroke-width="1.8" marker-end="url(#a4)"/><text x="138" y="46">①セット</text>
+              <path d="M368,34 Q458,44 544,82" fill="none" stroke="#9c4221" stroke-width="1.8" marker-end="url(#a4)"/><text x="448" y="38">②設定時間到達</text>
+              <path d="M254,52 Q160,72 116,90" fill="none" stroke="#9c4221" stroke-width="1.8" marker-end="url(#a4)"/><text x="188" y="78">③解除</text>
+              <path d="M486,100 Q300,92 118,102" fill="none" stroke="#9c4221" stroke-width="1.8" marker-end="url(#a4)"/><text x="300" y="88">④解除</text>
+              <path d="M504,124 Q480,210 372,192" fill="none" stroke="#9c4221" stroke-width="1.8" marker-end="url(#a4)"/><text x="500" y="166">⑤スヌーズボタン</text>
+              <path d="M372,168 Q470,148 492,118" fill="none" stroke="#9c4221" stroke-width="1.8" marker-end="url(#a4)"/><text x="408" y="142">⑥9分経過</text>
+              <path d="M244,182 Q126,162 66,124" fill="none" stroke="#9c4221" stroke-width="1.8" marker-end="url(#a4)"/><text x="116" y="168">⑦解除</text>
+            </g>
+          </svg>
+          <div class="cap">矢印＝有効遷移（この図は7本）</div>
+        </div>
+        <table class="cmp">
+          <tr><th>現在状態 ＼ イベント</th><th>セット</th><th>設定時間到達</th><th>解除</th><th>スヌーズボタン</th><th>9分経過</th></tr>
+          <tr><th>通常</th><td>アラーム予約</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+          <tr><th>アラーム予約</th><td>—</td><td>アラーム発生</td><td>通常</td><td>—</td><td>—</td></tr>
+          <tr><th>アラーム発生</th><td>—</td><td>—</td><td>通常</td><td>スヌーズ</td><td>—</td></tr>
+          <tr><th>スヌーズ</th><td>—</td><td>—</td><td>通常</td><td>—</td><td>アラーム発生</td></tr>
+        </table>
+        <p>状態遷移図は有効遷移の流れを直感的に把握しやすい。一方、<b>状態遷移表</b>は「状態 × イベント」の組み合わせを一覧化できるため、図に描かれていない遷移（無効遷移・状態変化なし・仕様未定義など）も確認しやすい。<b>全遷移カバレッジ</b>を検討するときは、状態遷移表が特に役立つ。ただし、状態やイベントが多い場合は表が大きくなるため、重要な状態・イベントに絞ることもある。</p>
+        <table class="cmp">
+          <tr><th>全状態カバレッジ</th><td>通過した状態 ÷ 全状態</td></tr>
+          <tr><th>有効遷移カバレッジ</th><td>通過した有効遷移 ÷ 全有効遷移。<span class="em">100%なら全状態100%も保証</span>（逆は不成立）</td></tr>
+          <tr><th>全遷移カバレッジ</th><td>有効＋無効遷移が対象（無効は実行を試みられるもの）</td></tr>
+        </table>
+        <div class="trap"><p><span class="x">✕</span>「全状態100%は有効遷移100%を保証」→ <b>逆</b>。✕「状態遷移テスト＝画面遷移の確認」→ それは<b>画面遷移テスト</b>。状態遷移は状態がイベントでどう変わるか。</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4.3 -->
+  <div class="sec">
+    <h3>4.3 ホワイトボックステスト技法</h3>
+    <p class="lo">LO：ステートメントテスト・ブランチテストを説明し、価値を述べる</p>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">ステートメントテスト／ステートメントカバレッジ</span><span class="en">statement testing / coverage</span></div>
+      <div class="t-body">
+        <p class="def">コード中の<b>実行可能なステートメント（命令文）</b>を対象とする技法。ステートメントカバレッジ＝（実行した命令文 ÷ 全実行可能命令文）。100%でも<b>判定の結果（真/偽）の網羅は保証しない</b>。</p>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">ブランチテスト／ブランチカバレッジ</span><span class="en">branch testing / coverage</span></div>
+      <div class="t-body">
+        <p class="def">判定（分岐）から出る<b>ブランチ（真・偽の両方）</b>を対象とする技法。ブランチカバレッジ＝（実行したブランチ ÷ 全ブランチ）。各判定の<b>真と偽の両方</b>を通す必要がある。</p>
+        <div class="fig">
+          <svg viewBox="0 0 600 195" width="600" height="195">
+            <text x="300" y="18" text-anchor="middle" font-size="12.5" font-weight="800" fill="#9c4221">分岐網羅（より強い）</text>
+            <text x="300" y="40" text-anchor="middle" font-size="11" font-weight="700" fill="#9c4221">真・偽の両方を網羅</text>
+            <ellipse cx="300" cy="118" rx="170" ry="56" fill="none" stroke="#9c4221" stroke-width="2.4"/>
+            <circle cx="300" cy="124" r="34" fill="#e8eff6" stroke="#2d5b8a" stroke-width="2"/>
+            <text x="300" y="128" text-anchor="middle" font-size="11.5" font-weight="800" fill="#2d5b8a">命令網羅</text>
+          </svg>
+          <div class="cap">ブランチカバレッジ100% ⇒ ステートメントカバレッジ100%（逆は不成立）</div>
+        </div>
+        <div class="trap"><p><span class="x">✕</span>「分岐網羅100%は命令の網羅を保証しない」→ <b>保証する</b>（包含関係の逆転）。✕「真もしくは偽の<b>いずれか</b>でよい」→ <b>両方</b>必要。</p></div>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">ホワイトボックステストの価値</span><span class="en">value of white-box</span></div>
+      <div class="t-body">
+        <p class="def">コードの<b>構造を網羅</b>でき、実装された全体をどれだけ試したかを<b>客観的なカバレッジ値</b>で測れる。仕様が不十分でも構造から欠陥を見つけられる。一方、<b>要件の実装漏れ（無い機能）には気づけない</b>のが弱点。</p>
+        <div class="trap"><p><span class="x">✕</span>「要件の実装漏れはホワイトボックスが見つけやすい」→ <b>逆</b>。要件と照合する<b>ブラックボックス</b>が気づく。</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4.4 -->
+  <div class="sec">
+    <h3>4.4 経験ベースのテスト技法</h3>
+    <p class="lo">LO：エラー推測・探索的テスト・チェックリストベースドテストを説明する</p>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">エラー推測</span><span class="en">error guessing</span></div>
+      <div class="t-body">
+        <p class="def">過去の経験（起こしやすいエラー、過去の故障、欠陥の傾向）をもとに、<b>エラー・欠陥・故障の発生を予測してリスト化</b>し、それを突くテストを設計する。体系化したものを<b>フォールト攻撃（fault attack）</b>と呼ぶ。</p>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">探索的テスト</span><span class="en">exploratory testing</span></div>
+      <div class="t-body">
+        <p class="def">テストを<b>実行しながら動的に設計・実行・記録・評価</b>する非形式的な技法。学びながら次のテストを考える。体系化のために、目的と範囲を示す<b>テストチャーター</b>を定め、時間を区切った<b>セッション</b>で実施する（セッションベースドテスト）。仕様が不十分／時間が限られる状況で有効。</p>
+        <div class="point"><div class="pl">暗記</div>探索的＝「実行しながら設計」＋「チャーター」＋「セッション」。穴埋め頻出。</div>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">チェックリストベースドテスト</span><span class="en">checklist-based testing</span></div>
+      <div class="t-body">
+        <p class="def">経験から作成した<b>チェックリスト</b>に沿ってテストを設計・実行する。リストはハイレベルな項目（テスト条件）の集まり。解釈に幅があるため<b>再現性は低め</b>。機能・非機能の両方に作れる。定期的な見直しでテストの弱化（旧称：殺虫剤のパラドックス）に対処する。</p>
+        <div class="trap"><p><span class="x">✕</span>「チェックリストベースド＝条件の全組み合わせを表に書く」→ それは<b>デシジョンテーブル</b>。3技法の説明シャッフルに注意。</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4.5 -->
+  <div class="sec">
+    <h3>4.5 コラボレーションによるテストアプローチ</h3>
+    <p class="lo">LO：ユーザーストーリーの共同作成／受け入れ基準／受け入れテスト駆動開発（ATDD）</p>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">ユーザーストーリーと3つのC</span><span class="en">user story / 3 C's</span></div>
+      <div class="t-body">
+        <p class="def">ユーザーストーリーは、<b>ユーザー・顧客・ビジネスにとって価値のある機能を、短く記述したもの</b>である。通常、ユーザー視点で「誰が、何をしたいか、なぜ必要か」を表す。詳細な仕様書として完成させるものではなく、関係者の<b>会話を促すための出発点</b>として扱う。</p>
+        <p>ユーザーストーリーは、<b>ビジネス担当者・開発担当者・テスト担当者</b>などが協力して作成する。複数の視点で共同作成することで、誤解、曖昧さ、抜け漏れを早期に見つけやすくなる。</p>
+        <p>ユーザーストーリーを表す代表的な考え方が<b>3つのC</b>である。</p>
+        <ul class="sub">
+          <li><span class="lbl">Card（カード）</span>ユーザーストーリーを短く記述する媒体。必要なことをすべて書き切る詳細仕様ではなく、会話のきっかけとなる。</li>
+          <li><span class="lbl">Conversation（会話）</span>ユーザーストーリーの詳細、前提、制約、実現方法などを関係者で話し合うこと。</li>
+          <li><span class="lbl">Confirmation（確認）</span>ユーザーストーリーが受け入れ可能かどうかを判断するための条件。通常、<b>受け入れ基準</b>として表す。</li>
+        </ul>
+        <p>良いユーザーストーリーの特性は<b>INVEST</b>で表される。</p>
+        <p><b>INVEST</b>=Independent(独立している) / Negotiable(交渉可能である) / Valuable(価値がある) / Estimable(見積もり可能である) / Small(コンパクトである) / Testable(テスト可能である)</p>
+        </ul>
+        <div class="point"><div class="pl">暗記</div>ユーザーストーリーは「詳細仕様」ではなく、<b>価値を表す短い記述＋会話＋受け入れ基準</b>で具体化するもの。3つのCは <b>カード・会話・確認</b>、良いストーリーの特性は <b>INVEST</b>。</div>
+        <div class="trap"><p><span class="x">✕</span>「ユーザーストーリー…詳細な仕様書」「開発担当者だけで作る」「Confirmation（確認）…テスト実行結果」などの説明は誤り。</p></div>
+      </div>
+    </div>
+    <div class="term">
+      <div class="t-head"><span class="jp">受け入れ基準</span><span class="en">acceptance criteria</span></div>
+      <div class="t-body">
+        <p class="def">ユーザーストーリーが<b>受け入れられるために満たすべき条件</b>。記述方法は2形式。</p>
+        <ul class="sub">
+          <li><span class="lbl">シナリオ指向</span>「Given（前提）/ When（操作）/ Then（結果）」の形式で具体的な振る舞いを記述。</li>
+          <li><span class="lbl">ルール指向</span>満たすべきルール（箇条書き・チェックリスト等）で記述。</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">受け入れテスト駆動開発（ATDD）</span><span class="en">acceptance test-driven development</span></div>
+      <div class="t-body">
+        <p class="def"><b>テストファースト</b>のアプローチ。実装<b>前</b>に、受け入れ基準をもとにテストケースを作る。最初の<b>仕様化ワークショップ</b>はステークホルダー・開発・テストが<b>協働</b>して行う。テストケースは典型的に<b>ポジティブ → ネガティブ → 非機能</b>の順で作成する。<b>テストレベルではなくアプローチ（手法）</b>である点に注意。</p>
+        <div class="trap"><p><span class="x">✕</span>ATDDを「最後に行うテストレベル」→ アプローチであってレベルではない。✕順番を「非機能→ネガティブ→ポジティブ」→ 逆。</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ 第5章 -->
+<section class="ch" id="ch5">
+  <div class="chhead">
+    <div class="chnum">5</div>
+    <div><h2>テスト活動のマネジメント</h2><span class="range">5.1 テスト計画／5.2 リスクマネジメント／5.3 テストのモニタリング・コントロール・完了／5.4 構成管理／5.5 欠陥マネジメント</span></div>
+  </div>
+
+  <!-- 5.1 -->
+  <div class="sec">
+    <h3>5.1 テスト計画</h3>
+    <p class="lo">LO：テスト計画書の目的と内容／テスト担当者の価値／開始・終了基準／見積り技法／テストケースの優先順位付け／テストピラミッド／テストの四象限</p>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">テスト計画書</span><span class="en">test plan</span></div>
+      <div class="t-body">
+        <p class="def">テスト活動を<b>概説する文書</b>。目的・範囲・対象・<b>包括的なアプローチ</b>・リスク・リソース・スケジュール・開始/終了基準などを記載する。個々のテストケースの詳細やテスト手順は書かない（それは設計・実装の成果物）。イテレーティブ開発では<b>リリース計画</b>と<b>イテレーション計画</b>がある（リリース計画→イテレーション計画の順）。</p>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">テスト方針／テスト戦略</span><span class="en">test policy / test strategy</span></div>
+      <div class="t-body">
+        <p class="def"><b>テスト方針</b>は、組織としてテストをなぜ行うのか、どのような目的・原則・価値観でテストに取り組むのかを示す上位レベルの方針である。個別プロジェクトの細かい手順ではなく、組織全体で共有するテストに対する考え方を表す。</p>
+        <p><b>テスト戦略</b>は、テスト方針を具体化し、テストをどのようなアプローチで進めるかを示す高レベルの方針である。例えば、テストレベル、テストタイプ、テスト技法、リスクベースドテストの使い方、テスト自動化、ツール、独立性、開始基準・終了基準などの考え方を含む。</p>
+        <p><b>テスト計画書</b>は、テスト方針やテスト戦略を踏まえて、特定のプロジェクトやリリースで、誰が・いつ・何を・どの範囲で・どのリソースを使ってテストするかを具体化する文書である。</p>
+        <table class="cmp">
+          <tr><th>項目</th><th>位置づけ</th><th>主な内容</th></tr>
+          <tr><td>テスト方針</td><td>組織レベルの考え方</td><td>テストの目的、原則、品質に対する姿勢</td></tr>
+          <tr><td>テスト戦略</td><td>高レベルのテストアプローチ</td><td>どのようなテストを、どの考え方で進めるか</td></tr>
+          <tr><td>テスト計画書</td><td>プロジェクト／リリース単位の具体化</td><td>範囲、対象、スケジュール、リソース、開始・終了基準など</td></tr>
+        </table>
+        <div class="point"><div class="pl">暗記</div>関係は <b>テスト方針 → テスト戦略 → テスト計画書</b>。方針・戦略は上位の考え方、計画書は個別プロジェクトでの具体化。</div>
+        <div class="trap"><p><span class="x">✕</span>「テスト方針＝個別プロジェクトの詳細スケジュール」「テスト戦略＝個々のテストケースの手順」「テスト計画書＝組織全体の品質方針」とする説明は誤り。粒度の違いに注意。</p></div>
+      </div>
+    </div>
+    <div class="term">
+      <div class="t-head"><span class="jp">開始基準／終了基準</span><span class="en">entry / exit criteria</span></div>
+      <div class="t-body">
+        <ul class="sub">
+          <li><span class="lbl">開始基準</span>テスト活動を<b>始める準備が整っているか</b>の条件（テスト環境・テストデータ・テスト可能な要件などが揃っている）。</li>
+          <li><span class="lbl">終了基準</span>テスト活動を<b>終えてよいか</b>の条件（カバレッジ達成、未解決欠陥が合意した制限内、残存リスクが受容可能など）。<b>当該テストレベルで達成すべき条件</b>からなる。</li>
+        </ul>
+        <p>「Definition of Ready（準備完了の定義）」「Definition of Done（完了の定義）」に対応する考え方。ビジネス判断でリスクを受容し、終了基準未達でも切り上げることはある。</p>
+        <div class="trap"><p><span class="x">✕</span>終了基準に「運用環境の準備・ユーザー教育の完了」を混ぜる→それは次レベル/運用の準備で、終了基準ではない。</p></div>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">テスト工数に影響する要因</span><span class="en">factors influencing test effort</span></div>
+      <div class="t-body">
+        <p class="def"><b>プロダクトの特性</b>（リスク、品質、テストベースの品質、規模、複雑さ）、<b>開発プロセスの特性</b>（モデル、ツール、テストプロセス、納期のプレッシャー、チームのスキル）、<b>人の特性</b>、<b>テスト結果</b>（検出した欠陥の数と重要度による再作業）。</p>
+        <div class="trap"><p><span class="x">✕</span>「開発モデルや納期はテスト工数に影響しない」→ <b>大きく影響する</b>。</p></div>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">見積り技法</span><span class="en">estimation techniques</span></div>
+      <div class="t-body">
+        <table class="cmp grp">
+          <tr class="ghead"><th colspan="2">メトリクスベース（過去の実績データを使う）</th></tr>
+          <tr><th>外挿</th><td>今プロジェクトの早い段階の<span class="em">実績工数を計測し、数学モデル</span>で残りを見積る</td></tr>
+          <tr><th>比率に基づく見積り</th><td><span class="em">過去の類似プロジェクト</span>の実績に規模等の<span class="em">比率</span>を掛ける</td></tr>
+          <tr class="ghead ghead-gap"><th colspan="2">エキスパートベース（専門家の判断を使う）</th></tr>
+          <tr><th>ワイドバンドデルファイ</th><td>複数の専門家が<span class="em">個別に見積り→議論→合意</span>を繰り返す</td></tr>
+          <tr><th>三点見積り</th><td>楽観(a)・最頻(m)・悲観(b)を<span class="em">加重平均</span>（(a+4m+b)/6 等）</td></tr>
+        </table>
+        <div class="trap"><p><span class="x">✕</span>外挿（メトリクス）とワイドバンドデルファイ（エキスパート）の<b>分類逆転</b>に注意。</p></div>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">テストケースの優先順位付け</span><span class="en">test case prioritization</span></div>
+      <div class="t-body">
+        <ul class="sub">
+          <li><span class="lbl">リスクベースの優先順位付け</span>リスクレベルの高いものを優先。</li>
+          <li><span class="lbl">カバレッジベースの優先順位付け</span>カバレッジを早く高められるものを優先。</li>
+          <li><span class="lbl">要件ベースの優先順位付け</span>ステークホルダーにとって重要な要件を優先。</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">テストピラミッド</span><span class="en">test pyramid</span></div>
+      <div class="t-body">
+        <p class="def">テストピラミッドは、主に<b>自動テストをテストの粒度や実行コストで階層化</b>し、どの層のテストをどれくらい持つべきかを考えるためのモデル。目的は、少ないコストで素早くフィードバックを得ながら、必要な品質確認をバランスよく行うことである。</p>
+        <ul class="sub">
+          <li><span class="lbl">下層：コンポーネントテスト／ユニットテスト</span>数を多くする層。小さく分離され、実行が速く、原因特定もしやすい。頻繁に自動実行しやすいため、ピラミッドの土台になる。</li>
+          <li><span class="lbl">中層：統合テスト／APIテストなど</span>コンポーネント間やサービス間の連携を確認する層。下層より実行コストは高いが、UIを通さずに重要な結合部分を確認できる。</li>
+          <li><span class="lbl">上層：システムテスト／E2E（エンドツーエンド）／UIテスト</span>ユーザーに近い流れを確認する層。価値は高いが、実行が遅く、壊れやすく、原因特定もしにくいため、数は絞る。</li>
+        </ul>
+        <p>ポイントは、<b>上層のテストをなくすことではない</b>。上層のテストは重要な業務シナリオやリリース判断に必要だが、数を増やしすぎると保守コストや実行時間が大きくなる。したがって、下層で多くを素早く確認し、上層では重要なシナリオに絞る。</p>
+        <div class="fig">
+          <svg viewBox="0 0 360 170" width="360" height="170">
+            <polygon points="155,18 205,18 235,150 125,150" fill="none"/>
+            <polygon points="139,108 221,108 235,150 125,150" fill="#e8eff6" stroke="#2d5b8a" stroke-width="1.5"/>
+            <polygon points="152,64 208,64 220,106 140,106" fill="#fbf4e3" stroke="#9a6b0b" stroke-width="1.5"/>
+            <polygon points="166,22 194,22 206,62 154,62" fill="#fdf5f1" stroke="#9c4221" stroke-width="1.5"/>
+            <text x="180" y="46" text-anchor="middle" font-size="10" font-weight="800" fill="#9c4221">UI/E2E（少）</text>
+            <text x="180" y="90" text-anchor="middle" font-size="10" font-weight="800" fill="#9a6b0b">統合（中）</text>
+            <text x="180" y="134" text-anchor="middle" font-size="10" font-weight="800" fill="#2d5b8a">コンポーネント（多）</text>
+          </svg>
+          <div class="cap">下ほど多く・速く・安く、上ほど少なく</div>
+        </div>
+        <div class="trap"><p><span class="x">✕</span>「テストプロセスを7層に階層化」→ 階層化するのは<b>テストの粒度</b>。7層ではない。✕「上層のE2E/UIテストを多く作るほどよい」→ 実行時間・不安定さ・保守コストが増えるため、通常は<b>下層を多く、上層を少なく</b>する。</p></div>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">テストの四象限</span><span class="en">testing quadrants</span></div>
+      <div class="t-body">
+        <p class="def">テストの四象限は、テストを2つの軸で整理し、<b>どの目的のテストが不足しているかをチームで話し合うためのモデル</b>である。軸は、<b>ビジネス指向⇔テクノロジー指向</b>、<b>チーム支援⇔プロダクト批評</b>の2つ。</p>
+        </ul>
+        <p>四象限は、テストを実行する順番を示すものではなく、<b>テストの目的や観点を分類するためのもの</b>である。1つのプロジェクトでは、4象限すべての観点を必要に応じて組み合わせる。</p>
+        <div class="fig">
+          <svg viewBox="0 0 430 170" width="430" height="170">
+            <line x1="190" y1="20" x2="190" y2="150" stroke="#1c1b18" stroke-width="1.4"/>
+            <line x1="70" y1="85" x2="310" y2="85" stroke="#1c1b18" stroke-width="1.4"/>
+            <text x="190" y="13" text-anchor="middle" font-size="10" font-weight="800">ビジネス指向</text>
+            <text x="190" y="165" text-anchor="middle" font-size="10" font-weight="800">テクノロジー指向</text>
+            <text x="64" y="89" text-anchor="end" font-size="10" font-weight="800">チーム支援</text>
+            <text x="316" y="89" text-anchor="start" font-size="10" font-weight="800">プロダクト批評</text>
+            <text x="130" y="52" text-anchor="middle" font-size="9.5" fill="#3a352c">Q2 機能/ストーリー</text>
+            <text x="250" y="52" text-anchor="middle" font-size="9.5" fill="#3a352c">Q3 探索的/受入/使用性</text>
+            <text x="130" y="122" text-anchor="middle" font-size="9.5" fill="#3a352c">Q1 単体/統合</text>
+            <text x="250" y="122" text-anchor="middle" font-size="9.5" fill="#3a352c">Q4 性能/セキュリティ</text>
+          </svg>
+          <div class="cap">Q1=技術×支援／Q2=ビジネス×支援／Q3=ビジネス×批評／Q4=技術×批評</div>
+        </div>
+        <ul class="sub">
+          <li><span class="lbl">Q1（左下）：テクノロジー指向 × チーム支援</span>単体テスト、コンポーネントテスト、コンポーネント統合テストなど。開発者やチームが実装を進めるための早いフィードバックを与える。</li>
+          <li><span class="lbl">Q2（左上）：ビジネス指向 × チーム支援</span>ユーザーストーリー、受け入れ基準、機能テスト、受け入れテストなど。チームが「何を作るべきか」を理解し、期待される振る舞いを確認する。</li>
+          <li><span class="lbl">Q3（右上）：ビジネス指向 × プロダクト批評</span>探索的テスト、ユーザー受け入れテスト、使用性テスト、ユーザー体験に関する確認など。ユーザーやビジネスの視点で、プロダクトが価値を提供できているかを評価する。</li>
+          <li><span class="lbl">Q4（右下）：テクノロジー指向 × プロダクト批評</span>性能テスト、負荷テスト、セキュリティテスト、信頼性などの技術的な非機能テスト。プロダクトの技術的品質を評価する。</li>
+        </ul>
+        <div class="trap"><p><span class="x">✕</span>「使用性テストは第四象限」→ 使用性は<b>ビジネス指向＝第三象限</b>。非機能の中で使用性だけQ3。✕「四象限はテストの実行順序を示す」→ 順序ではなく、<b>目的・観点の分類</b>である。</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5.2 -->
+  <div class="sec">
+    <h3>5.2 リスクマネジメント</h3>
+    <p class="lo">LO：リスクの定義とレベル／プロダクトリスクとプロジェクトリスク／リスクベースドテスト</p>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">リスクとリスクレベル</span><span class="en">risk / risk level</span></div>
+      <div class="t-body">
+        <p class="def">リスク＝将来、否定的な事象が起こる可能性。<b>リスクレベル＝発生可能性 × 影響度（重大さ）</b>で評価する。リスクマネジメントの流れは <b>リスクの識別 → 分析（可能性・影響度の評価）→ 軽減（コントロール）→ モニタリング</b>。</p>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">プロダクトリスク／プロジェクトリスク</span><span class="en">product / project risk</span></div>
+      <div class="t-body">
+        <ul class="sub">
+          <li><span class="lbl">プロダクトリスク</span><b>成果物の品質</b>に関するリスク（機能が仕様どおり動かない、UXが期待と違う、ニーズを満たさない、性能・セキュリティの問題など）。</li>
+          <li><span class="lbl">プロジェクトリスク</span><b>プロジェクトの管理・遂行</b>に関するリスク（要員不足、スキル不足、納期遅延、サプライヤー問題など）。</li>
+        </ul>
+        <div class="trap"><p><span class="x">✕</span>UX不適合・ニーズ不適合を「プロジェクトリスク」とする／要員不足を「プロダクトリスク」とする取り違えに注意。</p></div>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">リスクベースドテスト</span><span class="en">risk-based testing</span></div>
+      <div class="t-body">
+        <p class="def">リスク分析の結果に基づき、<b>リスクレベルの高い領域に多くのテスト労力を集中</b>させ、低い領域には少なく配分するアプローチ。全数テストが不可能（原則2）への現実的な対応。リスク分析はテストの優先順位付けにも使う。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5.3 -->
+  <div class="sec">
+    <h3>5.3 テストのモニタリング・コントロール・完了</h3>
+    <p class="lo">LO：テストで使うメトリクス／テストレポートの目的と内容／コミュニケーション</p>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">テストのモニタリングとコントロール</span><span class="en">test monitoring & control</span></div>
+      <div class="t-body">
+        <ul class="sub">
+          <li><span class="lbl">テストのモニタリング</span>メトリクスを用いてテストの<b>進捗・状況を継続的に把握</b>する。期間中も収集する。具体的には、テストケースの実行状況（消化数・残数）、合否件数、欠陥の検出・解決状況、カバレッジ達成度などを集め、<b>計画値と実績値を比較</b>して、終了基準にどれだけ近づいているかを確認する。あくまで状況を「見える化」する活動で、それ自体は是正を行わない。</li>
+          <li><span class="lbl">テストのコントロール</span>モニタリングで把握した状況をもとに、<b>計画とのずれを修正する是正アクション（指示）</b>を取る活動。例：テストの優先順位の組み替え、リソースの再配分、スケジュールの調整、テスト環境の準備の前倒し、（必要なら）テストの中止判断など。<b>欠陥そのものを修正（デバッグ）するわけではない</b>点に注意。モニタリング（把握）→コントロール（是正）の順で連動する。</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">テストメトリクス</span><span class="en">test metrics</span></div>
+      <div class="t-body">
+        <p class="def">テスト活動を<b>定量化した指標</b>。代表例：テストケースの準備状況・実行状況、欠陥情報、カバレッジ、タスクの完了状況などの<b>計画値と実績値</b>。（テストベースとケースの対応づけは<b>トレーサビリティ</b>であってメトリクスではない。）</p>
+      </div>
+    </div>
+
+    <div class="term">
+      <div class="t-head"><span class="jp">テストレポート</span><span class="en">test reports</span></div>
+      <div class="t-body">
+        <ul class="sub">
+          <li><span class="lbl">テスト進捗レポート</span>テスト活動の<b>期間中</b>に随時作成。<b>終了基準の達成状況をここで判断</b>する。</li>
+          <li><span class="lbl">テスト完了レポート</span>テスト終了後に作成。結果の総括・<b>残存リスク</b>・終了基準への適合などをまとめ、次フェーズの意思決定を支援する。</li>
+        </ul>
+        <p>レポートの内容は<b>読み手に応じて変える</b>（技術者向けと経営層向けで情報の種類・量を調整）。</p>
+        <div class="trap"><p><span class="x">✕</span>「完了レポートで終了基準を判定して終える」→ 手順が逆。<b>進捗レポートで判定</b>→達成なら完了レポート作成。</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5.4 -->
+  <div class="sec">
+    <h3>5.4 構成管理</h3>
+    <p class="lo">LO：構成管理がテストをどう支援するか</p>
+    <div class="term">
+      <div class="t-head"><span class="jp">構成管理（CM）</span><span class="en">configuration management</span></div>
+      <div class="t-body">
+        <p class="def">テストウェアやテスト対象を<b>識別・管理し、一貫性とトレーサビリティを維持</b>する活動。テストウェアの<b>バージョン管理</b>に加え、<b>テスト対象のバージョンとのトレーサビリティ</b>を保つ。<b>テスト環境も対象</b>になる。</p>
+        <ul class="sub">
+          <li><span class="lbl">構成アイテム</span>管理対象（テスト計画書・テストケース・テスト環境・テスト対象など）。</li>
+          <li><span class="lbl">ベースライン</span>承認された<b>特定時点の構成アイテムの状態</b>。これを基準に履歴管理し、以前の状態へ戻せる。</li>
+        </ul>
+        <div class="trap"><p><span class="x">✕</span>「構成管理＝内部構造に基づくテスト」→ それはホワイトボックス。✕「テスト環境は対象外」→ 対象。✕ベースラインを「計画・スケジュールの承認状態」と取り違え。</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5.5 -->
+  <div class="sec">
+    <h3>5.5 欠陥マネジメント</h3>
+    <p class="lo">LO：欠陥マネジメントのプロセスと欠陥レポートの内容</p>
+    <div class="term">
+      <div class="t-head"><span class="jp">欠陥マネジメント／欠陥レポート</span><span class="en">defect management / report</span></div>
+      <div class="t-body">
+        <p class="def">発見した欠陥を<b>記録・分類・分析・追跡し、解決まで管理</b>するプロセス。偽陽性が疑われても、<b>報告漏れを防ぐため基本的にすべて記録・調査</b>する。</p>
+        <p><b>欠陥レポートの目的</b>：開発担当者に調査すべき問題を通知する／テストマネージャーに<b>品質判断の材料</b>を提供する／プロセス改善のための情報を残す。</p>
+        <p><b>欠陥レポートの主な内容</b>：識別子、概要・説明、再現手順、テストアイテム、SDLCのフェーズ、観測した故障と期待結果、緊急度・優先度・重大度、ステータス、参照情報など。（<b>個人の人事評価は含めない</b>。）</p>
+        <p><b>重大度（severity）と優先度（priority）の違い</b>（よく問われる）：</p>
+        <ul class="sub">
+          <li><span class="lbl">重大度</span>その故障が<b>製品・システムに与える影響の大きさ</b>を表す。技術的・客観的な指標で、システムが停止するほどの致命的なものから、見た目だけの軽微なものまでの度合いを示す。状況が変わっても変動しにくい。</li>
+          <li><span class="lbl">優先度</span>その欠陥に<b>どれだけ早く対応（修正）すべきか、対応の順序</b>を表す。ビジネス上の価値や納期に基づく指標で、ステークホルダーの判断により決まり、状況の変化に応じて変わりうる。</li>
+        </ul>
+        <p>両者は<b>独立</b>しており、必ずしも一致しない。例：トップページのロゴ画像の誤りは、機能には影響しないため<b>重大度は低い</b>が、ブランド毀損を避けるため早く直したく<b>優先度は高い</b>。逆に、めったに通らない画面の致命的バグは<b>重大度は高い</b>が、発生頻度が低く後回しにでき<b>優先度は低い</b>こともある。</p>
+        <div class="trap">
+          <p><span class="x">✕</span>「偽陽性は判定がつくまで記録・報告しない」→ 報告漏れ防止のため<b>基本すべて記録</b>。</p>
+          <p><span class="x">✕</span>「重大度が高ければ優先度も必ず高い」→ <b>両者は独立</b>。重大度＝影響の大きさ、優先度＝対応の順序で、一致しないことがある。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ 第6章 -->
+<section class="ch" id="ch6">
+  <div class="chhead">
+    <div class="chnum">6</div>
+    <div><h2>テストツール</h2><span class="range">6.1 ツールによるテストの支援／6.2 テスト自動化の利点とリスク</span></div>
+  </div>
+
+  <!-- 6.1 -->
+  <div class="sec">
+    <h3>6.1 ツールによるテストの支援</h3>
+    <p class="lo">LO：テストツールを分類別に説明する</p>
+    <div class="term">
+      <div class="t-head"><span class="jp">テストツールの分類</span><span class="en">test tool categories</span></div>
+      <div class="t-body">
+        <p class="def">テストツールは<b>支援するテスト活動</b>によって分類される。1つのツールが複数活動を支援することもある。</p>
+        <ul class="sub">
+          <li><span class="lbl">テストマネジメント支援ツール</span>SDLC・要件・テスト・欠陥・構成の<b>管理とトレーサビリティ</b>を支援。</li>
+          <li><span class="lbl">静的テスト支援ツール</span>レビュー支援、<b>静的解析</b>（実行せずに規約違反・複雑度・脆弱性を検出）。</li>
+          <li><span class="lbl">テスト設計・実装支援ツール</span><b>テストケース生成・テストデータ準備</b>などを支援。</li>
+          <li><span class="lbl">テスト実行・カバレッジ支援ツール</span>テストの<b>自動実行・結果比較・カバレッジ計測</b>（リグレッションに有効）。</li>
+          <li><span class="lbl">非機能テスト支援ツール</span>手動では難しい<b>性能（ロード/ストレス）テスト</b>などを支援。</li>
+          <li><span class="lbl">DevOps支援ツール</span><b>CI/CDパイプライン</b>等を支援。</li>
+          <li><span class="lbl">コラボレーション支援ツール</span>コミュニケーションを支援。</li>
+        </ul>
+        <div class="trap"><p><span class="x">✕</span>「静的解析＝DevOpsツール」「カバレッジ計測＝マネジメント支援」「性能テスト＝マネジメント支援」など、<b>分類のたすき掛け</b>に注意。</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6.2 -->
+  <div class="sec">
+    <h3>6.2 テスト自動化の利点とリスク</h3>
+    <p class="lo">LO：テストツールを使う利点とリスク</p>
+    <div class="term">
+      <div class="t-head"><span class="jp">テスト自動化の利点とリスク</span><span class="en">benefits & risks of automation</span></div>
+      <div class="t-body">
+        <table class="cmp">
+          <tr><th>利点</th><td>反復作業の削減・時間の節約／一貫性・再実行性の向上／<span class="em">数値結果による評価の客観性向上</span>／手動では困難な大規模・高頻度テストの実行</td></tr>
+          <tr><th>リスク</th><td>導入・保守の時間/コスト/工数の<span class="em">過小評価</span>／ツール効果の<span class="em">過大な期待</span>・<span class="em">過度の依存</span>／自動テストの保守の手間／ベンダー依存・ライセンス問題</td></tr>
+        </table>
+        <div class="trap"><p><span class="x">✕</span>最頻出：「静的解析やカバレッジツールで<b>評価の客観性が損なわれる</b>」→ 数値結果なので<b>客観性は向上</b>（利点を裏返した誤り）。✕「ツールを入れればテスト設計や戦略は不要」→ ツールは支援で、人の判断の代替ではない。</p></div>
+      </div>
+    </div>
+    <div class="term">
+      <div class="t-head"><span class="jp">テストツール導入と定着</span><span class="en">tool adoption</span></div>
+      <div class="t-body">
+        <p class="def">テストツールは導入するだけでは効果が出ない。目的に合うツールを選び、<b>パイロット導入で評価</b>し、段階的に展開しながら、利用者へのトレーニングとサポート体制を整えることが重要。</p>
+        <ul class="sub">
+          <li><span class="lbl">成功させる考え方</span>小さく試す、効果とコストを測る、既存プロセスに合わせて運用を整える、利用者を教育する。</li>
+          <li><span class="lbl">失敗しやすい考え方</span>評価せず全社展開する、ツールを配れば自然に定着すると考える、ツールがテスト設計や判断を完全に代替すると期待する。</li>
+        </ul>
+        <div class="trap"><p><span class="x">✕</span>「ツール導入＝自動的に品質向上」ではない。ツールは<b>人の判断とプロセスを支援するもの</b>であり、導入・保守・教育のコストも見積もる必要がある。</p></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<footer>JSTQB Foundation Level シラバス4.0 準拠 ・ 頻出用語と重要論点の学習用参考書</footer>
+</main>
+</body>
+</html>
