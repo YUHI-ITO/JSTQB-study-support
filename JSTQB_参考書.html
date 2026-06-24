@@ -307,7 +307,7 @@
           <li><span class="lbl">6. テストはコンテキスト次第（旧称：テストは状況次第）</span>状況（安全性重視か等）によって最適なテストは異なる。唯一普遍的に適用できるアプローチは存在しない。</li>
           <li><span class="lbl">7. 「欠陥ゼロ」の落とし穴（旧称：バグゼロの落とし穴）</span>欠陥をすべて直してもユーザーのニーズを満たすとは限らない。検証だけでなく妥当性確認も実施すべき。</li>
         </ul>
-        <div class="trap"><p><span class="x">✕</span>「テスト工数節約のため後工程（システム/受け入れ）に集中」→ 原則3（早期テスト）違反。後ろ倒しは常に誤り。</p></div>
+        <div class="trap"><p><span class="x">✕</span>「テスト工数節約のため後工程（システム/受け入れ）に集中」→ 早期テストが原則であり、後工程に集中させる考え方は基本的に不適切。</p></div>
       </div>
     </div>
   </div>
@@ -801,13 +801,13 @@
               <rect x="244" y="160" width="124" height="38" rx="9" fill="#fff" stroke="#1c1b18" stroke-width="1.6"/><text x="306" y="184">スヌーズ</text>
             </g>
             <g font-size="9.5" fill="#726b5e">
-              <path d="M104,86 Q166,38 240,34" fill="none" stroke="#9c4221" stroke-width="1.8" marker-end="url(#a4)"/><text x="138" y="46">①セット</text>
-              <path d="M368,34 Q458,44 544,82" fill="none" stroke="#9c4221" stroke-width="1.8" marker-end="url(#a4)"/><text x="448" y="38">②設定時間到達</text>
-              <path d="M254,52 Q160,72 116,90" fill="none" stroke="#9c4221" stroke-width="1.8" marker-end="url(#a4)"/><text x="188" y="78">③解除</text>
-              <path d="M486,100 Q300,92 118,102" fill="none" stroke="#9c4221" stroke-width="1.8" marker-end="url(#a4)"/><text x="300" y="88">④解除</text>
-              <path d="M504,124 Q480,210 372,192" fill="none" stroke="#9c4221" stroke-width="1.8" marker-end="url(#a4)"/><text x="500" y="166">⑤スヌーズボタン</text>
-              <path d="M372,168 Q470,148 492,118" fill="none" stroke="#9c4221" stroke-width="1.8" marker-end="url(#a4)"/><text x="408" y="142">⑥9分経過</text>
-              <path d="M244,182 Q126,162 66,124" fill="none" stroke="#9c4221" stroke-width="1.8" marker-end="url(#a4)"/><text x="116" y="168">⑦解除</text>
+              <path d="M104,86 Q166,38 245,34" fill="none" stroke="#9c4221" stroke-width="1.8" marker-end="url(#a4)"/><text x="138" y="46">セット</text>
+              <path d="M368,34 Q458,44 544,84" fill="none" stroke="#9c4221" stroke-width="1.8" marker-end="url(#a4)"/><text x="448" y="38">設定時間到達</text>
+              <path d="M254,52 Q160,72 108,90" fill="none" stroke="#9c4221" stroke-width="1.8" marker-end="url(#a4)"/><text x="188" y="78">解除</text>
+              <path d="M486,100 Q300,92 110,102" fill="none" stroke="#9c4221" stroke-width="1.8" marker-end="url(#a4)"/><text x="300" y="88">解除</text>
+              <path d="M504,124 Q480,210 368,192" fill="none" stroke="#9c4221" stroke-width="1.8" marker-end="url(#a4)"/><text x="500" y="166">スヌーズボタン</text>
+              <path d="M368,168 Q470,148 488,123" fill="none" stroke="#9c4221" stroke-width="1.8" marker-end="url(#a4)"/><text x="408" y="142">9分経過</text>
+              <path d="M244,182 Q126,152 66,124" fill="none" stroke="#9c4221" stroke-width="1.8" marker-end="url(#a4)"/><text x="116" y="168">解除</text>
             </g>
           </svg>
           <div class="cap">矢印＝有効遷移（この図は7本）</div>
@@ -1036,14 +1036,14 @@
         <div class="fig">
           <svg viewBox="0 0 360 170" width="360" height="170">
             <polygon points="155,18 205,18 235,150 125,150" fill="none"/>
-            <polygon points="139,108 221,108 235,150 125,150" fill="#e8eff6" stroke="#2d5b8a" stroke-width="1.5"/>
+            <polygon points="139,108 221,108 234,150 126,150" fill="#e8eff6" stroke="#2d5b8a" stroke-width="1.5"/>
             <polygon points="152,64 208,64 220,106 140,106" fill="#fbf4e3" stroke="#9a6b0b" stroke-width="1.5"/>
-            <polygon points="166,22 194,22 206,62 154,62" fill="#fdf5f1" stroke="#9c4221" stroke-width="1.5"/>
-            <text x="180" y="46" text-anchor="middle" font-size="10" font-weight="800" fill="#9c4221">UI/E2E（少）</text>
-            <text x="180" y="90" text-anchor="middle" font-size="10" font-weight="800" fill="#9a6b0b">統合（中）</text>
-            <text x="180" y="134" text-anchor="middle" font-size="10" font-weight="800" fill="#2d5b8a">コンポーネント（多）</text>
+            <polygon points="164,22 197,22 207,62 153,62" fill="#fdf5f1" stroke="#9c4221" stroke-width="1.5"/>
+            <text x="180" y="46" text-anchor="middle" font-size="10" font-weight="800" fill="#9c4221">UI/E2E</text>
+            <text x="180" y="90" text-anchor="middle" font-size="10" font-weight="800" fill="#9a6b0b">統合</text>
+            <text x="180" y="134" text-anchor="middle" font-size="10" font-weight="800" fill="#2d5b8a">コンポーネント</text>
           </svg>
-          <div class="cap">下ほど多く・速く・安く、上ほど少なく</div>
+          <div class="cap">下ほど多く・速く・安く、上ほど少なく・遅く・高く</div>
         </div>
         <div class="trap"><p><span class="x">✕</span>「テストプロセスを7層に階層化」→ 階層化するのは<b>テストの粒度</b>。7層ではない。✕「上層のE2E/UIテストを多く作るほどよい」→ 実行時間・不安定さ・保守コストが増えるため、通常は<b>下層を多く、上層を少なく</b>する。</p></div>
       </div>
@@ -1171,10 +1171,10 @@
     <div class="term">
       <div class="t-head"><span class="jp">欠陥マネジメント／欠陥レポート</span><span class="en">defect management / report</span></div>
       <div class="t-body">
-        <p class="def">発見した欠陥を<b>記録・分類・分析・追跡し、解決まで管理</b>するプロセス。偽陽性が疑われても、<b>報告漏れを防ぐため基本的にすべて記録・調査</b>する。</p>
+        <p class="def">発見した欠陥を<b>記録・分類・分析・追跡し、解決まで管理</b>するプロセス。偽陽性が疑われても、<b>報告漏れを防ぐために適切に記録</b>し、必要に応じて再現確認や追加調査を行う。</p>
         <p><b>欠陥レポートの目的</b>：開発担当者に調査すべき問題を通知する／テストマネージャーに<b>品質判断の材料</b>を提供する／プロセス改善のための情報を残す。</p>
         <p><b>欠陥レポートの主な内容</b>：識別子、概要・説明、再現手順、テストアイテム、SDLCのフェーズ、観測した故障と期待結果、緊急度・優先度・重大度、ステータス、参照情報など。（<b>個人の人事評価は含めない</b>。）</p>
-        <p><b>重大度（severity）と優先度（priority）の違い</b>（よく問われる）：</p>
+        <p><b>重大度（severity）と優先度（priority）の違い</b>：</p>
         <ul class="sub">
           <li><span class="lbl">重大度</span>その故障が<b>製品・システムに与える影響の大きさ</b>を表す。技術的・客観的な指標で、システムが停止するほどの致命的なものから、見た目だけの軽微なものまでの度合いを示す。状況が変わっても変動しにくい。</li>
           <li><span class="lbl">優先度</span>その欠陥に<b>どれだけ早く対応（修正）すべきか、対応の順序</b>を表す。ビジネス上の価値や納期に基づく指標で、ステークホルダーの判断により決まり、状況の変化に応じて変わりうる。</li>
@@ -1233,7 +1233,7 @@
       </div>
     </div>
     <div class="term">
-      <div class="t-head"><span class="jp">テストツール導入と定着</span><span class="en">tool adoption</span></div>
+      <div class="t-head"><span class="jp">補足：テストツール導入と定着</span><span class="en">tool adoption</span></div>
       <div class="t-body">
         <p class="def">テストツールは導入するだけでは効果が出ない。目的に合うツールを選び、<b>パイロット導入で評価</b>し、段階的に展開しながら、利用者へのトレーニングとサポート体制を整えることが重要。</p>
         <ul class="sub">
